@@ -1,9 +1,9 @@
 package com.example.chatappnative.DI
 
 import com.example.chatappnative.core.constants.NetworkUrl
-import com.example.chatappnative.data.data_source.ExampleDataSource
-import com.example.chatappnative.data.repository.RepositoryImp
-import com.example.chatappnative.domain.repository.Repository
+import com.example.chatappnative.data.data_source.AuthDataSource
+import com.example.chatappnative.data.repository.AuthRepositoryImpl
+import com.example.chatappnative.domain.repository.AuthRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,21 +14,21 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object ExampleDatasourceModule {
+object AuthDatasourceModule {
 
     @Provides
     @Singleton
-    fun provideExampleDataSource(): ExampleDataSource {
+    fun provideExampleDataSource(): AuthDataSource {
         return Retrofit.Builder()
             .baseUrl(NetworkUrl.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create(ExampleDataSource::class.java);
+            .create(AuthDataSource::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideExampleRepository(dataSource: ExampleDataSource): Repository {
-        return RepositoryImp(dataSource)
+    fun provideExampleRepository(authDataSource: AuthDataSource): AuthRepository {
+        return AuthRepositoryImpl(authDataSource)
     }
 }

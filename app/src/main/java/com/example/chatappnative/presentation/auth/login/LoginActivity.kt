@@ -1,10 +1,11 @@
-package com.example.chatappnative
+package com.example.chatappnative.presentation.auth.login
 
 import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -17,18 +18,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.media3.common.util.Log
-import com.example.chatappnative.domain.repository.Repository
 import com.example.chatappnative.ui.theme.ChatAppNativeTheme
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.runBlocking
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    @Inject
-    lateinit var _repo: Repository;
+    private val loginViewModel: LoginViewModel by viewModels()
 
     @SuppressLint("UnsafeOptInUsageError")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,12 +44,7 @@ class MainActivity : ComponentActivity() {
                         ) {
                             Button(
                                 onClick = {
-                                    runBlocking {
-                                        val value = _repo.getExample();
 
-
-                                        Log.d("MainActivity", "onCreate: $value")
-                                    }
                                 }
                             ) {
                                 Text(text = "Call Get Example")
