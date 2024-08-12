@@ -2,7 +2,7 @@ package com.example.chatappnative.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
+val ColorPrimary = Color(0xFF36B8B8)
 val PurpleGrey80 = Color(0xFFCCC2DC)
 val Pink80 = Color(0xFFEFB8C8)
 

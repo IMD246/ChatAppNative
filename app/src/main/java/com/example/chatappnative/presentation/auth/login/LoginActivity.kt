@@ -22,7 +22,7 @@ import com.example.chatappnative.ui.theme.ChatAppNativeTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class LoginActivity : ComponentActivity() {
 
     private val loginViewModel: LoginViewModel by viewModels()
 
@@ -54,21 +54,5 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    ChatAppNativeTheme {
-        Greeting("Android")
     }
 }

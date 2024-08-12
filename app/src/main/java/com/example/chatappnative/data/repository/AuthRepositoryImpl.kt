@@ -26,7 +26,7 @@ class AuthRepositoryImpl @Inject constructor(
             } catch (e: HttpException) {
                 emit(ResponseState.Error(message = "Error occurred"))
             } catch (e: SocketException) {
-                emit(ResponseState.Error(message = "Pls check your network!"))
+                emit(ResponseState.Error(message = "Please check your network!"))
             }
         }
 }
