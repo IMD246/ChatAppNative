@@ -1,6 +1,11 @@
 package com.example.chatappnative.Util
 
 object ValidatorUtil {
+    private fun isNotEmail(value: Any?): Boolean {
+        return !Regex("^[A-Za-z](.*)([@]{1})(.{1,})(\\.)(.{1,})")
+            .matches(value.toString())
+    }
+
     fun validateName(value: String): String {
         if (value.isEmpty()) {
             return "Trường này bắt buộc";
@@ -21,13 +26,13 @@ object ValidatorUtil {
         return "";
     }
 
-    fun validatePhone(value: String): String {
+    fun validateEmail(value: String): String {
         if (value.isEmpty()) {
             return "Trường này bắt buộc";
         }
 
-        if (value.length !in 10..12) {
-            return "Độ dài số điện thoại chỉ được 10 hoặc 11 kí tự"
+        if (isNotEmail(value)) {
+            return "Xin hãy kiểm tra lại định dạng email của bạn!"
         }
 
         return "";

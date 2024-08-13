@@ -1,9 +1,13 @@
 package com.example.chatappnative.data.data_source
 
-import retrofit2.http.GET
-import retrofit2.http.Query
+import com.example.chatappnative.core.constants.NetworkUrl.REGISTER
+import com.example.chatappnative.data.BaseReponse
+import retrofit2.http.Body
+import retrofit2.http.POST
 
 interface AuthDataSource {
-    @GET("/api/v3/coins/markets?page")
-    suspend fun register(@Query("email") email: String, @Query("password") password: String)
+    @POST(REGISTER)
+    suspend fun register(
+        @Body() postData: Map<String, String>,
+    ): BaseReponse
 }

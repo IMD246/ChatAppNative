@@ -24,6 +24,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -43,6 +44,9 @@ fun BaseInput(
     maxLengths: Int? = null,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    suffix: @Composable() (() -> Unit)? = null,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    modifier: Modifier? = null
 ) {
 
     var isFocused: Boolean by remember { mutableStateOf(false) }
@@ -51,13 +55,20 @@ fun BaseInput(
         focusRequester ?: FocusRequester()
     }
 
-    val modifier = Modifier
-        .fillMaxWidth()
-        .padding(horizontal = 20.dp)
-        .onFocusChanged {
-            isFocused = it.hasFocus
-        }
-        .focusRequester(focusRequester)
+    val dataModifier: Modifier
+
+    if (modifier != null) {
+        dataModifier = modifier
+    } else {
+        dataModifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp)
+            .onFocusChanged {
+                isFocused = it.hasFocus
+            }
+    }
+
+    dataModifier.focusRequester(focusRequester)
 
     var isError = false
 
@@ -81,9 +92,8 @@ fun BaseInput(
         MaterialTheme.colorScheme.primary
     }
 
-
     OutlinedTextField(
-        modifier = modifier,
+        modifier = dataModifier,
         shape = RoundedCornerShape(25.dp),
         keyboardActions = keyboardActions,
         keyboardOptions = keyboardOptions,
@@ -139,5 +149,9 @@ fun BaseInput(
                 ),
             )
         },
+        suffix = suffix,
+        visualTransformation = visualTransformation,
     )
 }
+
+

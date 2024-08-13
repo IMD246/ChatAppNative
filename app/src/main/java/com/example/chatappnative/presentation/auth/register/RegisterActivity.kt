@@ -10,13 +10,17 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
@@ -25,14 +29,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.chatappnative.Util.ValidatorUtil
 import com.example.chatappnative.presentation.auth.composables.BaseButton
 import com.example.chatappnative.presentation.auth.composables.BaseInput
+import com.example.chatappnative.presentation.auth.composables.ButtonWithoutOuterPadding
 import com.example.chatappnative.presentation.auth.composables.LargeTopSection
+import com.example.chatappnative.presentation.auth.composables.PasswordInput
 import com.example.chatappnative.presentation.auth.login.RegisterViewModel
 import com.example.chatappnative.ui.theme.ChatAppNativeTheme
+import com.example.chatappnative.ui.theme.Color191919
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -68,6 +78,9 @@ class RegisterActivity : ComponentActivity() {
         val focusManager = LocalFocusManager.current
         val interactionSource = remember { MutableInteractionSource() }
 
+        // show dialog
+        registeriewModel.dialogAPIHelper.displayDialog()
+
         Box(modifier = Modifier
             .clickable(
                 interactionSource = interactionSource,
@@ -83,7 +96,7 @@ class RegisterActivity : ComponentActivity() {
                 horizontalAlignment = Alignment.CenterHorizontally,
 
                 ) {
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(30.dp))
                 BaseInput(
                     value = registeriewModel.nameController.collectAsState().value,
                     onValueChange = {
@@ -103,35 +116,16 @@ class RegisterActivity : ComponentActivity() {
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 BaseInput(
-                    value = registeriewModel.passwordController.collectAsState().value,
+                    value = registeriewModel.emailController.collectAsState().value,
                     onValueChange = {
-                        registeriewModel.onChangedPasswordController(it)
+                        registeriewModel.onChangedEmailController(it)
                     },
-                    isShowError = registeriewModel.showError.collectAsState().value,
-                    hint = "Enter your password",
-                    label = "Password",
-                    onValidation = {
-                        ValidatorUtil.validatePassword(registeriewModel.passwordController.collectAsState().value)
-                    },
-                    keyboardActions = KeyboardActions(
-                        onNext = {
-                            focusManager.moveFocus(FocusDirection.Next);
-                        }
-                    )
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                BaseInput(
-                    value = registeriewModel.phoneController.collectAsState().value,
-                    onValueChange = {
-                        registeriewModel.onChangedPhoneController(it)
-                    },
-                    hint = "Enter your phone number",
-                    label = "Phone",
+                    hint = "Enter your email",
+                    label = "Email",
                     isShowError = registeriewModel.showError.collectAsState().value,
                     onValidation = {
-                        ValidatorUtil.validatePhone(registeriewModel.phoneController.collectAsState().value)
+                        ValidatorUtil.validateEmail(registeriewModel.emailController.collectAsState().value)
                     },
-                    maxLengths = 11,
                     keyboardActions = KeyboardActions(
                         onDone = {
                             keyboardController?.hide()
@@ -140,7 +134,20 @@ class RegisterActivity : ComponentActivity() {
                         }
                     ),
                     keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number,
+                        keyboardType = KeyboardType.Email,
+                    )
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                PasswordInput(
+                    value = registeriewModel.passwordController.collectAsState().value,
+                    onValueChange = {
+                        registeriewModel.onChangedPasswordController(it)
+                    },
+                    isShowError = registeriewModel.showError.collectAsState().value,
+                    keyboardActions = KeyboardActions(
+                        onNext = {
+                            focusManager.moveFocus(FocusDirection.Next);
+                        }
                     )
                 )
                 Spacer(modifier = Modifier.height(10.dp))
@@ -149,6 +156,30 @@ class RegisterActivity : ComponentActivity() {
                     title = "Register",
                 ) {
                     registeriewModel.onRegister()
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+                Row {
+                    Text(
+                        text = "Already have an account ",
+                        style = TextStyle(
+                            color = Color191919,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Normal
+                        ),
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    ButtonWithoutOuterPadding(
+                        onClick = {
+                            registeriewModel.toLogin()
+                        }) {
+                        Text(
+                            text = "Login", style = TextStyle(
+                                color = MaterialTheme.colorScheme.primary,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.SemiBold,
+                            )
+                        )
+                    }
                 }
             }
         }
