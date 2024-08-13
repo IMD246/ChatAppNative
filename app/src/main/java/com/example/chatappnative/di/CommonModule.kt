@@ -1,4 +1,4 @@
-package com.example.chatappnative.DI
+package com.example.chatappnative.di
 
 import dagger.Module
 import dagger.hilt.InstallIn

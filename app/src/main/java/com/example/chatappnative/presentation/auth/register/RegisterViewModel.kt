@@ -3,10 +3,10 @@ package com.example.chatappnative.presentation.auth.login
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.chatappnative.Helper.DialogAPIHelper
-import com.example.chatappnative.Util.ValidatorUtil
 import com.example.chatappnative.data.ResponseState
 import com.example.chatappnative.domain.repository.AuthRepository
+import com.example.chatappnative.helper.DialogAPIHelper
+import com.example.chatappnative.util.ValidatorUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow

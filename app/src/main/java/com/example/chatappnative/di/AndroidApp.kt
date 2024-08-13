@@ -1,7 +1,7 @@
-package com.example.chatappnative.DI
+package com.example.chatappnative.di
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
-class AndroidAppDI : Application()
+class AndroidApp : Application()

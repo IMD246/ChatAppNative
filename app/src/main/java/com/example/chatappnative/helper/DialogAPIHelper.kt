@@ -1,4 +1,4 @@
-package com.example.chatappnative.Helper
+package com.example.chatappnative.helper
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -47,7 +47,7 @@ class DialogAPIHelper {
     }
 
     @Composable
-    fun displayDialog(
+    fun DisplayDialog(
         dismissOnBackPress: Boolean = false,
         dismissOnClickOutside: Boolean = false,
         needShowSuccess: Boolean = true,
@@ -112,10 +112,6 @@ class DialogAPIHelper {
         dismissOnClickOutside: Boolean = false,
         message: String = "",
     ) {
-        val message: String = message.ifEmpty {
-            "Success"
-        }
-
         Dialog(
             properties = DialogProperties(
                 dismissOnClickOutside = dismissOnClickOutside,

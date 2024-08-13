@@ -1,4 +1,4 @@
-package com.example.chatappnative.DI
+package com.example.chatappnative.di
 
 import com.example.chatappnative.core.constants.NetworkUrl
 import com.example.chatappnative.data.data_source.AuthDataSource
@@ -20,10 +20,10 @@ object AuthDatasourceModule {
 
     @Provides
     @Singleton
-    fun provideExampleDataSource(): AuthDataSource {
-        val interceptorLog = HttpLoggingInterceptor();
+    fun provideAuthDataSource(): AuthDataSource {
+        val interceptorLog = HttpLoggingInterceptor()
         // set your desired log level
-        interceptorLog.setLevel(HttpLoggingInterceptor.Level.BODY);
+        interceptorLog.setLevel(HttpLoggingInterceptor.Level.BODY)
 
         val httpClient = Builder()
             .addInterceptor(interceptorLog)
@@ -38,7 +38,7 @@ object AuthDatasourceModule {
 
     @Provides
     @Singleton
-    fun provideExampleRepository(authDataSource: AuthDataSource): AuthRepository {
+    fun provideAuthRepository(authDataSource: AuthDataSource): AuthRepository {
         return AuthRepositoryImpl(authDataSource)
     }
 }

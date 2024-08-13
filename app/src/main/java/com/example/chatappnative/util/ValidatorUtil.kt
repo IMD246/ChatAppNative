@@ -1,8 +1,8 @@
-package com.example.chatappnative.Util
+package com.example.chatappnative.util
 
 object ValidatorUtil {
     private fun isNotEmail(value: Any?): Boolean {
-        return !Regex("^[A-Za-z](.*)([@]{1})(.{1,})(\\.)(.{1,})")
+        return !Regex("^[A-Za-z](.*)(@)(.+)(\\.)(.+)")
             .matches(value.toString())
     }
 

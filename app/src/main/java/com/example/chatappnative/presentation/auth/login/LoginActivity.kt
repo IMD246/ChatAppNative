@@ -35,7 +35,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.chatappnative.Util.ValidatorUtil
 import com.example.chatappnative.presentation.auth.composables.BaseButton
 import com.example.chatappnative.presentation.auth.composables.BaseInput
 import com.example.chatappnative.presentation.auth.composables.ButtonWithoutOuterPadding
@@ -44,6 +43,7 @@ import com.example.chatappnative.presentation.auth.composables.PasswordInput
 import com.example.chatappnative.presentation.auth.register.RegisterActivity
 import com.example.chatappnative.ui.theme.ChatAppNativeTheme
 import com.example.chatappnative.ui.theme.Color191919
+import com.example.chatappnative.util.ValidatorUtil
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -81,7 +81,7 @@ class LoginActivity : ComponentActivity() {
         val interactionSource = remember { MutableInteractionSource() }
 
         // show dialog
-        loginModel.dialogAPIHelper.displayDialog()
+        loginModel.dialogAPIHelper.DisplayDialog()
 
         Box(modifier = Modifier
             .clickable(
