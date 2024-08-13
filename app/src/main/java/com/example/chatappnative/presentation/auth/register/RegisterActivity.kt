@@ -59,7 +59,7 @@ class RegisterActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     topBar = {
                         LargeTopSection(
-                            title = "Small Top App Bar",
+                            title = "Register",
                             subTitle = "Fill up your details to register."
                         )
                     }
@@ -157,7 +157,7 @@ class RegisterActivity : ComponentActivity() {
                 ) {
                     registeriewModel.onRegister()
                 }
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(Modifier.weight(1f))
                 Row {
                     Text(
                         text = "Already have an account ",
@@ -170,7 +170,7 @@ class RegisterActivity : ComponentActivity() {
                     Spacer(modifier = Modifier.width(4.dp))
                     ButtonWithoutOuterPadding(
                         onClick = {
-                            registeriewModel.toLogin()
+                            onBackPressedDispatcher.onBackPressed()
                         }) {
                         Text(
                             text = "Login", style = TextStyle(

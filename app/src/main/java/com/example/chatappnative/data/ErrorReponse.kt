@@ -1,7 +1,6 @@
 package com.example.chatappnative.data
 
-data class BaseReponse<T>(
-    val data: T?,
+data class ErrorReponse(
     val message: String = "",
     val code: Int = 0,
 )

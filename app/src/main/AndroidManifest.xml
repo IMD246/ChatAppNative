@@ -21,22 +21,21 @@
             android:name=".presentation.auth.login.LoginActivity"
             android:exported="true"
             android:theme="@style/Theme.ChatAppNative">
-            <!--            <intent-filter>-->
-            <!--                <action android:name="android.intent.action.MAIN" />-->
-
-            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
-            <!--            </intent-filter>-->
-        </activity>
-        <activity
-            android:name=".presentation.auth.register.RegisterActivity"
-            android:exported="true"
-            android:label="Register"
-            android:theme="@style/Theme.ChatAppNative">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".presentation.auth.register.RegisterActivity"
+            android:exported="true"
+            android:theme="@style/Theme.ChatAppNative">
+            <!--            <intent-filter>-->
+            <!--                <action android:name="android.intent.action.MAIN" />-->
+
+            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
+            <!--            </intent-filter>-->
         </activity>
     </application>
 

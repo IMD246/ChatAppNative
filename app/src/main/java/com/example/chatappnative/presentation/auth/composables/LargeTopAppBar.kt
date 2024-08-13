@@ -1,5 +1,6 @@
 package com.example.chatappnative.presentation.auth.composables
 
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner.current
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,15 +26,17 @@ import androidx.compose.ui.unit.sp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LargeTopSection(
-    modifier: Modifier = Modifier,
     useBackNavigation: Boolean = true,
     title: String,
     subTitle: String? = null,
 ) {
+    val onBackPressedDispatcher = current?.onBackPressedDispatcher
 
     val navigationIcon: @Composable () -> Unit = {
         if (useBackNavigation) IconButton(
-            onClick = { }, colors = IconButtonDefaults.iconButtonColors(
+            onClick = {
+                onBackPressedDispatcher?.onBackPressed()
+            }, colors = IconButtonDefaults.iconButtonColors(
                 contentColor = Color.White,
             )
         ) {

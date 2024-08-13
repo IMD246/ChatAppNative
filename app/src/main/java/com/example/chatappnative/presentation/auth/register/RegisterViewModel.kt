@@ -128,9 +128,5 @@ class RegisterViewModel @Inject constructor(
                 }
             }
         }
-
-    }
-
-    fun toLogin() {
     }
 }

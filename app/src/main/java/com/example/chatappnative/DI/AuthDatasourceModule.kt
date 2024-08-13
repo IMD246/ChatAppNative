@@ -1,7 +1,6 @@
 package com.example.chatappnative.DI
 
 import com.example.chatappnative.core.constants.NetworkUrl
-import com.example.chatappnative.data.api.ResponseCodeCheckInterceptor
 import com.example.chatappnative.data.data_source.AuthDataSource
 import com.example.chatappnative.data.repository.AuthRepositoryImpl
 import com.example.chatappnative.domain.repository.AuthRepository
@@ -28,7 +27,6 @@ object AuthDatasourceModule {
 
         val httpClient = Builder()
             .addInterceptor(interceptorLog)
-            .addNetworkInterceptor(ResponseCodeCheckInterceptor());
 
         return Retrofit.Builder()
             .baseUrl(NetworkUrl.BASE_URL)
