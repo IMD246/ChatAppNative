@@ -1,4 +1,4 @@
-package com.example.chatappnative.presentation.auth.composables
+package com.example.chatappnative.presentation.composables
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -12,14 +12,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 
 @Composable
 fun BaseButton(
+    modifier: Modifier? = null,
     enabled: Boolean = true,
     title: String,
+    titleColorEnabled: Color? = null,
+    bgColorEnabled: Color? = null,
+    titleColorDisabled: Color? = null,
+    bgColorDisabled: Color? = null,
+    shapeRadius: Dp = 30.dp,
+    titleStyle: TextStyle? = null,
     onClick: () -> Unit,
 ) {
 
@@ -27,19 +35,21 @@ fun BaseButton(
     val bgButton: Color
 
     if (enabled) {
-        titleColor = Color.White
-        bgButton = MaterialTheme.colorScheme.primary
+        titleColor = titleColorEnabled ?: Color.White
+        bgButton = bgColorEnabled ?: MaterialTheme.colorScheme.primary
     } else {
-        titleColor = Color.White.copy(alpha = 0.5F)
-        bgButton = MaterialTheme.colorScheme.primary.copy(alpha = 0.5F)
+        titleColor = titleColorDisabled ?: Color.White.copy(alpha = 0.5F)
+        bgButton = bgColorDisabled ?: MaterialTheme.colorScheme.primary.copy(alpha = 0.5F)
     }
-    
+
+    val modifier = modifier ?: Modifier
+        .fillMaxWidth()
+        .padding(horizontal = 30.dp)
+
     Button(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 30.dp),
+        modifier = modifier,
         onClick = onClick,
-        shape = RoundedCornerShape(30.dp),
+        shape = RoundedCornerShape(shapeRadius),
         colors = ButtonDefaults.buttonColors(
             containerColor = bgButton,
             contentColor = titleColor,
@@ -49,7 +59,7 @@ fun BaseButton(
     ) {
         Text(
             text = title,
-            style = TextStyle(
+            style = titleStyle ?: TextStyle(
                 color = titleColor,
                 fontWeight = FontWeight.Medium,
                 fontSize = 18.sp

@@ -1,4 +1,4 @@
-package com.example.chatappnative.presentation.auth.composables
+package com.example.chatappnative.presentation.composables
 
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner.current
 import androidx.compose.foundation.layout.Column

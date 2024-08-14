@@ -34,12 +34,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.chatappnative.presentation.auth.composables.BaseButton
 import com.example.chatappnative.presentation.auth.composables.BaseInput
-import com.example.chatappnative.presentation.auth.composables.ButtonWithoutOuterPadding
-import com.example.chatappnative.presentation.auth.composables.LargeTopSection
-import com.example.chatappnative.presentation.auth.composables.PasswordInput
 import com.example.chatappnative.presentation.auth.login.RegisterViewModel
+import com.example.chatappnative.presentation.composables.BaseButton
+import com.example.chatappnative.presentation.composables.ButtonWithoutOuterPadding
+import com.example.chatappnative.presentation.composables.LargeTopSection
+import com.example.chatappnative.presentation.composables.PasswordInput
 import com.example.chatappnative.ui.theme.ChatAppNativeTheme
 import com.example.chatappnative.ui.theme.Color191919
 import com.example.chatappnative.util.ValidatorUtil

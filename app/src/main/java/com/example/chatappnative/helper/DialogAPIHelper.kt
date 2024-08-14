@@ -25,7 +25,7 @@ import androidx.compose.ui.window.DialogProperties
 import coil.size.Size
 import com.example.chatappnative.R
 import com.example.chatappnative.data.ResponseState
-import com.example.chatappnative.presentation.auth.composables.GifImage
+import com.example.chatappnative.presentation.composables.GifImage
 import com.example.chatappnative.ui.theme.ColorF2F2F2
 
 class DialogAPIHelper {

@@ -18,7 +18,7 @@
         android:theme="@style/Theme.ChatAppNative"
         tools:targetApi="31">
         <activity
-            android:name=".presentation.auth.login.LoginActivity"
+            android:name=".presentation.welcome.splash.SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.ChatAppNative">
             <intent-filter>
@@ -26,6 +26,26 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".presentation.welcome.onboarding.OnboardingActivity"
+            android:exported="true"
+            android:theme="@style/Theme.ChatAppNative">
+            <!--            <intent-filter>-->
+            <!--                <action android:name="android.intent.action.MAIN" />-->
+
+            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
+            <!--            </intent-filter>-->
+        </activity>
+        <activity
+            android:name=".presentation.auth.login.LoginActivity"
+            android:exported="true"
+            android:theme="@style/Theme.ChatAppNative">
+            <!--                        <intent-filter>-->
+            <!--                            <action android:name="android.intent.action.MAIN" />-->
+
+            <!--                            <category android:name="android.intent.category.LAUNCHER" />-->
+            <!--                        </intent-filter>-->
         </activity>
         <activity
             android:name=".presentation.auth.register.RegisterActivity"

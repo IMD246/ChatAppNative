@@ -1,4 +1,4 @@
-package com.example.chatappnative.presentation.auth.composables
+package com.example.chatappnative.presentation.composables
 
 import android.os.Build.VERSION.SDK_INT
 import androidx.compose.foundation.Image

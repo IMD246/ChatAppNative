@@ -1,4 +1,4 @@
-package com.example.chatappnative.presentation.auth.composables
+package com.example.chatappnative.presentation.composables
 
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
