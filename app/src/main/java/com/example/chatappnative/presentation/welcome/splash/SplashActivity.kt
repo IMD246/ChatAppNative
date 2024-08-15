@@ -8,7 +8,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -18,6 +17,7 @@ import androidx.compose.ui.res.painterResource
 import com.example.chatappnative.R
 import com.example.chatappnative.presentation.auth.login.LoginActivity
 import com.example.chatappnative.presentation.auth.login.SplashViewModel
+import com.example.chatappnative.presentation.main.MainActivity
 import com.example.chatappnative.presentation.welcome.onboarding.OnboardingActivity
 import com.example.chatappnative.ui.theme.ChatAppNativeTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,7 +25,6 @@ import dagger.hilt.android.AndroidEntryPoint
 @SuppressLint("CustomSplashScreen")
 @AndroidEntryPoint
 class SplashActivity : ComponentActivity() {
-
     private val splashModel: SplashViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,8 +47,7 @@ class SplashActivity : ComponentActivity() {
                 if (accessToken.isEmpty()) {
                     Intent(this@SplashActivity, LoginActivity::class.java)
                 } else {
-                    // Main Page
-                    Intent(this@SplashActivity, LoginActivity::class.java)
+                    Intent(this@SplashActivity, MainActivity::class.java)
                 }
             } else {
                 Intent(this@SplashActivity, OnboardingActivity::class.java)
@@ -57,15 +55,12 @@ class SplashActivity : ComponentActivity() {
 
             startActivity(intent)
         }
-        Box(
-            modifier = Modifier
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.img_launcher_background),
-                contentDescription = "",
-                modifier = Modifier.fillMaxSize(),
-            )
-        }
+
+        Image(
+            painter = painterResource(id = R.drawable.img_launcher_background),
+            contentDescription = "",
+            modifier = Modifier.fillMaxSize(),
+        )
     }
 }
 

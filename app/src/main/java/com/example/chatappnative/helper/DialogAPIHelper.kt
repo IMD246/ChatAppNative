@@ -18,6 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -44,6 +45,10 @@ class DialogAPIHelper {
 
     fun getIsShowDialog(): Boolean {
         return isShowDialog.value
+    }
+
+    fun getResponseState(): ResponseState<*>? {
+        return responseState.value
     }
 
     @Composable
@@ -74,7 +79,9 @@ class DialogAPIHelper {
                 )
             }
 
-            else -> {}
+            else -> {
+                return
+            }
         }
     }
 
@@ -125,17 +132,20 @@ class DialogAPIHelper {
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(20.dp))
-                    .padding(horizontal = 30.dp)
                     .background(color = ColorF2F2F2, shape = RoundedCornerShape(20.dp)),
                 contentAlignment = Alignment.Center,
             ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(
+                    modifier = Modifier.padding(horizontal = 30.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     GifImage(data = R.drawable.anim_success, size = Size(width = 200, height = 200))
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = message,
                         style = TextStyle(
                             fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
                             fontSize = 14.sp,
                             color = Color.Green
                         )
@@ -165,11 +175,13 @@ class DialogAPIHelper {
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(20.dp))
-                    .padding(horizontal = 30.dp)
                     .background(color = ColorF2F2F2, shape = RoundedCornerShape(20.dp)),
                 contentAlignment = Alignment.Center,
             ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(
+                    modifier = Modifier.padding(horizontal = 30.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     GifImage(data = R.drawable.anim_error, size = Size(width = 200, height = 200))
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
@@ -177,6 +189,7 @@ class DialogAPIHelper {
                         style = TextStyle(
                             fontWeight = FontWeight.Bold,
                             fontSize = 14.sp,
+                            textAlign = TextAlign.Center,
                             color = Color.Red
                         )
                     )

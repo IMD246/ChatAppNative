@@ -3,5 +3,8 @@
 
     <style name="Theme.ChatAppNative" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:windowIsTranslucent">true</item>
+
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">@color/statusBar</item>
     </style>
 </resources>

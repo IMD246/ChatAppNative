@@ -1,5 +1,6 @@
 package com.example.chatappnative.presentation.auth.register
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -22,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -40,6 +42,7 @@ import com.example.chatappnative.presentation.composables.BaseButton
 import com.example.chatappnative.presentation.composables.ButtonWithoutOuterPadding
 import com.example.chatappnative.presentation.composables.LargeTopSection
 import com.example.chatappnative.presentation.composables.PasswordInput
+import com.example.chatappnative.presentation.main.MainActivity
 import com.example.chatappnative.ui.theme.ChatAppNativeTheme
 import com.example.chatappnative.ui.theme.Color191919
 import com.example.chatappnative.util.ValidatorUtil
@@ -48,7 +51,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class RegisterActivity : ComponentActivity() {
 
-    private val registeriewModel: RegisterViewModel by viewModels()
+    private val registerModel: RegisterViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,7 +82,17 @@ class RegisterActivity : ComponentActivity() {
         val interactionSource = remember { MutableInteractionSource() }
 
         // show dialog
-        registeriewModel.dialogAPIHelper.DisplayDialog()
+        registerModel.dialogAPIHelper.DisplayDialog()
+
+        val success = registerModel.success.collectAsState().value
+        LaunchedEffect(key1 = success) {
+            if (success) {
+                val intent = Intent(this@RegisterActivity, MainActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK);
+                finish()
+                startActivity(intent)
+            }
+        }
 
         Box(modifier = Modifier
             .clickable(
@@ -98,15 +111,15 @@ class RegisterActivity : ComponentActivity() {
                 ) {
                 Spacer(modifier = Modifier.height(30.dp))
                 BaseInput(
-                    value = registeriewModel.nameController.collectAsState().value,
+                    value = registerModel.nameController.collectAsState().value,
                     onValueChange = {
-                        registeriewModel.onChangedNameController(it)
+                        registerModel.onChangedNameController(it)
                     },
-                    isShowError = registeriewModel.showError.collectAsState().value,
+                    isShowError = registerModel.showError.collectAsState().value,
                     hint = "Enter your name",
                     label = "Name",
                     onValidation = {
-                        ValidatorUtil.validateName(registeriewModel.nameController.collectAsState().value)
+                        ValidatorUtil.validateName(registerModel.nameController.collectAsState().value)
                     },
                     keyboardActions = KeyboardActions(
                         onNext = {
@@ -116,21 +129,21 @@ class RegisterActivity : ComponentActivity() {
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 BaseInput(
-                    value = registeriewModel.emailController.collectAsState().value,
+                    value = registerModel.emailController.collectAsState().value,
                     onValueChange = {
-                        registeriewModel.onChangedEmailController(it)
+                        registerModel.onChangedEmailController(it)
                     },
                     hint = "Enter your email",
                     label = "Email",
-                    isShowError = registeriewModel.showError.collectAsState().value,
+                    isShowError = registerModel.showError.collectAsState().value,
                     onValidation = {
-                        ValidatorUtil.validateEmail(registeriewModel.emailController.collectAsState().value)
+                        ValidatorUtil.validateEmail(registerModel.emailController.collectAsState().value)
                     },
                     keyboardActions = KeyboardActions(
                         onDone = {
                             keyboardController?.hide()
                             focusManager.clearFocus(true)
-                            registeriewModel.onRegister()
+                            registerModel.onRegister()
                         }
                     ),
                     keyboardOptions = KeyboardOptions(
@@ -139,11 +152,11 @@ class RegisterActivity : ComponentActivity() {
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 PasswordInput(
-                    value = registeriewModel.passwordController.collectAsState().value,
+                    value = registerModel.passwordController.collectAsState().value,
                     onValueChange = {
-                        registeriewModel.onChangedPasswordController(it)
+                        registerModel.onChangedPasswordController(it)
                     },
-                    isShowError = registeriewModel.showError.collectAsState().value,
+                    isShowError = registerModel.showError.collectAsState().value,
                     keyboardActions = KeyboardActions(
                         onNext = {
                             focusManager.moveFocus(FocusDirection.Next);
@@ -152,10 +165,10 @@ class RegisterActivity : ComponentActivity() {
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 BaseButton(
-                    enabled = registeriewModel.enabled.collectAsState().value,
+                    enabled = registerModel.enabled.collectAsState().value,
                     title = "Register",
                 ) {
-                    registeriewModel.onRegister()
+                    registerModel.onRegister()
                 }
                 Spacer(Modifier.weight(1f))
                 Row {

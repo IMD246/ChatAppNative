@@ -4,7 +4,6 @@ import com.example.chatappnative.data.ResponseState
 import com.example.chatappnative.data.data_source.AuthDataSource
 import com.example.chatappnative.data.model.UserInfoAccessModel
 import com.example.chatappnative.domain.repository.AuthRepository
-import com.example.chatappnative.domain.repository.BaseRespository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -16,7 +15,7 @@ class AuthRepositoryImpl @Inject constructor(
         email: String,
         password: String
     ): Flow<ResponseState<UserInfoAccessModel>> {
-        return BaseRespository.callAPI {
+        return BaseRepository.callAPI {
             val postData = HashMap<String, String>()
 
             postData["name"] = name
@@ -34,7 +33,7 @@ class AuthRepositoryImpl @Inject constructor(
         email: String,
         password: String
     ): Flow<ResponseState<UserInfoAccessModel>> {
-        return BaseRespository.callAPI {
+        return BaseRepository.callAPI {
             val postData = HashMap<String, String>()
 
             postData["email"] = email

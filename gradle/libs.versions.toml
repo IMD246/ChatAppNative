@@ -19,6 +19,9 @@ loggingInterceptor = "5.0.0-alpha.14"
 coil = "2.7.0"
 coilGif = "2.7.0"
 coilCompose = "2.7.0"
+navigationCompose = "2.7.7"
+ui = "1.7.0-beta07"
+material = "1.7.0-beta07"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -45,6 +48,9 @@ logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-intercep
 coil = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
 coil-gif = { group = "io.coil-kt", name = "coil-gif", version.ref = "coilGif" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coilCompose" }
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
+androidx-material = { group = "androidx.compose.material", name = "material", version.ref = "material" }
 
 
 [plugins]

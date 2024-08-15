@@ -1,4 +1,4 @@
-package com.example.chatappnative.domain.repository
+package com.example.chatappnative.data.repository
 
 import com.example.chatappnative.data.BaseResponse
 import com.example.chatappnative.data.ErrorResponse
@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.flow
 import retrofit2.Response
 import java.net.SocketException
 
-object BaseRespository {
+object BaseRepository {
     suspend fun <T> callAPI(
         action: suspend () -> Response<BaseResponse<T>>,
     ): Flow<ResponseState<T>> = flow {

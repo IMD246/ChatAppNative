@@ -19,9 +19,12 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val preferences: Preferences
+    val preferences: Preferences
 ) : ViewModel() {
     val dialogAPIHelper = DialogAPIHelper()
+
+    private val _success = MutableStateFlow(false)
+    var success = _success.asStateFlow()
 
     private val _passwordController = MutableStateFlow("")
     var passwordController = _passwordController.asStateFlow()
@@ -90,21 +93,26 @@ class LoginViewModel @Inject constructor(
             ).collectLatest {
                 when (it) {
                     is ResponseState.Error -> {
+                        dialogAPIHelper.hideDialog()
                         dialogAPIHelper.showDialog(it)
                         delay(2000)
                         dialogAPIHelper.hideDialog()
+                        _success.value = false
                         Log.d("Login", "onLogin: Error ${it.message}")
                     }
 
                     is ResponseState.Loading -> {
+                        _success.value = false
                         dialogAPIHelper.showDialog(stateAPI = it)
                     }
 
                     is ResponseState.Success -> {
-                        preferences.saveAccessToken(it.data?.accessToken ?: "")
+                        dialogAPIHelper.hideDialog()
                         dialogAPIHelper.showDialog(it)
+                        preferences.saveAccessToken(it.data?.accessToken ?: "")
                         delay(2000)
                         dialogAPIHelper.hideDialog()
+                        _success.value = true
                         Log.d("Login", "onLogin: Success ${it.message}")
                     }
                 }

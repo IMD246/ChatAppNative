@@ -21,6 +21,9 @@ class RegisterViewModel @Inject constructor(
 ) : ViewModel() {
     val dialogAPIHelper = DialogAPIHelper()
 
+    private val _success = MutableStateFlow(false)
+    var success = _success.asStateFlow()
+
     private val _nameController = MutableStateFlow("")
     var nameController = _nameController.asStateFlow()
     private var _errorName = ""
@@ -112,10 +115,12 @@ class RegisterViewModel @Inject constructor(
                         dialogAPIHelper.showDialog(it)
                         delay(2000)
                         dialogAPIHelper.hideDialog()
+                        _success.value = false
                         Log.d("Register", "onRegister: Error ${it.message}")
                     }
 
                     is ResponseState.Loading -> {
+                        _success.value = false
                         dialogAPIHelper.showDialog(stateAPI = it)
                     }
 
@@ -123,6 +128,7 @@ class RegisterViewModel @Inject constructor(
                         dialogAPIHelper.showDialog(it)
                         delay(2000)
                         dialogAPIHelper.hideDialog()
+                        _success.value = true
                         Log.d("Register", "onRegister: Success ${it.message}")
                     }
                 }

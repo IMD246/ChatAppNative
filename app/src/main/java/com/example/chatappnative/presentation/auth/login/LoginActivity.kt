@@ -23,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -41,6 +42,7 @@ import com.example.chatappnative.presentation.composables.BaseButton
 import com.example.chatappnative.presentation.composables.ButtonWithoutOuterPadding
 import com.example.chatappnative.presentation.composables.LargeTopSection
 import com.example.chatappnative.presentation.composables.PasswordInput
+import com.example.chatappnative.presentation.main.MainActivity
 import com.example.chatappnative.ui.theme.ChatAppNativeTheme
 import com.example.chatappnative.ui.theme.Color191919
 import com.example.chatappnative.util.ValidatorUtil
@@ -83,6 +85,15 @@ class LoginActivity : ComponentActivity() {
         // show dialog
         loginModel.dialogAPIHelper.DisplayDialog()
 
+        val isSuccess = loginModel.success.collectAsState().value
+        LaunchedEffect(key1 = isSuccess) {
+            if (isSuccess) {
+                val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+        }
+
         Box(modifier = Modifier
             .clickable(
                 interactionSource = interactionSource,
@@ -96,8 +107,7 @@ class LoginActivity : ComponentActivity() {
                     .fillMaxSize()
                     .padding(innerPadding),
                 horizontalAlignment = Alignment.CenterHorizontally,
-
-                ) {
+            ) {
                 Spacer(modifier = Modifier.height(30.dp))
                 BaseInput(
                     value = loginModel.emailController.collectAsState().value,
@@ -112,7 +122,7 @@ class LoginActivity : ComponentActivity() {
                     },
                     keyboardActions = KeyboardActions(
                         onNext = {
-                            focusManager.moveFocus(FocusDirection.Next);
+                            focusManager.moveFocus(FocusDirection.Next)
                         }
                     ),
                     keyboardOptions = KeyboardOptions(
