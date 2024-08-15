@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.example.chatappnative.presentation.auth.composables
+package com.example.chatappnative.presentation.composables
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -34,6 +34,7 @@ import com.example.chatappnative.ui.theme.Color191919
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BaseInput(
+    modifier: Modifier? = null,
     value: String = "",
     hint: String,
     label: String,
@@ -44,14 +45,13 @@ fun BaseInput(
     maxLengths: Int? = null,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    suffix: @Composable() (() -> Unit)? = null,
+    suffix: @Composable (() -> Unit)? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
-    modifier: Modifier? = null
 ) {
 
     var isFocused: Boolean by remember { mutableStateOf(false) }
 
-    val focusRequester = remember {
+    val focus = remember {
         focusRequester ?: FocusRequester()
     }
 
@@ -68,7 +68,7 @@ fun BaseInput(
             }
     }
 
-    dataModifier.focusRequester(focusRequester)
+    dataModifier.focusRequester(focus)
 
     var isError = false
 
@@ -79,12 +79,10 @@ fun BaseInput(
 
     onExecuteValidation()
 
-    val errorMode: Boolean;
-
-    if (isShowError)
-        errorMode = isError
+    val errorMode: Boolean = if (isShowError)
+        isError
     else
-        errorMode = isError && isFocused
+        isError && isFocused
 
     val colorLabel: Color = if (errorMode) {
         MaterialTheme.colorScheme.error

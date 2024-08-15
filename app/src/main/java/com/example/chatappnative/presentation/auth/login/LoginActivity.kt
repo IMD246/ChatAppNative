@@ -36,9 +36,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.chatappnative.presentation.auth.composables.BaseInput
 import com.example.chatappnative.presentation.auth.register.RegisterActivity
 import com.example.chatappnative.presentation.composables.BaseButton
+import com.example.chatappnative.presentation.composables.BaseInput
 import com.example.chatappnative.presentation.composables.ButtonWithoutOuterPadding
 import com.example.chatappnative.presentation.composables.LargeTopSection
 import com.example.chatappnative.presentation.composables.PasswordInput

@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.example.chatappnative.R
 import com.example.chatappnative.presentation.auth.login.LoginActivity
-import com.example.chatappnative.presentation.auth.login.SplashViewModel
 import com.example.chatappnative.presentation.main.MainActivity
 import com.example.chatappnative.presentation.welcome.onboarding.OnboardingActivity
 import com.example.chatappnative.ui.theme.ChatAppNativeTheme

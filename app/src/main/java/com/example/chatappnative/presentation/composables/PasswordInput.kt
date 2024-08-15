@@ -15,7 +15,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.chatappnative.R
-import com.example.chatappnative.presentation.auth.composables.BaseInput
 import com.example.chatappnative.util.ValidatorUtil
 
 

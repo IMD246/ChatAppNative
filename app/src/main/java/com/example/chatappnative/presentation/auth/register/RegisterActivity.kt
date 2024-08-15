@@ -36,9 +36,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.chatappnative.presentation.auth.composables.BaseInput
-import com.example.chatappnative.presentation.auth.login.RegisterViewModel
 import com.example.chatappnative.presentation.composables.BaseButton
+import com.example.chatappnative.presentation.composables.BaseInput
 import com.example.chatappnative.presentation.composables.ButtonWithoutOuterPadding
 import com.example.chatappnative.presentation.composables.LargeTopSection
 import com.example.chatappnative.presentation.composables.PasswordInput
@@ -88,7 +87,7 @@ class RegisterActivity : ComponentActivity() {
         LaunchedEffect(key1 = success) {
             if (success) {
                 val intent = Intent(this@RegisterActivity, MainActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                 finish()
                 startActivity(intent)
             }
@@ -123,7 +122,7 @@ class RegisterActivity : ComponentActivity() {
                     },
                     keyboardActions = KeyboardActions(
                         onNext = {
-                            focusManager.moveFocus(FocusDirection.Next);
+                            focusManager.moveFocus(FocusDirection.Next)
                         }
                     )
                 )
@@ -159,7 +158,7 @@ class RegisterActivity : ComponentActivity() {
                     isShowError = registerModel.showError.collectAsState().value,
                     keyboardActions = KeyboardActions(
                         onNext = {
-                            focusManager.moveFocus(FocusDirection.Next);
+                            focusManager.moveFocus(FocusDirection.Next)
                         }
                     )
                 )

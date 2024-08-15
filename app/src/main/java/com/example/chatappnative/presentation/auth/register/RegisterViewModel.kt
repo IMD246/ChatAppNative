@@ -1,4 +1,4 @@
-package com.example.chatappnative.presentation.auth.login
+package com.example.chatappnative.presentation.auth.register
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -49,7 +49,7 @@ class RegisterViewModel @Inject constructor(
         canRegister()
     }
 
-    fun onValidationName(value: String) {
+    private fun onValidationName(value: String) {
         _errorName = ValidatorUtil.validateName(value)
     }
 
@@ -59,7 +59,7 @@ class RegisterViewModel @Inject constructor(
         canRegister()
     }
 
-    fun onValidationPassword(value: String) {
+    private fun onValidationPassword(value: String) {
         _errorPassword = ValidatorUtil.validatePassword(value)
     }
 
@@ -69,7 +69,7 @@ class RegisterViewModel @Inject constructor(
         canRegister()
     }
 
-    fun onValidationEmail(value: String) {
+    private fun onValidationEmail(value: String) {
         _errorEmail = ValidatorUtil.validateEmail(value)
     }
 
@@ -79,30 +79,30 @@ class RegisterViewModel @Inject constructor(
         onValidationPassword(_passwordController.value)
 
         if (_errorEmail.isNotEmpty()) {
-            _enabled.value = false;
-            return false;
+            _enabled.value = false
+            return false
         }
 
         if (_errorPassword.isNotEmpty()) {
-            _enabled.value = false;
-            return false;
+            _enabled.value = false
+            return false
         }
 
         if (_errorName.isNotEmpty()) {
-            _enabled.value = false;
-            return false;
+            _enabled.value = false
+            return false
         }
 
-        _enabled.value = true;
-        return true;
+        _enabled.value = true
+        return true
     }
 
     fun onRegister() {
         if (!canRegister()) {
-            _showError.value = true;
-            return;
+            _showError.value = true
+            return
         }
-        _showError.value = false;
+        _showError.value = false
 
         viewModelScope.launch {
             authRepository.register(

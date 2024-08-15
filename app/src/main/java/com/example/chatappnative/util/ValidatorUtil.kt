@@ -8,33 +8,33 @@ object ValidatorUtil {
 
     fun validateName(value: String): String {
         if (value.isEmpty()) {
-            return "Trường này bắt buộc";
+            return "Trường này bắt buộc"
         }
 
-        return "";
+        return ""
     }
 
     fun validatePassword(value: String): String {
         if (value.isEmpty()) {
-            return "Trường này bắt buộc";
+            return "Trường này bắt buộc"
         }
 
         if (value.length < 6) {
             return "độ dài tối thiểu gồm 6 ký tự"
         }
 
-        return "";
+        return ""
     }
 
     fun validateEmail(value: String): String {
         if (value.isEmpty()) {
-            return "Trường này bắt buộc";
+            return "Trường này bắt buộc"
         }
 
         if (isNotEmail(value)) {
             return "Xin hãy kiểm tra lại định dạng email của bạn!"
         }
 
-        return "";
+        return ""
     }
 }

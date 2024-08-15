@@ -1,4 +1,4 @@
-package com.example.chatappnative.presentation.auth.login
+package com.example.chatappnative.presentation.welcome.splash
 
 import androidx.lifecycle.ViewModel
 import com.example.chatappnative.data.local_database.Preferences
@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SplashViewModel @Inject constructor(
-    private val preferences: Preferences
+    preferences: Preferences
 ) : ViewModel() {
     private val _isOnboarding = MutableStateFlow(false)
     private val _accessToken = MutableStateFlow("")

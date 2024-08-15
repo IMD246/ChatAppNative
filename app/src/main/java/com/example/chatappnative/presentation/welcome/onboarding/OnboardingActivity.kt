@@ -6,7 +6,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -55,7 +54,6 @@ class OnboardingActivity : ComponentActivity() {
         }
     }
 
-    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     fun OnboardingScreen() {
         val pagerState = rememberPagerState(
@@ -204,7 +202,7 @@ class OnboardingActivity : ComponentActivity() {
             Text(
                 text = "If you are confused about \n" +
                         "what to do just open \n" +
-                        "Chatboat app",
+                        "${applicationContext.getString(R.string.app_name)} app",
                 style = TextStyle(
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Medium,

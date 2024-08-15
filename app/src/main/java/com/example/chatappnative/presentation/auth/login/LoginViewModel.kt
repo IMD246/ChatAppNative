@@ -19,7 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    val preferences: Preferences
+    private val preferences: Preferences
 ) : ViewModel() {
     val dialogAPIHelper = DialogAPIHelper()
 
@@ -47,7 +47,7 @@ class LoginViewModel @Inject constructor(
         canLogin()
     }
 
-    fun onValidationPassword(value: String) {
+    private fun onValidationPassword(value: String) {
         _errorPassword = ValidatorUtil.validatePassword(value)
     }
 
@@ -57,7 +57,7 @@ class LoginViewModel @Inject constructor(
         canLogin()
     }
 
-    fun onValidationEmail(value: String) {
+    private fun onValidationEmail(value: String) {
         _errorEmail = ValidatorUtil.validateEmail(value)
     }
 
@@ -66,25 +66,25 @@ class LoginViewModel @Inject constructor(
         onValidationPassword(_passwordController.value)
 
         if (_errorEmail.isNotEmpty()) {
-            _enabled.value = false;
-            return false;
+            _enabled.value = false
+            return false
         }
 
         if (_errorPassword.isNotEmpty()) {
-            _enabled.value = false;
-            return false;
+            _enabled.value = false
+            return false
         }
 
-        _enabled.value = true;
-        return true;
+        _enabled.value = true
+        return true
     }
 
     fun onLogin() {
         if (!canLogin()) {
-            _showError.value = true;
-            return;
+            _showError.value = true
+            return
         }
-        _showError.value = false;
+        _showError.value = false
 
         viewModelScope.launch {
             authRepository.login(
