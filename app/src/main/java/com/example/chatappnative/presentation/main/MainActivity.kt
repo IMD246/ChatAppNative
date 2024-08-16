@@ -1,7 +1,6 @@
 package com.example.chatappnative.presentation.main
 
-//noinspection UsingMaterialAndMaterial3Libraries
-//noinspection UsingMaterialAndMaterial3Libraries
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,9 +9,7 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.BottomNavigation
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -30,6 +27,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.chatappnative.presentation.main.chat.ChatScreen
+import com.example.chatappnative.presentation.main.chat.ChatViewModel
+import com.example.chatappnative.presentation.main.components.BottomNavItem
 import com.example.chatappnative.ui.theme.ChatAppNativeTheme
 import com.example.chatappnative.ui.theme.Color191919
 import com.example.chatappnative.ui.theme.ColorF9FFFF
@@ -38,7 +38,6 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val mainModel: MainViewModel by viewModels()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -52,6 +51,7 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun BottomNavigationBar(navController: NavHostController) {
         BottomNavigation(
+            modifier = Modifier.padding(bottom = 40.dp),
             backgroundColor = ColorF9FFFF,
             elevation = 10.dp,
         ) {
@@ -123,7 +123,8 @@ class MainActivity : ComponentActivity() {
     fun NavigationHost(navController: NavHostController) {
         NavHost(navController, startDestination = BottomNavItem.Chat.route) {
             composable(BottomNavItem.Chat.route) {
-                Text(text = "Chats")
+                val chatModel: ChatViewModel by viewModels()
+                ChatScreen(chatModel = chatModel)
             }
             composable(BottomNavItem.Contact.route) {
                 Text(text = "Contacts")

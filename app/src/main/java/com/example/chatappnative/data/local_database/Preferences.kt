@@ -1,11 +1,11 @@
 package com.example.chatappnative.data.local_database
 
 import android.content.Context
-import android.content.SharedPreferences
 
 class Preferences(context: Context) {
-    private var sharedPreferences: SharedPreferences =
+    private var sharedPreferences =
         context.getSharedPreferences("prefs", Context.MODE_PRIVATE);
+
     private val ONBOARDING = "onboarding"
     private val ACCESS_TOKEN = "access_token"
 

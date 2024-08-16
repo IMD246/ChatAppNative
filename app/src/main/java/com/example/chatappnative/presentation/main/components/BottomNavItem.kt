@@ -1,4 +1,4 @@
-package com.example.chatappnative.presentation.main
+package com.example.chatappnative.presentation.main.components
 
 import com.example.chatappnative.R
 
