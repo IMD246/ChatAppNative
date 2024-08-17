@@ -87,6 +87,7 @@ class LoginActivity : ComponentActivity() {
         loginModel.dialogAPIHelper.DisplayDialog()
 
         val isSuccess = loginModel.success.collectAsState().value
+
         LaunchedEffect(key1 = isSuccess) {
             if (isSuccess) {
                 val intent = Intent(this@LoginActivity, MainActivity::class.java)

@@ -2,6 +2,7 @@ package com.example.chatappnative.di
 
 import android.content.Context
 import com.example.chatappnative.data.local_database.Preferences
+import com.example.chatappnative.data.socket.SocketManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,5 +18,11 @@ object CommonModule {
     @Singleton
     fun providePreferences(@ApplicationContext context: Context): Preferences {
         return Preferences(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSocketManager(): SocketManager {
+        return SocketManager()
     }
 }

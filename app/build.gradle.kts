@@ -76,6 +76,7 @@ dependencies {
     implementation(libs.androidx.material)
     implementation(libs.compose.bom)
     implementation(libs.material3)
+    implementation(libs.socket.io.client)
     ksp(libs.hilt.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

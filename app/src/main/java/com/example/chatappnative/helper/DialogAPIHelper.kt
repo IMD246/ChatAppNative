@@ -28,6 +28,8 @@ import com.example.chatappnative.R
 import com.example.chatappnative.data.ResponseState
 import com.example.chatappnative.presentation.composables.GifImage
 import com.example.chatappnative.ui.theme.ColorF2F2F2
+import java.util.Timer
+import java.util.TimerTask
 
 class DialogAPIHelper {
     private val isShowDialog = mutableStateOf(false)
@@ -36,6 +38,15 @@ class DialogAPIHelper {
     fun showDialog(stateAPI: ResponseState<*>) {
         isShowDialog.value = true
         responseState.value = stateAPI
+
+        if (stateAPI is ResponseState.Error || stateAPI is ResponseState.Success) {
+            Timer().schedule(object : TimerTask() {
+                override fun run() {
+                    cancel()
+                    hideDialog()
+                }
+            }, 1000)
+        }
     }
 
     fun hideDialog() {

@@ -1,14 +1,22 @@
 package com.example.chatappnative.presentation.main.chat
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.chatappnative.data.model.ChatModel
+import com.example.chatappnative.data.socket.SocketManager
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.util.Date
+import javax.inject.Inject
 
-class ChatViewModel : ViewModel() {
+@HiltViewModel
+class ChatViewModel
+@Inject constructor(
+    private val socketManager: SocketManager
+) : ViewModel() {
     private val _selectedTabbarIndex = MutableStateFlow(0)
     val selectedTabbarIndex = _selectedTabbarIndex
     val tabs = listOf("Chats", "Calls")
@@ -22,10 +30,12 @@ class ChatViewModel : ViewModel() {
     var isRefreshing = MutableStateFlow(false)
 
     init {
+//        Log.d("ChatViewModel", "socket connection: ${socketManager.socket?.connected()}")
+        socketManager.connect()
         fetchData()
     }
 
-    fun fetchData() {
+    private fun fetchData() {
         if (_selectedTabbarIndex.value == 0) {
             getChatList()
         } else {
@@ -34,6 +44,7 @@ class ChatViewModel : ViewModel() {
     }
 
     private fun getChatList() {
+        Log.d("ChatViewModel", "socket connection: ${socketManager.socket?.connected()}")
         _chatList.value = listOf(
             ChatModel(
                 name = "John Doe",

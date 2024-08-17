@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.chatappnative.data.ResponseState
+import com.example.chatappnative.data.local_database.Preferences
+import com.example.chatappnative.data.socket.SocketManager
 import com.example.chatappnative.domain.repository.AuthRepository
 import com.example.chatappnative.helper.DialogAPIHelper
 import com.example.chatappnative.util.ValidatorUtil
@@ -17,7 +19,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val socketManager: SocketManager,
+    private val preferences: Preferences,
 ) : ViewModel() {
     val dialogAPIHelper = DialogAPIHelper()
 
@@ -125,10 +129,21 @@ class RegisterViewModel @Inject constructor(
                     }
 
                     is ResponseState.Success -> {
-                        dialogAPIHelper.showDialog(it)
-                        delay(2000)
-                        dialogAPIHelper.hideDialog()
-                        _success.value = true
+                        val state = it
+                        preferences.saveAccessToken(it.data?.accessToken ?: "")
+                        socketManager.connect()
+
+                        socketManager.onConnect {
+                            dialogAPIHelper.hideDialog()
+                            dialogAPIHelper.showDialog(state)
+
+                            viewModelScope.launch {
+                                delay(2000L)
+                                dialogAPIHelper.hideDialog()
+                                _success.value = true
+                            }
+                        }
+
                         Log.d("Register", "onRegister: Success ${it.message}")
                     }
                 }

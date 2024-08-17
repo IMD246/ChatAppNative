@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.chatappnative.data.ResponseState
 import com.example.chatappnative.data.local_database.Preferences
+import com.example.chatappnative.data.socket.SocketManager
 import com.example.chatappnative.domain.repository.AuthRepository
 import com.example.chatappnative.helper.DialogAPIHelper
 import com.example.chatappnative.util.ValidatorUtil
@@ -19,18 +20,19 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val preferences: Preferences
+    private val preferences: Preferences,
+    private val socketManager: SocketManager
 ) : ViewModel() {
     val dialogAPIHelper = DialogAPIHelper()
 
     private val _success = MutableStateFlow(false)
     var success = _success.asStateFlow()
 
-    private val _passwordController = MutableStateFlow("")
+    private val _passwordController = MutableStateFlow("123456")
     var passwordController = _passwordController.asStateFlow()
     private var _errorPassword = ""
 
-    private val _emailController = MutableStateFlow("")
+    private val _emailController = MutableStateFlow("devnguyen123456@gmail.com")
     var emailController = _emailController.asStateFlow()
     private var _errorEmail = ""
 
@@ -107,12 +109,21 @@ class LoginViewModel @Inject constructor(
                     }
 
                     is ResponseState.Success -> {
-                        dialogAPIHelper.hideDialog()
-                        dialogAPIHelper.showDialog(it)
+                        val state = it
                         preferences.saveAccessToken(it.data?.accessToken ?: "")
-                        delay(2000)
-                        dialogAPIHelper.hideDialog()
-                        _success.value = true
+                        socketManager.connect()
+
+                        socketManager.onConnect {
+                            dialogAPIHelper.hideDialog()
+                            dialogAPIHelper.showDialog(state)
+
+                            viewModelScope.launch {
+                                delay(2000L)
+                                dialogAPIHelper.hideDialog()
+                                _success.value = true
+                            }
+                        }
+
                         Log.d("Login", "onLogin: Success ${it.message}")
                     }
                 }
