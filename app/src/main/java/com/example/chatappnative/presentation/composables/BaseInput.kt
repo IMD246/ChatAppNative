@@ -97,10 +97,13 @@ fun BaseInput(
         keyboardOptions = keyboardOptions,
         isError = errorMode,
         singleLine = true,
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = MaterialTheme.colorScheme.primary,
-            unfocusedBorderColor = MaterialTheme.colorScheme.primary,
+        colors = TextFieldDefaults.colors(
+            focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+            unfocusedIndicatorColor = MaterialTheme.colorScheme.primary,
             errorLabelColor = MaterialTheme.colorScheme.error,
+            errorContainerColor = Color.White,
+            unfocusedContainerColor = Color.White,
+            focusedContainerColor = Color.White,
         ),
         supportingText = {
             if (errorMode) {

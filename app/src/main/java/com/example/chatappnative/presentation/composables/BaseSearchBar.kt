@@ -44,7 +44,6 @@ import com.example.chatappnative.ui.theme.Color191919
 import com.example.chatappnative.ui.theme.ColorF9FFFF
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BaseSearchBar(
     modifier: Modifier? = null,
@@ -89,12 +88,19 @@ fun BaseSearchBar(
             }
     }
 
+    val borderColor = if (isFocused) {
+        Color.White
+    } else {
+        Color191919.copy(alpha = 0.1F)
+    }
+
     dataModifier.focusRequester(focus)
 
     OutlinedTextField(
         modifier = dataModifier
-            .shadow(1.dp, shape = RoundedCornerShape(25.dp))
-            .background(ColorF9FFFF),
+            .shadow(
+                1.dp, shape = RoundedCornerShape(25.dp)
+            ),
         keyboardActions = KeyboardActions(
             onSearch = {
                 onSubmitted(inputData.value)
@@ -104,9 +110,11 @@ fun BaseSearchBar(
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
         shape = RoundedCornerShape(25.dp),
         singleLine = true,
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = Color.White,
-            unfocusedBorderColor = Color.White,
+        colors = TextFieldDefaults.colors(
+            focusedIndicatorColor = Color.White,
+            unfocusedIndicatorColor = Color.White,
+            unfocusedContainerColor = ColorF9FFFF,
+            focusedContainerColor = ColorF9FFFF,
         ),
         value = inputData.value,
         onValueChange = {

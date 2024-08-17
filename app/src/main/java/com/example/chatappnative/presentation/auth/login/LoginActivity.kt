@@ -95,14 +95,16 @@ class LoginActivity : ComponentActivity() {
             }
         }
 
-        Box(modifier = Modifier
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null
-            ) {
-                keyboardController?.hide()
-                focusManager.clearFocus(true)
-            }) {
+        Box(
+            modifier = Modifier
+                .clickable(
+                    interactionSource = interactionSource,
+                    indication = null
+                ) {
+                    keyboardController?.hide()
+                    focusManager.clearFocus(true)
+                },
+        ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
