@@ -24,6 +24,7 @@ fun PasswordInput(
     onValueChange: (String) -> Unit,
     isShowError: Boolean,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
 ) {
     val visiblePassword = remember {
         mutableStateOf(false)
@@ -62,7 +63,7 @@ fun PasswordInput(
         value = value,
         isShowError = isShowError,
         keyboardActions = keyboardActions,
-        keyboardOptions = KeyboardOptions(
+        keyboardOptions = keyboardOptions.copy(
             keyboardType = KeyboardType.Password,
         ),
         visualTransformation = if (visiblePassword.value) {

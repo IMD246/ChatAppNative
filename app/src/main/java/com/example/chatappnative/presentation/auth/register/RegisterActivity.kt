@@ -33,6 +33,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -120,6 +121,9 @@ class RegisterActivity : ComponentActivity() {
                     onValidation = {
                         ValidatorUtil.validateName(registerModel.nameController.collectAsState().value)
                     },
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Next,
+                    ),
                     keyboardActions = KeyboardActions(
                         onNext = {
                             focusManager.moveFocus(FocusDirection.Next)
@@ -147,6 +151,7 @@ class RegisterActivity : ComponentActivity() {
                     ),
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Next,
                     )
                 )
                 Spacer(modifier = Modifier.height(10.dp))
@@ -157,9 +162,14 @@ class RegisterActivity : ComponentActivity() {
                     },
                     isShowError = registerModel.showError.collectAsState().value,
                     keyboardActions = KeyboardActions(
-                        onNext = {
-                            focusManager.moveFocus(FocusDirection.Next)
+                        onDone = {
+                            keyboardController?.hide()
+                            focusManager.clearFocus(true)
+                            registerModel.onRegister()
                         }
+                    ),
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Done,
                     )
                 )
                 Spacer(modifier = Modifier.height(10.dp))

@@ -12,11 +12,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -34,8 +34,10 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.chatappnative.ui.theme.Color191919
@@ -51,9 +53,10 @@ fun BaseSearchBar(
     focusRequester: FocusRequester? = null,
     isShowError: Boolean = false,
     maxLengths: Int? = null,
-    keyboardActions: KeyboardActions = KeyboardActions.Default,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    onSubmitted: (String) -> Unit,
 ) {
+    val focusManager = LocalFocusManager.current
+
     val inputData = remember { mutableStateOf(value) }
 
     val visibleClearIcon: @Composable () -> Unit = if (inputData.value.isNotEmpty()) {
@@ -92,9 +95,14 @@ fun BaseSearchBar(
         modifier = dataModifier
             .shadow(1.dp, shape = RoundedCornerShape(25.dp))
             .background(ColorF9FFFF),
-        keyboardActions = keyboardActions,
+        keyboardActions = KeyboardActions(
+            onSearch = {
+                onSubmitted(inputData.value)
+                focusManager.clearFocus(true)
+            }
+        ),
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
         shape = RoundedCornerShape(25.dp),
-        keyboardOptions = keyboardOptions,
         singleLine = true,
         colors = TextFieldDefaults.outlinedTextFieldColors(
             focusedBorderColor = Color.White,
