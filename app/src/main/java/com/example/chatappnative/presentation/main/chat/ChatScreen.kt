@@ -113,6 +113,7 @@ fun AppBar(chatModel: ChatViewModel) {
             BaseSearchBar(
                 hint = "Search by name, number...",
                 onSubmitted = chatModel.onSubmitted,
+                onClear = chatModel.onSubmitted
             )
             TabRow(
                 selectedTabIndex = selectedTabbarIndex,

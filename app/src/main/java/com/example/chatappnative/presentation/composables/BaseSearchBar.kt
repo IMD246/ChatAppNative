@@ -53,6 +53,7 @@ fun BaseSearchBar(
     isShowError: Boolean = false,
     maxLengths: Int? = null,
     onSubmitted: (String) -> Unit,
+    onClear: (String) -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -157,6 +158,7 @@ fun BaseSearchBar(
                 IconButton(modifier = Modifier.size(24.dp), onClick = {
                     if (inputData.value.isNotEmpty()) {
                         inputData.value = ""
+                        onClear("")
                     }
                 }) {
                     visibleClearIcon()
