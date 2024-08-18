@@ -1,6 +1,5 @@
 package com.example.chatappnative.presentation.main.chat
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.chatappnative.data.model.ChatModel
@@ -19,7 +18,11 @@ class ChatViewModel
 ) : ViewModel() {
     private val _selectedTabbarIndex = MutableStateFlow(0)
     val selectedTabbarIndex = _selectedTabbarIndex
+
     val tabs = listOf("Chats", "Calls")
+
+    private val _isLoadingChatList = MutableStateFlow(false)
+    val isLoadingChatList = _isLoadingChatList
 
     private val _chatList = MutableStateFlow(arrayOf<ChatModel>().toList())
     val chatList = _chatList
@@ -27,15 +30,24 @@ class ChatViewModel
     private val _callList = MutableStateFlow(arrayOf<ChatModel>().toList())
     val callList = _callList
 
+    private val _isLoadingCallList = MutableStateFlow(false)
+    val isLoadingCallList = _isLoadingCallList
+
     var isRefreshing = MutableStateFlow(false)
 
     init {
 //        Log.d("ChatViewModel", "socket connection: ${socketManager.socket?.connected()}")
         socketManager.connect()
-        fetchData()
+        fetchData(all = true)
     }
 
-    private fun fetchData() {
+    private fun fetchData(all: Boolean = false) {
+        if (all) {
+            getChatList()
+            getCallList()
+            return
+        }
+
         if (_selectedTabbarIndex.value == 0) {
             getChatList()
         } else {
@@ -44,44 +56,101 @@ class ChatViewModel
     }
 
     private fun getChatList() {
-        Log.d("ChatViewModel", "socket connection: ${socketManager.socket?.connected()}")
-        _chatList.value = listOf(
-            ChatModel(
-                name = "John Doe",
-                type = "normal",
-                lastMessage = "Hello, how are you?",
-                typeMessage = "text",
-                createdDate = Date(),
-                image = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT26MP9f5YdlTfN-2pikGFAXSyfPfT7l-wdhA&s"
-            ),
-            ChatModel(
-                name = "Test 1",
-                type = "normal",
-                lastMessage = "",
-                typeMessage = "image",
-                createdDate = Date(),
-                image = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT26MP9f5YdlTfN-2pikGFAXSyfPfT7l-wdhA&s"
-            ),
-            ChatModel(
-                name = "Test 2",
-                type = "normal",
-                lastMessage = "",
-                typeMessage = "video",
-                createdDate = Date(),
-                image = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT26MP9f5YdlTfN-2pikGFAXSyfPfT7l-wdhA&s"
-            ),
-            ChatModel(
-                name = "Test 4",
-                type = "normal",
-                lastMessage = "",
-                typeMessage = "record",
-                createdDate = Date(),
-                image = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT26MP9f5YdlTfN-2pikGFAXSyfPfT7l-wdhA&s"
-            )
-        )
+        viewModelScope.launch {
+            try {
+                _isLoadingChatList.value = true
+
+                delay(2000L)
+
+                _chatList.value = listOf(
+                    ChatModel(
+                        name = "John Doe",
+                        type = "normal",
+                        lastMessage = "Hello, how are you?",
+                        typeMessage = "text",
+                        createdDate = Date(),
+                        image = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT26MP9f5YdlTfN-2pikGFAXSyfPfT7l-wdhA&s"
+                    ),
+                    ChatModel(
+                        name = "Test 1",
+                        type = "normal",
+                        lastMessage = "",
+                        typeMessage = "image",
+                        createdDate = Date(),
+                        image = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT26MP9f5YdlTfN-2pikGFAXSyfPfT7l-wdhA&s"
+                    ),
+                    ChatModel(
+                        name = "Test 2",
+                        type = "normal",
+                        lastMessage = "",
+                        typeMessage = "video",
+                        createdDate = Date(),
+                        image = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT26MP9f5YdlTfN-2pikGFAXSyfPfT7l-wdhA&s"
+                    ),
+                    ChatModel(
+                        name = "Test 4",
+                        type = "normal",
+                        lastMessage = "",
+                        typeMessage = "record",
+                        createdDate = Date(),
+                        image = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT26MP9f5YdlTfN-2pikGFAXSyfPfT7l-wdhA&s"
+                    )
+                )
+
+                _isLoadingChatList.value = false
+            } catch (e: Exception) {
+                _isLoadingChatList.value = false
+            }
+        }
     }
 
     private fun getCallList() {
+        viewModelScope.launch {
+            try {
+                _isLoadingCallList.value = true
+
+                delay(2000L)
+
+                _callList.value = listOf(
+                    ChatModel(
+                        name = "John Doe",
+                        type = "normal",
+                        lastMessage = "Hello, how are you?",
+                        typeMessage = "text",
+                        createdDate = Date(),
+                        image = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT26MP9f5YdlTfN-2pikGFAXSyfPfT7l-wdhA&s"
+                    ),
+                    ChatModel(
+                        name = "Test 1",
+                        type = "normal",
+                        lastMessage = "",
+                        typeMessage = "image",
+                        createdDate = Date(),
+                        image = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT26MP9f5YdlTfN-2pikGFAXSyfPfT7l-wdhA&s"
+                    ),
+                    ChatModel(
+                        name = "Test 2",
+                        type = "normal",
+                        lastMessage = "",
+                        typeMessage = "video",
+                        createdDate = Date(),
+                        image = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT26MP9f5YdlTfN-2pikGFAXSyfPfT7l-wdhA&s"
+                    ),
+                    ChatModel(
+                        name = "Test 4",
+                        type = "normal",
+                        lastMessage = "",
+                        typeMessage = "record",
+                        createdDate = Date(),
+                        image = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT26MP9f5YdlTfN-2pikGFAXSyfPfT7l-wdhA&s"
+                    )
+                )
+
+                _isLoadingCallList.value = false
+            } catch (e: Exception) {
+                _isLoadingCallList.value = false
+            }
+        }
     }
 
     fun onRefresh() {
@@ -99,5 +168,6 @@ class ChatViewModel
 
 
     val onSubmitted: (String) -> Unit = {
+        fetchData()
     }
 }

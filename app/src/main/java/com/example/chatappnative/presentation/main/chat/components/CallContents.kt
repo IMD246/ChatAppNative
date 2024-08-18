@@ -36,10 +36,15 @@ import java.util.TimerTask
 
 @Composable
 fun CallContent(chatModel: ChatViewModel) {
-    val chatList = chatModel.chatList.collectAsState().value
+    val callList = chatModel.callList.collectAsState().value
+    val isLoadingCallList = chatModel.isLoadingCallList.collectAsState().value
+
+    if (isLoadingCallList) {
+        return CallListShimmer()
+    }
 
     // Chat list is empty
-    if (chatList.isEmpty()) {
+    if (callList.isEmpty()) {
         return Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
@@ -61,7 +66,7 @@ fun CallContent(chatModel: ChatViewModel) {
     LazyColumn(
         modifier = Modifier.padding(20.dp, 15.dp)
     ) {
-        chatList.forEach {
+        callList.forEach {
             item {
                 CallItem(it)
             }

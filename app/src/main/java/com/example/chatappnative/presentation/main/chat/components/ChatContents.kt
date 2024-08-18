@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -37,6 +38,11 @@ import java.util.TimerTask
 @Composable
 fun ChatContent(chatModel: ChatViewModel) {
     val chatList = chatModel.chatList.collectAsState().value
+    val isLoadingChatList = chatModel.isLoadingChatList.collectAsState().value
+
+    if (isLoadingChatList) {
+        return ChatListShimmer()
+    }
 
     // Chat list is empty
     if (chatList.isEmpty()) {
@@ -102,7 +108,7 @@ private fun ChatItem(item: ChatModel) {
                     color = Color191919.copy(alpha = 0.95F),
                 )
             )
-            Spacer(modifier = Modifier.width(6.dp))
+            Spacer(modifier = Modifier.height(6.dp))
             Message(item)
         }
         Spacer(modifier = Modifier.weight(1F))
