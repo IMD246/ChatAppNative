@@ -5,12 +5,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.chatappnative.R
 import com.example.chatappnative.data.model.ChatModel
+import com.example.chatappnative.presentation.composables.BaseList
 import com.example.chatappnative.presentation.composables.NetworkImage
 import com.example.chatappnative.presentation.main.chat.ChatViewModel
 import com.example.chatappnative.ui.theme.Color191919
@@ -37,20 +36,19 @@ import java.util.TimerTask
 
 @Composable
 fun ChatContent(chatModel: ChatViewModel) {
-    val chatList = chatModel.chatList.collectAsState().value
-    val isLoadingChatList = chatModel.isLoadingChatList.collectAsState().value
+    val items = chatModel.chatList.collectAsState().value
+    val isLoading = chatModel.isLoadingChatList.collectAsState().value
+    val isLoadMore = chatModel.isChatListLoadMore.collectAsState().value
 
-    if (isLoadingChatList) {
-        return ChatListShimmer()
-    }
-
-    // Chat list is empty
-    if (chatList.isEmpty()) {
-        return Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
+    BaseList(
+        items = items,
+        loadingContent = {
+            ChatListShimmer()
+        },
+        loadMoreContent = {
+            ChatShimmerItem()
+        },
+        emptyContent = {
             Text(
                 text = "There is no conversion here \n" +
                         "lets have some",
@@ -61,33 +59,32 @@ fun ChatContent(chatModel: ChatViewModel) {
                     textAlign = TextAlign.Center,
                 )
             )
-        }
-    }
-
-    LazyColumn(
-        modifier = Modifier.padding(20.dp, 15.dp)
-    ) {
-        chatList.forEach {
-            item {
-                ChatItem(it)
-            }
-        }
-    }
+        },
+        isLoading = isLoading,
+        contentItem = {
+            ChatItem(it)
+        },
+        isLoadMore = isLoadMore,
+        onLoadMore = {
+            chatModel.loadMore()
+        },
+        modifier = Modifier.padding(20.dp, 15.dp),
+    )
 }
 
 @Composable
 private fun ChatItem(item: ChatModel) {
     val dateDisplay: MutableState<String> = remember {
-        mutableStateOf(DateFormatUtil.dateMessageFormat(item.createdDate))
+        mutableStateOf(DateFormatUtil.dateMessageFormat(item.getDateTimeLastMessage()))
     }
 
     Timer().schedule(object : TimerTask() {
         override fun run() {
-            if (DateFormatUtil.isDiffSecondsMoreThanAMinute(item.createdDate)) {
+            if (DateFormatUtil.isDiffSecondsMoreThanAMinute(item.getDateTimeLastMessage())) {
                 Log.d("ChatItem", "cancel")
                 cancel()
             }
-            dateDisplay.value = DateFormatUtil.dateMessageFormat(item.createdDate)
+            dateDisplay.value = DateFormatUtil.dateMessageFormat(item.getDateTimeLastMessage())
         }
     }, 1000)
 
@@ -96,7 +93,7 @@ private fun ChatItem(item: ChatModel) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         NetworkImage(
-            url = item.image,
+            url = item.urlImage,
         )
         Spacer(modifier = Modifier.width(8.dp))
         Column {

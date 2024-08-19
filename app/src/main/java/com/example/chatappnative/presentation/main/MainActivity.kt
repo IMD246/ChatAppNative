@@ -4,7 +4,6 @@ package com.example.chatappnative.presentation.main
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -46,7 +45,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
             ChatAppNativeTheme {
                 MainScreen()
@@ -57,7 +55,6 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun BottomNavigationBar(navController: NavHostController) {
         BottomNavigation(
-            modifier = Modifier.padding(bottom = 40.dp),
             backgroundColor = ColorF9FFFF,
             elevation = 10.dp,
         ) {
@@ -139,6 +136,7 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
 
     @Composable
     fun NavigationHost(navController: NavHostController) {

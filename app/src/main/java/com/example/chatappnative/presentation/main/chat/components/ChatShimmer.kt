@@ -27,7 +27,7 @@ fun ChatListShimmer() {
 }
 
 @Composable
-private fun ChatShimmerItem() {
+fun ChatShimmerItem() {
     Row(
         modifier = Modifier.padding(bottom = 15.dp),
         verticalAlignment = Alignment.CenterVertically

@@ -3,6 +3,7 @@ package com.example.chatappnative.util
 import android.annotation.SuppressLint
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.TimeZone
 
 object DateFormatUtil {
     val DATE_TIME_FORMAT: String = "yyyy-MM-ddTHH:mm:ssZ"
@@ -16,7 +17,7 @@ object DateFormatUtil {
 
     @SuppressLint("SimpleDateFormat")
     fun dateMessageFormat(value: Date): String {
-        val currentDate = Date()
+        val currentDate = getCurrentLocalDate()
 
         // calculate difference milliseconds
         val diffInMillis = currentDate.time - value.time
@@ -56,5 +57,32 @@ object DateFormatUtil {
         }
 
         return true
+    }
+
+    fun getCurrentLocalDate(): Date {
+        val date = Date()
+
+        val getFormattedDate = getFormattedDate(date)
+
+        val toLocalCurrentDate = parseToLocalDate(getFormattedDate)
+
+        return toLocalCurrentDate
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    fun parseToLocalDate(value: String): Date {
+        val formatter = SimpleDateFormat("yyyy-MM-dd")
+        val tz = TimeZone.getDefault()
+        formatter.timeZone = tz;
+
+        val date = formatter.parse(value) as Date
+
+        return date
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    fun getFormattedDate(value: Date): String {
+        val formatter = SimpleDateFormat("yyyy-MM-dd")
+        return formatter.format(value)
     }
 }

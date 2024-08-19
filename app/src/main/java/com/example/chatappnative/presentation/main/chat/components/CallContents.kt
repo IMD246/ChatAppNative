@@ -31,6 +31,7 @@ import com.example.chatappnative.presentation.composables.NetworkImage
 import com.example.chatappnative.presentation.main.chat.ChatViewModel
 import com.example.chatappnative.ui.theme.Color191919
 import com.example.chatappnative.util.DateFormatUtil
+import java.util.Date
 import java.util.Timer
 import java.util.TimerTask
 
@@ -77,16 +78,16 @@ fun CallContent(chatModel: ChatViewModel) {
 @Composable
 fun CallItem(item: ChatModel) {
     val dateDisplay: MutableState<String> = remember {
-        mutableStateOf(DateFormatUtil.dateMessageFormat(item.createdDate))
+        mutableStateOf(DateFormatUtil.dateMessageFormat(Date()))
     }
 
     Timer().schedule(object : TimerTask() {
         override fun run() {
-            if (DateFormatUtil.isDiffSecondsMoreThanAMinute(item.createdDate)) {
+            if (DateFormatUtil.isDiffSecondsMoreThanAMinute(Date())) {
                 Log.d("ChatItem", "cancel")
                 cancel()
             }
-            dateDisplay.value = DateFormatUtil.dateMessageFormat(item.createdDate)
+            dateDisplay.value = DateFormatUtil.dateMessageFormat(Date())
         }
     }, 1000)
 
@@ -95,7 +96,7 @@ fun CallItem(item: ChatModel) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         NetworkImage(
-            url = item.image,
+            url = item.urlImage,
         )
         Spacer(modifier = Modifier.width(8.dp))
         Column {
