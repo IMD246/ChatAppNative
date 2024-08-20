@@ -1,6 +1,7 @@
 package com.example.chatappnative.domain.repository
 
 import com.example.chatappnative.data.ResponseState
+import com.example.chatappnative.data.model.DeviceTokenModel
 import com.example.chatappnative.data.model.UserInfoAccessModel
 import kotlinx.coroutines.flow.Flow
 
@@ -17,4 +18,8 @@ interface AuthRepository {
         password: String,
         deviceToken: String,
     ): Flow<ResponseState<UserInfoAccessModel>>
+
+    suspend fun refreshToken(
+        deviceToken: String,
+    ): Flow<ResponseState<DeviceTokenModel>>
 }

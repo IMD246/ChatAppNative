@@ -6,6 +6,7 @@ object NetworkUrl {
     //    const val BASE_URL = "http://localhost:5000";
     const val REGISTER = "/api/auth/register";
     const val LOGIN = "/api/auth/login";
+    const val REFRESH_DEVICE_TOKEN = "/api/auth/refresh-device-token";
 
     const val GET_CHAT_LIST = "/api/chat/get-chats";
     const val GET_FRIEND_LIST = "/api/friend/get-friend";
