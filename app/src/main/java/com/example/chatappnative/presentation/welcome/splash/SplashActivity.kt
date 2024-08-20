@@ -19,6 +19,7 @@ import com.example.chatappnative.presentation.auth.login.LoginActivity
 import com.example.chatappnative.presentation.main.MainActivity
 import com.example.chatappnative.presentation.welcome.onboarding.OnboardingActivity
 import com.example.chatappnative.ui.theme.ChatAppNativeTheme
+import com.google.firebase.FirebaseApp
 import dagger.hilt.android.AndroidEntryPoint
 
 @SuppressLint("CustomSplashScreen")
@@ -28,6 +29,7 @@ class SplashActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        FirebaseApp.initializeApp(this)
         enableEdgeToEdge()
         setContent {
             ChatAppNativeTheme {

@@ -13,7 +13,8 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun register(
         name: String,
         email: String,
-        password: String
+        password: String,
+        deviceToken: String,
     ): Flow<ResponseState<UserInfoAccessModel>> {
         return BaseRepository.callAPI {
             val postData = HashMap<String, String>()
@@ -21,7 +22,7 @@ class AuthRepositoryImpl @Inject constructor(
             postData["name"] = name
             postData["email"] = email
             postData["password"] = password
-
+            postData["device_token"] = deviceToken
             authDataSource.register(
                 postData = postData
             )
@@ -31,14 +32,15 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun login(
         email: String,
-        password: String
+        password: String,
+        deviceToken: String,
     ): Flow<ResponseState<UserInfoAccessModel>> {
         return BaseRepository.callAPI {
             val postData = HashMap<String, String>()
 
             postData["email"] = email
             postData["password"] = password
-
+            postData["device_token"] = deviceToken
             authDataSource.login(
                 postData = postData
             )

@@ -9,12 +9,15 @@ import com.example.chatappnative.data.socket.SocketManager
 import com.example.chatappnative.domain.repository.AuthRepository
 import com.example.chatappnative.helper.DialogAPIHelper
 import com.example.chatappnative.util.ValidatorUtil
+import com.google.firebase.Firebase
+import com.google.firebase.messaging.messaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 @HiltViewModel
@@ -113,6 +116,7 @@ class RegisterViewModel @Inject constructor(
                 _nameController.value,
                 _emailController.value,
                 _passwordController.value,
+                Firebase.messaging.token.await()
             ).collectLatest {
                 when (it) {
                     is ResponseState.Error -> {
@@ -132,7 +136,6 @@ class RegisterViewModel @Inject constructor(
                         val state = it
                         preferences.saveAccessToken(it.data?.accessToken ?: "")
                         socketManager.connect()
-
                         socketManager.onConnect {
                             dialogAPIHelper.hideDialog()
                             dialogAPIHelper.showDialog(state)

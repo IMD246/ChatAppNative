@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.kotlinAndroidKsp)
     alias(libs.plugins.hiltAndroid)
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -74,9 +75,11 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.ui)
     implementation(libs.androidx.material)
-    implementation(libs.compose.bom)
+    implementation(platform(libs.compose.bom))
     implementation(libs.material3)
     implementation(libs.socket.io.client)
+    implementation(libs.firebase.messaging)
+    implementation(libs.play.services.cloud.messaging)
     ksp(libs.hilt.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
