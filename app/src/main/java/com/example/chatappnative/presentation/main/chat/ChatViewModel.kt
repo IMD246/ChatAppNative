@@ -21,7 +21,7 @@ class ChatViewModel
     private val socketManager: SocketManager,
     private val chatRepository: ChatRepository,
 ) : ViewModel() {
-    private val pageSize = APIConstants.PAGE_SIZE;
+    private val pageSize = APIConstants.PAGE_SIZE
 
     private val _selectedTabbarIndex = MutableStateFlow(0)
     val selectedTabbarIndex = _selectedTabbarIndex
@@ -58,7 +58,7 @@ class ChatViewModel
         }
     }
 
-    suspend fun fetchData(
+    private suspend fun fetchData(
         all: Boolean = false,
         clear: Boolean = false,
         isLoadMore: Boolean = false,
@@ -90,7 +90,6 @@ class ChatViewModel
     private suspend fun getChatList(isLoadMore: Boolean = false) {
         viewModelScope.launch {
             chatRepository.getChatList(
-                userID = "6356459400f3a29453c22a59",
                 page = _pagedChatList.currentPage + 1,
                 keyword = _keyword,
                 pageSize = pageSize,

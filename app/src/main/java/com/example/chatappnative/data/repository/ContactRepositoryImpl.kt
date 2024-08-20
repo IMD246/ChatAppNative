@@ -1,26 +1,26 @@
 package com.example.chatappnative.data.repository
 
 import com.example.chatappnative.data.ResponseState
-import com.example.chatappnative.data.data_source.ChatDataSource
+import com.example.chatappnative.data.data_source.ContactDataSource
 import com.example.chatappnative.data.local_database.Preferences
-import com.example.chatappnative.data.model.ChatModel
+import com.example.chatappnative.data.model.ContactModel
 import com.example.chatappnative.data.model.PagedListModel
-import com.example.chatappnative.domain.repository.ChatRepository
+import com.example.chatappnative.domain.repository.ContactRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class ChatRepositoryImpl @Inject constructor(
-    private val chatDataSource: ChatDataSource,
+class ContactRepositoryImpl @Inject constructor(
+    private val contactDataSource: ContactDataSource,
     private val preferences: Preferences,
-) : ChatRepository {
+) : ContactRepository {
 
-    override suspend fun getChatList(
+    override suspend fun getContactList(
         page: Int,
         pageSize: Int,
-        keyword: String?,
-    ): Flow<ResponseState<PagedListModel<ChatModel>>> {
+        keyword: String?
+    ): Flow<ResponseState<PagedListModel<ContactModel>>> {
         return BaseRepository.callAPI {
-            chatDataSource.getChatList(
+            contactDataSource.getContactList(
                 page = page,
                 pageSize = pageSize,
                 keyword = keyword,

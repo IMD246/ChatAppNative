@@ -34,6 +34,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.chatappnative.presentation.main.chat.ChatScreen
 import com.example.chatappnative.presentation.main.chat.ChatViewModel
 import com.example.chatappnative.presentation.main.components.BottomNavItem
+import com.example.chatappnative.presentation.main.contact.ContactScreen
+import com.example.chatappnative.presentation.main.contact.ContactViewModel
 import com.example.chatappnative.ui.theme.ChatAppNativeTheme
 import com.example.chatappnative.ui.theme.Color191919
 import com.example.chatappnative.ui.theme.ColorF9FFFF
@@ -146,7 +148,8 @@ class MainActivity : ComponentActivity() {
                 ChatScreen(chatModel = chatModel)
             }
             composable(BottomNavItem.Contact.route) {
-                Text(text = "Contacts")
+                val contactModel: ContactViewModel by viewModels()
+                ContactScreen(contactModel = contactModel)
             }
             composable(BottomNavItem.Setting.route) {
                 Text(text = "Settings")

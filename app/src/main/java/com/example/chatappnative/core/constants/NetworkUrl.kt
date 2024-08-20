@@ -8,4 +8,5 @@ object NetworkUrl {
     const val LOGIN = "/api/auth/login";
 
     const val GET_CHAT_LIST = "/api/chat/get-chats";
+    const val GET_FRIEND_LIST = "/api/friend/get-friend";
 }
