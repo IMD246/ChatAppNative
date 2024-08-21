@@ -1,6 +1,7 @@
 package com.example.chatappnative.presentation.auth.register
 
 import android.util.Log
+import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.chatappnative.data.ResponseState
@@ -43,6 +44,10 @@ class RegisterViewModel @Inject constructor(
     var emailController = _emailController.asStateFlow()
     private var _errorEmail = ""
 
+    private val _phoneController = MutableStateFlow("")
+    var phoneController = _phoneController.asStateFlow()
+    private var _errorPhone = ""
+
     private val _showError = MutableStateFlow(false)
     var showError = _showError.asStateFlow()
 
@@ -80,10 +85,22 @@ class RegisterViewModel @Inject constructor(
         _errorEmail = ValidatorUtil.validateEmail(value)
     }
 
+    fun onChangedPhoneController(value: String) {
+        if (!value.isDigitsOnly()) return
+        _phoneController.value = value
+        onValidationPhone(value)
+        canRegister()
+    }
+
+    private fun onValidationPhone(value: String) {
+        _errorPhone = ValidatorUtil.validatePhone(value)
+    }
+
     private fun canRegister(): Boolean {
         onValidationEmail(_emailController.value)
         onValidationName(_nameController.value)
         onValidationPassword(_passwordController.value)
+        onValidationPhone(_phoneController.value)
 
         if (_errorEmail.isNotEmpty()) {
             _enabled.value = false
@@ -96,6 +113,11 @@ class RegisterViewModel @Inject constructor(
         }
 
         if (_errorName.isNotEmpty()) {
+            _enabled.value = false
+            return false
+        }
+
+        if (_errorPhone.isNotEmpty()) {
             _enabled.value = false
             return false
         }
@@ -115,6 +137,7 @@ class RegisterViewModel @Inject constructor(
             authRepository.register(
                 _nameController.value,
                 _emailController.value,
+                _phoneController.value,
                 _passwordController.value,
                 Firebase.messaging.token.await()
             ).collectLatest {

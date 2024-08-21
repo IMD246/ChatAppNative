@@ -16,6 +16,7 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun register(
         name: String,
         email: String,
+        phone: String,
         password: String,
         deviceToken: String,
     ): Flow<ResponseState<UserInfoAccessModel>> {
@@ -25,6 +26,7 @@ class AuthRepositoryImpl @Inject constructor(
             postData["name"] = name
             postData["email"] = email
             postData["password"] = password
+            postData["phone"] = phone
             postData["device_token"] = deviceToken
             authDataSource.register(
                 postData = postData

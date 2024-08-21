@@ -1,5 +1,6 @@
 package com.example.chatappnative.presentation.main.contact.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
@@ -55,6 +56,7 @@ fun ContactContent(contactModel: ContactViewModel) {
             contactModel.loadMore()
         },
         modifier = Modifier.padding(20.dp, 15.dp),
+        horizontalAlignment = Alignment.Start,
     )
 }
 
@@ -62,7 +64,8 @@ fun ContactContent(contactModel: ContactViewModel) {
 private fun ContactItem(item: ContactModel) {
     Row(
         modifier = Modifier.padding(bottom = 15.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Start,
     ) {
         NetworkImage(
             url = item.imageUrl ?: "",
@@ -72,6 +75,7 @@ private fun ContactItem(item: ContactModel) {
             text = item.name,
             style = TextStyle(
                 fontSize = 16.sp,
+                textAlign = TextAlign.Start,
                 fontWeight = FontWeight.Medium,
                 color = Color191919.copy(alpha = 0.95F),
             )

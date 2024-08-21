@@ -6,6 +6,11 @@ object ValidatorUtil {
             .matches(value.toString())
     }
 
+    private fun isNotPhone(value: Any?): Boolean {
+        return !Regex("^[0-9]{10,11}")
+            .matches(value.toString())
+    }
+
     fun validateName(value: String): String {
         if (value.isEmpty()) {
             return "Trường này bắt buộc"
@@ -33,6 +38,18 @@ object ValidatorUtil {
 
         if (isNotEmail(value)) {
             return "Xin hãy kiểm tra lại định dạng email của bạn!"
+        }
+
+        return ""
+    }
+
+    fun validatePhone(value: String): String {
+        if (value.isEmpty()) {
+            return "Trường này bắt buộc"
+        }
+
+        if (isNotPhone(value)) {
+            return "Độ dài trường phone phải đủ 10 hoặc 11 ký tự"
         }
 
         return ""

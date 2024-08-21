@@ -17,8 +17,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -105,7 +107,8 @@ class RegisterActivity : ComponentActivity() {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(innerPadding),
+                    .padding(innerPadding)
+                    .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally,
 
                 ) {
@@ -152,6 +155,29 @@ class RegisterActivity : ComponentActivity() {
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Email,
                         imeAction = ImeAction.Next,
+                    )
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                BaseInput(
+                    value = registerModel.phoneController.collectAsState().value,
+                    onValueChange = {
+                        if (it.length <= 11) {
+                            registerModel.onChangedPhoneController(it)
+                        }
+                    },
+                    isShowError = registerModel.showError.collectAsState().value,
+                    hint = "Enter your phone",
+                    label = "Phone",
+                    onValidation = {
+                        ValidatorUtil.validatePhone(registerModel.phoneController.collectAsState().value)
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Next,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onNext = {
+                            focusManager.moveFocus(FocusDirection.Next)
+                        }
                     )
                 )
                 Spacer(modifier = Modifier.height(10.dp))

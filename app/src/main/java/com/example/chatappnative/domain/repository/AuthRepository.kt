@@ -9,6 +9,7 @@ interface AuthRepository {
     suspend fun register(
         name: String,
         email: String,
+        phone: String = "",
         password: String,
         deviceToken: String,
     ): Flow<ResponseState<UserInfoAccessModel>>
