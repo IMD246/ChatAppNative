@@ -15,7 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.chatappnative.data.model.ContactModel
+import com.example.chatappnative.data.model.FriendModel
 import com.example.chatappnative.presentation.composables.BaseList
 import com.example.chatappnative.presentation.composables.NetworkImage
 import com.example.chatappnative.presentation.main.contact.ContactViewModel
@@ -23,7 +23,7 @@ import com.example.chatappnative.ui.theme.Color191919
 
 @Composable
 fun ContactContent(contactModel: ContactViewModel) {
-    val items = contactModel.chatList.collectAsState().value
+    val items = contactModel.contactList.collectAsState().value
     val isLoading = contactModel.isLoadingContactList.collectAsState().value
     val isLoadMore = contactModel.isContactListLoadMore.collectAsState().value
 
@@ -61,14 +61,14 @@ fun ContactContent(contactModel: ContactViewModel) {
 }
 
 @Composable
-private fun ContactItem(item: ContactModel) {
+private fun ContactItem(item: FriendModel) {
     Row(
         modifier = Modifier.padding(bottom = 15.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start,
     ) {
         NetworkImage(
-            url = item.imageUrl ?: "",
+            url = item.urlImage ?: "",
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(

@@ -4,12 +4,7 @@ import androidx.activity.compose.LocalOnBackPressedDispatcherOwner.current
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -33,18 +28,7 @@ fun LargeTopSection(
     val onBackPressedDispatcher = current?.onBackPressedDispatcher
 
     val navigationIcon: @Composable () -> Unit = {
-        if (useBackNavigation) IconButton(
-            onClick = {
-                onBackPressedDispatcher?.onBackPressed()
-            }, colors = IconButtonDefaults.iconButtonColors(
-                contentColor = Color.White,
-            )
-        ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Back"
-            )
-        }
+        if (useBackNavigation) BackButton()
     }
 
     LargeTopAppBar(

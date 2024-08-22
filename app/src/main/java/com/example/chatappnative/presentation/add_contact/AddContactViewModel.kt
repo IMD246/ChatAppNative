@@ -1,13 +1,13 @@
-package com.example.chatappnative.presentation.main.contact
+﻿package com.example.chatappnative.presentation.add_contact
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.chatappnative.data.ResponseState
 import com.example.chatappnative.data.api.APIConstants
-import com.example.chatappnative.data.model.FriendModel
+import com.example.chatappnative.data.model.ContactModel
 import com.example.chatappnative.data.model.PagedListModel
-import com.example.chatappnative.data.socket.SocketManager
 import com.example.chatappnative.domain.repository.ContactRepository
+import com.example.chatappnative.helper.DialogAPIHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -15,19 +15,20 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ContactViewModel
+class AddContactViewModel
 @Inject constructor(
-    private val socketManager: SocketManager,
     private val contactRepository: ContactRepository,
 ) : ViewModel() {
+    val dialogAPIHelper = DialogAPIHelper()
+
     private val pageSize = APIConstants.PAGE_SIZE
 
     private val _isLoadingContactList = MutableStateFlow(false)
     val isLoadingContactList = _isLoadingContactList
 
-    private var _pagedContactList = PagedListModel<FriendModel>()
+    private var _pagedContactList = PagedListModel<ContactModel>()
 
-    private val _contactList = MutableStateFlow(arrayOf<FriendModel>().toList())
+    private val _contactList = MutableStateFlow(arrayOf<ContactModel>().toList())
     val contactList = _contactList
 
     private var _keyword: String? = null
@@ -37,6 +38,9 @@ class ContactViewModel
 
     private val _isContactListLoadMore = MutableStateFlow(false)
     var isContactListLoadMore = _isContactListLoadMore
+
+    private val _message = MutableStateFlow("")
+    var message = _message
 
     init {
         viewModelScope.launch {
@@ -60,7 +64,7 @@ class ContactViewModel
 
     private suspend fun getContactList(isLoadMore: Boolean = false) {
         viewModelScope.launch {
-            contactRepository.getFriendList(
+            contactRepository.getContactList(
                 page = _pagedContactList.currentPage + 1,
                 keyword = _keyword,
                 pageSize = pageSize,
@@ -114,10 +118,50 @@ class ContactViewModel
     suspend fun loadMore() {
         if (_isContactListLoadMore.value) return
 
+        if (_pagedContactList.currentPage == _pagedContactList.totalPages) {
+            return
+        }
+
         viewModelScope.launch {
             _isContactListLoadMore.value = true
             fetchData(isLoadMore = true)
             _isContactListLoadMore.value = false
         }
+    }
+
+    fun updateItemStatus(item: ContactModel, statusUpdate: Int) {
+        val data = _contactList.value.toMutableList()
+
+        val index = data.indexOf(item)
+
+        viewModelScope.launch {
+            contactRepository.updateFriendStatus(
+                friendId = item.id,
+                status = statusUpdate,
+            ).collect {
+                when (it) {
+                    is ResponseState.Error -> {
+                        message.value = "Đã có lỗi xảy ra vui lòng thử lại!"
+                        dialogAPIHelper.hideDialog()
+                    }
+
+                    is ResponseState.Loading -> {
+                        dialogAPIHelper.showDialog(stateAPI = it)
+                    }
+
+                    is ResponseState.Success -> {
+                        dialogAPIHelper.hideDialog()
+                        message.value = "Đã cập nhật thành công!"
+                        data[index] =
+                            data[index].copy(status = it.data?.user_status ?: data[index].status)
+                        _contactList.value = data
+                    }
+                }
+            }
+        }
+    }
+
+    fun updateShowError() {
+        message.value = ""
     }
 }

@@ -1,7 +1,8 @@
 package com.example.chatappnative.data.model
 
 data class ContactModel(
+    val id: String = "",
     val name: String = "",
-    val imageUrl: String? = "",
-    val presence: Boolean = false,
+    val status: Int = 1,
+    val urlImage: String = ""
 )

@@ -2,19 +2,23 @@ package com.example.chatappnative.presentation.main
 
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -36,6 +40,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.chatappnative.R
+import com.example.chatappnative.presentation.add_contact.AddContactActivity
 import com.example.chatappnative.presentation.main.chat.ChatScreen
 import com.example.chatappnative.presentation.main.chat.ChatViewModel
 import com.example.chatappnative.presentation.main.components.BottomNavItem
@@ -44,6 +50,7 @@ import com.example.chatappnative.presentation.main.contact.ContactViewModel
 import com.example.chatappnative.ui.theme.ChatAppNativeTheme
 import com.example.chatappnative.ui.theme.Color191919
 import com.example.chatappnative.ui.theme.ColorF9FFFF
+import com.example.chatappnative.ui.theme.ColorPrimary
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -128,6 +135,22 @@ class MainActivity : ComponentActivity() {
             bottomBar = {
                 BottomNavigationBar(navController)
             },
+            floatingActionButton = {
+                FloatingActionButton(
+                    containerColor = ColorPrimary,
+                    shape = CircleShape,
+                    modifier = Modifier
+                        .size(60.dp),
+                    onClick = {
+                        startActivity(Intent(this@MainActivity, AddContactActivity::class.java))
+                    },
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_add_user),
+                        contentDescription = "",
+                    )
+                }
+            }
         ) {
             Box(
                 modifier = Modifier
