@@ -80,6 +80,7 @@ dependencies {
     implementation(libs.socket.io.client)
     implementation(libs.firebase.messaging)
     implementation(libs.play.services.cloud.messaging)
+    implementation(libs.eventbus)
     ksp(libs.hilt.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

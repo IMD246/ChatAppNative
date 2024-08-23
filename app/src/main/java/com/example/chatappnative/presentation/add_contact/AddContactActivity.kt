@@ -2,6 +2,7 @@ package com.example.chatappnative.presentation.add_contact
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -20,12 +21,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.example.chatappnative.event.AddContactEvent
 import com.example.chatappnative.presentation.add_contact.components.AddContactContent
 import com.example.chatappnative.presentation.composables.BackButton
 import com.example.chatappnative.presentation.composables.BaseSearchBar
+import com.example.chatappnative.service.EventBusService
 import com.example.chatappnative.ui.theme.ChatAppNativeTheme
 import com.example.chatappnative.ui.theme.ColorPrimary
 import dagger.hilt.android.AndroidEntryPoint
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 @AndroidEntryPoint
 class AddContactActivity : ComponentActivity() {
@@ -39,6 +44,21 @@ class AddContactActivity : ComponentActivity() {
                 AddContactScreen(addContactViewModel = addContactModel, context = this)
             }
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onMessageEvent(event: AddContactEvent) {
+        Log.d("AddContactActivity", "onMessageEvent: ${event.message}")
+    }
+
+    override fun onStart() {
+        super.onStart()
+        EventBusService.register(this)
+    }
+
+    override fun onStop() {
+        EventBusService.unregister(this)
+        super.onStop()
     }
 }
 

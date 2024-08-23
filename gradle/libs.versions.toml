@@ -27,6 +27,7 @@ socketIoClient = "2.1.1"
 googleGmsGoogleServices = "4.4.2"
 firebaseMessaging = "24.0.0"
 playServicesCloudMessaging = "17.3.0"
+eventbus = "3.3.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -62,6 +63,7 @@ material3 = { group = "androidx.compose.material3", name = "material3", version.
 socket-io-client = { group = "io.socket", name = "socket.io-client", version.ref = "socketIoClient" }
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging", version.ref = "firebaseMessaging" }
 play-services-cloud-messaging = { group = "com.google.android.gms", name = "play-services-cloud-messaging", version.ref = "playServicesCloudMessaging" }
+eventbus = { group = "org.greenrobot", name = "eventbus", version.ref = "eventbus" }
 
 
 [plugins]

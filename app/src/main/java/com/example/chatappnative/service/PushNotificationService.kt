@@ -40,6 +40,7 @@ class PushNotificationService : FirebaseMessagingService() {
         super.onMessageReceived(remoteMessage)
 
         remoteMessage.notification?.let {
+            EventBusService.sendEvent("AddContactEvent", it.body!!)
             generateNotification(it.title!!, it.body!!)
         }
     }
@@ -62,7 +63,6 @@ class PushNotificationService : FirebaseMessagingService() {
             .setContentText(body)
             .setVibrate(longArrayOf(1000, 1000, 1000, 1000))
             .setAutoCancel(true)
-            .setOnlyAlertOnce(true)
             .setContentIntent(pendingIntent)
 
         val notificationManager =

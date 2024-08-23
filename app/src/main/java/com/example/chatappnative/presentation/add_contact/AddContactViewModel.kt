@@ -1,5 +1,6 @@
 ﻿package com.example.chatappnative.presentation.add_contact
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.chatappnative.data.ResponseState
@@ -7,7 +8,10 @@ import com.example.chatappnative.data.api.APIConstants
 import com.example.chatappnative.data.model.ContactModel
 import com.example.chatappnative.data.model.PagedListModel
 import com.example.chatappnative.domain.repository.ContactRepository
+import com.example.chatappnative.event.AddContactEvent
 import com.example.chatappnative.helper.DialogAPIHelper
+import com.google.common.eventbus.EventBus
+import com.google.common.eventbus.Subscribe
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -19,6 +23,8 @@ class AddContactViewModel
 @Inject constructor(
     private val contactRepository: ContactRepository,
 ) : ViewModel() {
+    val eventBus = EventBus("AddContact")
+
     val dialogAPIHelper = DialogAPIHelper()
 
     private val pageSize = APIConstants.PAGE_SIZE
@@ -46,6 +52,11 @@ class AddContactViewModel
         viewModelScope.launch {
             fetchData()
         }
+    }
+
+    @Subscribe
+    fun onMessageEvent(event: AddContactEvent) {
+        Log.d("AddContactViewModel", "onMessageEvent: ${event.message}")
     }
 
     private suspend fun fetchData(
