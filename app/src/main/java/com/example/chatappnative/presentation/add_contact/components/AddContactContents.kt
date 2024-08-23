@@ -3,7 +3,7 @@ package com.example.chatappnative.presentation.add_contact.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ButtonDefaults
@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.chatappnative.data.model.ContactModel
@@ -77,6 +78,8 @@ private fun AddContactItem(addContactModel: AddContactViewModel, item: ContactMo
         Spacer(modifier = Modifier.width(8.dp))
         Text(
             text = item.name,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 2,
             style = TextStyle(
                 fontSize = 16.sp,
                 textAlign = TextAlign.Start,
@@ -131,9 +134,10 @@ private fun ActionAddContact(addContactModel: AddContactViewModel, item: Contact
     }
 
     OutlinedButton(
-        modifier = Modifier
-            .width(120.dp)
-            .height(48.dp),
+        modifier = Modifier.defaultMinSize(
+            minWidth = 120.dp,
+            minHeight = 48.dp
+        ),
         border = ButtonDefaults.outlinedButtonBorder(
             enabled = false,
         ),
