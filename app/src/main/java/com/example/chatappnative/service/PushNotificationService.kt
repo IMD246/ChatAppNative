@@ -10,15 +10,21 @@ import android.os.Build.VERSION_CODES
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.chatappnative.R
+import com.example.chatappnative.data.model.DataNotificationModel
+import com.example.chatappnative.data.model.FriendStatusModel
 import com.example.chatappnative.domain.repository.AuthRepository
+import com.example.chatappnative.presentation.add_contact.AddContactActivity
 import com.example.chatappnative.presentation.auth.login.LoginActivity
+import com.example.chatappnative.presentation.main.MainActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class PushNotificationService : FirebaseMessagingService() {
@@ -38,14 +44,41 @@ class PushNotificationService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
+        var pendingIntent: PendingIntent? = null
+        try {
+            if (remoteMessage.data.isNotEmpty()) {
+                Log.d("PushNotificationService", "data: ${remoteMessage.data}")
 
-        remoteMessage.notification?.let {
-            EventBusService.sendEvent("AddContactEvent", it.body!!)
-            generateNotification(it.title!!, it.body!!)
+                val jsonString = Gson().toJson(remoteMessage.data)
+
+                val notificationData =
+                    Gson().fromJson(jsonString, DataNotificationModel::class.java)
+
+                if (notificationData.event == "add_contact") {
+                    pendingIntent = handleAddContactEvent(notificationData)
+                }
+            }
+
+            remoteMessage.notification?.let {
+                if (it.title?.isNotEmpty() != null || it.body?.isNotEmpty() == true) {
+                    generateNotification(
+                        it.title ?: "",
+                        it.body ?: "",
+                        customPendingIntent = pendingIntent
+                    )
+                }
+            }
+
+        } catch (e: Exception) {
+            Log.d("PushNotificationService", "onMessageReceived: ${e.message}")
         }
     }
 
-    private fun generateNotification(title: String, body: String) {
+    private fun generateNotification(
+        title: String,
+        body: String,
+        customPendingIntent: PendingIntent? = null
+    ) {
         val intent = Intent(this, LoginActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
@@ -63,7 +96,7 @@ class PushNotificationService : FirebaseMessagingService() {
             .setContentText(body)
             .setVibrate(longArrayOf(1000, 1000, 1000, 1000))
             .setAutoCancel(true)
-            .setContentIntent(pendingIntent)
+            .setContentIntent(customPendingIntent ?: pendingIntent)
 
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -78,5 +111,55 @@ class PushNotificationService : FirebaseMessagingService() {
         }
 
         notificationManager.notify(0, builder.build())
+    }
+
+    private fun handleAddContactEvent(notificationData: DataNotificationModel): PendingIntent? {
+        val friendStatus = Gson().fromJson(
+            notificationData.data.toString(),
+            FriendStatusModel::class.java
+        )
+
+        when (friendStatus.senderStatus) {
+            1 -> {
+                EventBusService.sendEvent(
+                    notificationData.event,
+                    friendStatus,
+                )
+
+                return null
+            }
+
+            2 -> {
+                EventBusService.sendEvent(
+                    notificationData.event,
+                    friendStatus,
+                )
+
+                val intent = Intent(this, AddContactActivity::class.java)
+
+                return PendingIntent.getActivity(
+                    this, 0, intent,
+                    PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE,
+                )
+            }
+
+            3 -> {
+                EventBusService.sendEvent(
+                    notificationData.event,
+                    friendStatus,
+                )
+
+                val intent = Intent(this, MainActivity::class.java)
+                intent.putExtra(MainActivity.TAB_INDEX, 1)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+
+                return PendingIntent.getActivity(
+                    this, 0, intent,
+                    PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE,
+                )
+            }
+
+            else -> return null
+        }
     }
 }

@@ -1,6 +1,5 @@
 ﻿package com.example.chatappnative.presentation.add_contact
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.chatappnative.data.ResponseState
@@ -8,10 +7,8 @@ import com.example.chatappnative.data.api.APIConstants
 import com.example.chatappnative.data.model.ContactModel
 import com.example.chatappnative.data.model.PagedListModel
 import com.example.chatappnative.domain.repository.ContactRepository
-import com.example.chatappnative.event.AddContactEvent
 import com.example.chatappnative.helper.DialogAPIHelper
 import com.google.common.eventbus.EventBus
-import com.google.common.eventbus.Subscribe
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -52,11 +49,6 @@ class AddContactViewModel
         viewModelScope.launch {
             fetchData()
         }
-    }
-
-    @Subscribe
-    fun onMessageEvent(event: AddContactEvent) {
-        Log.d("AddContactViewModel", "onMessageEvent: ${event.message}")
     }
 
     private suspend fun fetchData(
@@ -129,15 +121,22 @@ class AddContactViewModel
     suspend fun loadMore() {
         if (_isContactListLoadMore.value) return
 
-        if (_pagedContactList.currentPage == _pagedContactList.totalPages) {
-            return
-        }
+        if (_pagedContactList.currentPage >= _pagedContactList.totalPages) return
 
         viewModelScope.launch {
             _isContactListLoadMore.value = true
             fetchData(isLoadMore = true)
             _isContactListLoadMore.value = false
         }
+    }
+
+    fun updateItemStatusWithoutAPI(friendId: String, statusUpdate: Int) {
+        val data = _contactList.value.toMutableList()
+        val item = data.find { it.id == friendId } ?: return
+
+        val index = data.indexOf(item)
+        data[index] = data[index].copy(status = statusUpdate)
+        _contactList.value = data
     }
 
     fun updateItemStatus(item: ContactModel, statusUpdate: Int) {

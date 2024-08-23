@@ -23,6 +23,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -57,12 +58,18 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val mainModel: MainViewModel by viewModels()
 
+    companion object {
+        const val TAB_INDEX = "tab-index"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val tabIndex = intent.getIntExtra(TAB_INDEX, 0);
+
         requestNotificationPermission()
         setContent {
             ChatAppNativeTheme {
-                MainScreen()
+                MainScreen(tabIndex)
             }
         }
     }
@@ -124,8 +131,17 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun MainScreen() {
+    fun MainScreen(tabIndex: Int = 0) {
         val navController = rememberNavController()
+
+        LaunchedEffect(tabIndex) {
+            if (tabIndex != 0) {
+                navController.navigate(BottomNavItem.Contact.route) {
+                    popUpTo(navController.graph.startDestinationId)
+                    launchSingleTop = true
+                }
+            }
+        }
 
         val keyboardController = LocalSoftwareKeyboardController.current
         val focusManager = LocalFocusManager.current

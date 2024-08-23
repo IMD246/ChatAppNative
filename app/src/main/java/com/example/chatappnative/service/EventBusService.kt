@@ -1,5 +1,6 @@
 package com.example.chatappnative.service
 
+import com.example.chatappnative.data.model.FriendStatusModel
 import com.example.chatappnative.event.AddContactEvent
 import org.greenrobot.eventbus.EventBus
 
@@ -8,14 +9,14 @@ object EventBusService {
 
     fun sendEvent(typeEvent: String, payload: Any) {
         when (typeEvent) {
-            "AddContactEvent" -> {
-                sendAddContactEvent(payload)
+            "add_contact" -> {
+                sendAddContactEvent(payload as FriendStatusModel)
             }
         }
     }
 
-    private fun sendAddContactEvent(payload: Any) {
-        eventBus.post(AddContactEvent(payload as String))
+    private fun sendAddContactEvent(data: FriendStatusModel) {
+        eventBus.post(AddContactEvent(data))
     }
 
     fun register(subscriber: Any) {

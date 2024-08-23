@@ -2,7 +2,6 @@ package com.example.chatappnative.presentation.add_contact
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -48,7 +47,10 @@ class AddContactActivity : ComponentActivity() {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onMessageEvent(event: AddContactEvent) {
-        Log.d("AddContactActivity", "onMessageEvent: ${event.message}")
+        addContactModel.updateItemStatusWithoutAPI(
+            event.friendStatusModel.friendId,
+            event.friendStatusModel.friendStatus
+        )
     }
 
     override fun onStart() {

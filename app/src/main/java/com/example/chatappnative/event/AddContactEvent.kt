@@ -1,5 +1,7 @@
 package com.example.chatappnative.event
 
+import com.example.chatappnative.data.model.FriendStatusModel
+
 class AddContactEvent(
-    val message: String,
+    val friendStatusModel: FriendStatusModel
 )
