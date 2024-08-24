@@ -44,11 +44,14 @@ import androidx.navigation.compose.rememberNavController
 import com.example.chatappnative.R
 import com.example.chatappnative.event.AddFriendEvent
 import com.example.chatappnative.presentation.add_contact.AddContactActivity
+import com.example.chatappnative.presentation.auth.login.LoginActivity
 import com.example.chatappnative.presentation.main.chat.ChatScreen
 import com.example.chatappnative.presentation.main.chat.ChatViewModel
 import com.example.chatappnative.presentation.main.components.BottomNavItem
 import com.example.chatappnative.presentation.main.contact.ContactScreen
 import com.example.chatappnative.presentation.main.contact.ContactViewModel
+import com.example.chatappnative.presentation.main.setting.SettingScreen
+import com.example.chatappnative.presentation.main.setting.SettingViewModel
 import com.example.chatappnative.service.EventBusService
 import com.example.chatappnative.ui.theme.ChatAppNativeTheme
 import com.example.chatappnative.ui.theme.Color191919
@@ -63,6 +66,7 @@ class MainActivity : ComponentActivity() {
     private val mainModel: MainViewModel by viewModels()
     private val chatModel: ChatViewModel by viewModels()
     private val contactModel: ContactViewModel by viewModels()
+    private val settingViewModel: SettingViewModel by viewModels()
 
     companion object {
         const val TAB_INDEX = "tab-index"
@@ -218,11 +222,15 @@ class MainActivity : ComponentActivity() {
                 ChatScreen(chatModel = chatModel)
             }
             composable(BottomNavItem.Contact.route) {
-
                 ContactScreen(contactModel = contactModel)
             }
             composable(BottomNavItem.Setting.route) {
-                Text(text = "Settings")
+                SettingScreen(settingViewModel = settingViewModel) {
+                    finish()
+                    val intent = Intent(this@MainActivity, LoginActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    startActivity(intent)
+                }
             }
         }
     }

@@ -1,9 +1,9 @@
 package com.example.chatappnative.data.repository
 
-import com.example.chatappnative.data.BaseResponse
-import com.example.chatappnative.data.ErrorResponse
-import com.example.chatappnative.data.ResponseState
 import com.example.chatappnative.data.api.APIException
+import com.example.chatappnative.data.api.BaseResponse
+import com.example.chatappnative.data.api.ErrorResponse
+import com.example.chatappnative.data.api.ResponseState
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

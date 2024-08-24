@@ -1,42 +1,37 @@
-package com.example.chatappnative.presentation.main.contact
+package com.example.chatappnative.presentation.main.setting
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.example.chatappnative.presentation.composables.BaseSearchBar
-import com.example.chatappnative.presentation.main.contact.components.ContactContent
+import com.example.chatappnative.presentation.main.contact.ContactViewModel
 import com.example.chatappnative.ui.theme.ColorPrimary
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ContactScreen(contactModel: ContactViewModel) {
-    val isRefreshing = contactModel.isRefreshing.collectAsState().value
-
-    PullToRefreshBox(
-        isRefreshing = isRefreshing,
-        onRefresh = {
-            contactModel.onRefresh()
-        },
+fun SettingScreen(settingViewModel: SettingViewModel, onLogout: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
-                com.example.chatappnative.presentation.main.setting.AppBar(contactModel)
-                ContactContent(contactModel)
-            }
+        OutlinedButton(onClick = {
+            settingViewModel.onLogout()
+            onLogout()
+        }) {
+            Text(text = "Logout")
         }
     }
 }

@@ -2,8 +2,8 @@ package com.example.chatappnative.presentation.main.chat
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.chatappnative.data.ResponseState
 import com.example.chatappnative.data.api.APIConstants
+import com.example.chatappnative.data.api.ResponseState
 import com.example.chatappnative.data.model.ChatModel
 import com.example.chatappnative.data.model.PagedListModel
 import com.example.chatappnative.data.socket.SocketManager

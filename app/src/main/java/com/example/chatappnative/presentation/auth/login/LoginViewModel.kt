@@ -3,7 +3,7 @@ package com.example.chatappnative.presentation.auth.login
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.chatappnative.data.ResponseState
+import com.example.chatappnative.data.api.ResponseState
 import com.example.chatappnative.data.local_database.Preferences
 import com.example.chatappnative.data.socket.SocketManager
 import com.example.chatappnative.domain.repository.AuthRepository

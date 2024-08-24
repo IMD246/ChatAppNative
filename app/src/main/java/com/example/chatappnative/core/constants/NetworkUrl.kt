@@ -9,6 +9,7 @@ object NetworkUrl {
     const val REGISTER = "/api/auth/register"
     const val LOGIN = "/api/auth/login"
     const val REFRESH_DEVICE_TOKEN = "/api/auth/refresh-device-token"
+    const val LOGOUT = "/api/auth/logout"
 
     //Contact
     const val GET_CHAT_LIST = "/api/chat/get-chats"

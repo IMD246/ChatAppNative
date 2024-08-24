@@ -3,7 +3,7 @@ package com.example.chatappnative.data.data_source
 import com.example.chatappnative.core.constants.NetworkUrl.GET_FRIEND_LIST
 import com.example.chatappnative.core.constants.NetworkUrl.GET_USER_LIST
 import com.example.chatappnative.core.constants.NetworkUrl.UPDATE_FRIEND_STATUS
-import com.example.chatappnative.data.BaseResponse
+import com.example.chatappnative.data.api.BaseResponse
 import com.example.chatappnative.data.model.ContactModel
 import com.example.chatappnative.data.model.FriendModel
 import com.example.chatappnative.data.model.PagedListModel

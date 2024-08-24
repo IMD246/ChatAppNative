@@ -1,7 +1,7 @@
 package com.example.chatappnative.data.data_source
 
 import com.example.chatappnative.core.constants.NetworkUrl.GET_CHAT_LIST
-import com.example.chatappnative.data.BaseResponse
+import com.example.chatappnative.data.api.BaseResponse
 import com.example.chatappnative.data.model.ChatModel
 import com.example.chatappnative.data.model.PagedListModel
 import retrofit2.Response

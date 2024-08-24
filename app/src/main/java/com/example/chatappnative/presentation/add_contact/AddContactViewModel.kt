@@ -3,8 +3,8 @@
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.chatappnative.data.ResponseState
 import com.example.chatappnative.data.api.APIConstants
+import com.example.chatappnative.data.api.ResponseState
 import com.example.chatappnative.data.model.ContactModel
 import com.example.chatappnative.data.model.FriendModel
 import com.example.chatappnative.data.model.PagedListModel

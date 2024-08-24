@@ -1,6 +1,6 @@
 package com.example.chatappnative.data.repository
 
-import com.example.chatappnative.data.ResponseState
+import com.example.chatappnative.data.api.ResponseState
 import com.example.chatappnative.data.data_source.AuthDataSource
 import com.example.chatappnative.data.local_database.Preferences
 import com.example.chatappnative.data.model.DeviceTokenModel
@@ -62,6 +62,14 @@ class AuthRepositoryImpl @Inject constructor(
                 postData = postData,
 //                accessToken = "Bearer ${preferences.getAccessToken()}"
                 accessToken = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2YjhjNjA4YjFmODUwNzU1NzcwMDg3ZCIsImlhdCI6MTcyMzM4ODAyMX0.X7bLhNUuRmNlhSP21ciiAwKLPBFTzsPT-GC_9uCqZbw"
+            )
+        }
+    }
+
+    override suspend fun logout(): Flow<ResponseState<Boolean>> {
+        return BaseRepository.callAPI {
+            authDataSource.logout(
+                accessToken = "Bearer ${preferences.getAccessToken()}"
             )
         }
     }

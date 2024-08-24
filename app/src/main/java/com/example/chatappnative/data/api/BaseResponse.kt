@@ -1,4 +1,4 @@
-package com.example.chatappnative.data
+package com.example.chatappnative.data.api
 
 data class BaseResponse<T>(
     val data: T?,

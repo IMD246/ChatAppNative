@@ -1,6 +1,6 @@
 package com.example.chatappnative.data.repository
 
-import com.example.chatappnative.data.ResponseState
+import com.example.chatappnative.data.api.ResponseState
 import com.example.chatappnative.data.data_source.ContactDataSource
 import com.example.chatappnative.data.local_database.Preferences
 import com.example.chatappnative.data.model.ContactModel

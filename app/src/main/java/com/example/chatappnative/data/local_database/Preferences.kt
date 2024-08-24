@@ -24,4 +24,8 @@ class Preferences(context: Context) {
     fun getAccessToken(): String {
         return sharedPreferences.getString(ACCESS_TOKEN, "") ?: ""
     }
+
+    fun logout() {
+        sharedPreferences.edit().clear().apply()
+    }
 }
