@@ -6,5 +6,6 @@ data class FriendStatusModel(
     @SerializedName("friend_id") val friendId: String,
     @SerializedName("sender_status") val senderStatus: Int,
     @SerializedName("friend_status") val friendStatus: Int,
+    @SerializedName("friend_info") val friendInfo: FriendModel,
     val urlImage: String = "",
 )

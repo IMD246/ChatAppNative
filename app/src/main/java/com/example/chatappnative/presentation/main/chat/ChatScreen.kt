@@ -137,6 +137,7 @@ fun AppBar(chatModel: ChatViewModel) {
                     },
                         selected = selectedTabbarIndex == index,
                         onClick = {
+                            if (selectedTabbarIndex == index) return@Tab
                             chatModel.onUpdateSelectedTabbarIndex(index)
                         }
                     )

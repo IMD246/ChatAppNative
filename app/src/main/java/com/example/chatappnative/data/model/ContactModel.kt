@@ -4,5 +4,6 @@ data class ContactModel(
     val id: String = "",
     val name: String = "",
     val status: Int = 1,
-    val urlImage: String = ""
+    val urlImage: String = "",
+    val presence: Boolean = false,
 )

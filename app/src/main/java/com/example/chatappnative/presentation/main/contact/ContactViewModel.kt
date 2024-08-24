@@ -1,5 +1,6 @@
 package com.example.chatappnative.presentation.main.contact
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.chatappnative.data.ResponseState
@@ -38,6 +39,8 @@ class ContactViewModel
     private val _isContactListLoadMore = MutableStateFlow(false)
     var isContactListLoadMore = _isContactListLoadMore
 
+    private val _exceptFriendIds = mutableListOf<String>()
+
     init {
         viewModelScope.launch {
             fetchData()
@@ -64,6 +67,7 @@ class ContactViewModel
                 page = _pagedContactList.currentPage + 1,
                 keyword = _keyword,
                 pageSize = pageSize,
+                exceptFriendIds = formatExceptFriendIds()
             ).collectLatest {
                 when (it) {
                     is ResponseState.Error -> {
@@ -94,6 +98,7 @@ class ContactViewModel
 
     fun onRefresh() {
         viewModelScope.launch {
+            _exceptFriendIds.clear()
             _isRefreshing.value = true
             fetchData(clear = true)
             _isRefreshing.value = false
@@ -107,6 +112,7 @@ class ContactViewModel
         }
 
         viewModelScope.launch {
+            _exceptFriendIds.clear()
             fetchData(clear = true)
         }
     }
@@ -119,5 +125,45 @@ class ContactViewModel
             fetchData(isLoadMore = true)
             _isContactListLoadMore.value = false
         }
+    }
+
+    fun updateContactFriend(status: Int, friendModel: FriendModel) {
+        Log.d("ContactViewModel", "updateContactFriend: $status, $friendModel")
+        // friend status is accepted
+        if (status == 3) {
+            val data = _contactList.value.toMutableList()
+
+            if (!data.contains(friendModel)) {
+                data.add(friendModel)
+            }
+
+            if (!_exceptFriendIds.contains(friendModel.id)) {
+                _exceptFriendIds.add(friendModel.id)
+            }
+
+            _contactList.value = data
+        }
+        // friend status is unfriend
+        if (status == 1) {
+            val data = _contactList.value.toMutableList()
+
+            val item = data.find { it.id == friendModel.id } ?: return
+
+            data.remove(item)
+
+            if (_exceptFriendIds.contains(friendModel.id)) {
+                _exceptFriendIds.remove(friendModel.id)
+            }
+
+            _contactList.value = data
+        }
+    }
+
+    private fun formatExceptFriendIds(): String? {
+        if (_exceptFriendIds.isEmpty()) {
+            return null
+        }
+
+        return _exceptFriendIds.joinToString(separator = ",")
     }
 }

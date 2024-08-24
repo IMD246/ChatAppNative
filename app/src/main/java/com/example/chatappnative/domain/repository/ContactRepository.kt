@@ -12,6 +12,7 @@ interface ContactRepository {
         page: Int = 1,
         pageSize: Int = 15,
         keyword: String? = null,
+        exceptFriendIds: String? = null,
     ): Flow<ResponseState<PagedListModel<FriendModel>>>
 
     suspend fun getContactList(

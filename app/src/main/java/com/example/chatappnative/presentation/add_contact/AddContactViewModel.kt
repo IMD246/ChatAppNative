@@ -1,13 +1,16 @@
 ﻿package com.example.chatappnative.presentation.add_contact
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.chatappnative.data.ResponseState
 import com.example.chatappnative.data.api.APIConstants
 import com.example.chatappnative.data.model.ContactModel
+import com.example.chatappnative.data.model.FriendModel
 import com.example.chatappnative.data.model.PagedListModel
 import com.example.chatappnative.domain.repository.ContactRepository
 import com.example.chatappnative.helper.DialogAPIHelper
+import com.example.chatappnative.service.EventBusService
 import com.google.common.eventbus.EventBus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -164,6 +167,19 @@ class AddContactViewModel
                         message.value = "Đã cập nhật thành công!"
                         data[index] =
                             data[index].copy(status = it.data?.user_status ?: data[index].status)
+
+                        if (data[index].status == 1 || data[index].status == 3) {
+                            Log.d("AddContactViewModel", "sendFriendEvent: ${data[index]}")
+                            EventBusService.sendFriendEvent(
+                                data[index].status,
+                                FriendModel(
+                                    id = item.id,
+                                    name = item.name,
+                                    urlImage = item.urlImage,
+                                    presence = item.presence,
+                                ),
+                            )
+                        }
                         _contactList.value = data
                     }
                 }

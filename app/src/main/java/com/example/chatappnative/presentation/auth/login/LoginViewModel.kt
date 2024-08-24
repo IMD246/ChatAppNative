@@ -35,7 +35,7 @@ class LoginViewModel @Inject constructor(
     var passwordController = _passwordController.asStateFlow()
     private var _errorPassword = ""
 
-    private val _emailController = MutableStateFlow("devnguyen123456@gmail.com")
+    private val _emailController = MutableStateFlow("duytest2@gmail.com")
     var emailController = _emailController.asStateFlow()
     private var _errorEmail = ""
 

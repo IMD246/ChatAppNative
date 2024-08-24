@@ -46,7 +46,7 @@ class AddContactActivity : ComponentActivity() {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onMessageEvent(event: AddContactEvent) {
+    fun onAddContactEvent(event: AddContactEvent) {
         addContactModel.updateItemStatusWithoutAPI(
             event.friendStatusModel.friendId,
             event.friendStatusModel.friendStatus

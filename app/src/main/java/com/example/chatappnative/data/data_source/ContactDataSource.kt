@@ -23,6 +23,7 @@ interface ContactDataSource {
         @Query("page") page: Int = 1,
         @Query("pageSize") pageSize: Int = 15,
         @Query("keyword") keyword: String? = null,
+        @Query("exceptFriendIds") exceptFriendIds: String? = null,
         @Header("Authorization") accessToken: String = ""
     ): Response<BaseResponse<PagedListModel<FriendModel>>>
 

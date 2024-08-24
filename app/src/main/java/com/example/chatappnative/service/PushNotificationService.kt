@@ -60,7 +60,7 @@ class PushNotificationService : FirebaseMessagingService() {
             }
 
             remoteMessage.notification?.let {
-                if (it.title?.isNotEmpty() != null || it.body?.isNotEmpty() == true) {
+                if (it.title?.isNotEmpty() == true || it.body?.isNotEmpty() == true) {
                     generateNotification(
                         it.title ?: "",
                         it.body ?: "",
@@ -119,11 +119,18 @@ class PushNotificationService : FirebaseMessagingService() {
             FriendStatusModel::class.java
         )
 
+        Log.d("PushNotificationService", "friendStatus: $friendStatus")
+        
         when (friendStatus.senderStatus) {
             1 -> {
                 EventBusService.sendEvent(
                     notificationData.event,
                     friendStatus,
+                )
+
+                EventBusService.sendFriendEvent(
+                    friendStatus.senderStatus,
+                    friendStatus.friendInfo,
                 )
 
                 return null
@@ -147,6 +154,11 @@ class PushNotificationService : FirebaseMessagingService() {
                 EventBusService.sendEvent(
                     notificationData.event,
                     friendStatus,
+                )
+
+                EventBusService.sendFriendEvent(
+                    friendStatus.senderStatus,
+                    friendStatus.friendInfo,
                 )
 
                 val intent = Intent(this, MainActivity::class.java)
