@@ -116,6 +116,7 @@ class LoginViewModel @Inject constructor(
                     is ResponseState.Success -> {
                         val state = it
                         preferences.saveAccessToken(it.data?.accessToken ?: "")
+                        preferences.saveUserInfo(it.data!!)
                         Log.d(
                             "LoginViewModel",
                             "token_device:  $token"
@@ -125,7 +126,6 @@ class LoginViewModel @Inject constructor(
                         socketManager.onConnect {
                             dialogAPIHelper.hideDialog()
                             dialogAPIHelper.showDialog(state)
-
                             viewModelScope.launch {
                                 delay(2000L)
                                 dialogAPIHelper.hideDialog()

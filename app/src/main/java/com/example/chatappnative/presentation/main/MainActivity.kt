@@ -64,6 +64,7 @@ import org.greenrobot.eventbus.ThreadMode
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val mainModel: MainViewModel by viewModels()
+
     private val chatModel: ChatViewModel by viewModels()
     private val contactModel: ContactViewModel by viewModels()
     private val settingViewModel: SettingViewModel by viewModels()
@@ -95,6 +96,7 @@ class MainActivity : ComponentActivity() {
     override fun onStart() {
         super.onStart()
         EventBusService.register(this)
+        mainModel.init()
     }
 
     override fun onStop() {

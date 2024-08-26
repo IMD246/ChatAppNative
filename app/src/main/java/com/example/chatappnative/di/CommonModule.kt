@@ -22,7 +22,7 @@ object CommonModule {
 
     @Provides
     @Singleton
-    fun provideSocketManager(): SocketManager {
-        return SocketManager()
+    fun provideSocketManager(preferences: Preferences): SocketManager {
+        return SocketManager(preferences)
     }
 }

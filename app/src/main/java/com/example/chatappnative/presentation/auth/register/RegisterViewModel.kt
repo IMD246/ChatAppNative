@@ -158,6 +158,7 @@ class RegisterViewModel @Inject constructor(
                     is ResponseState.Success -> {
                         val state = it
                         preferences.saveAccessToken(it.data?.accessToken ?: "")
+                        preferences.saveUserInfo(it.data!!)
                         socketManager.connect()
                         socketManager.onConnect {
                             dialogAPIHelper.hideDialog()

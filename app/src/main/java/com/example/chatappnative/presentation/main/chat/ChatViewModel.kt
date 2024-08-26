@@ -1,5 +1,6 @@
 package com.example.chatappnative.presentation.main.chat
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.chatappnative.data.api.APIConstants
@@ -51,8 +52,10 @@ class ChatViewModel
     var isChatListLoadMore = _isChatListLoadMore
 
     init {
-//        Log.d("ChatViewModel", "socket connection: ${socketManager.socket?.connected()}")
-        socketManager.connect()
+        socketManager.onUserPresence {
+            Log.d("ChatViewModel", ": $it")
+        }
+
         viewModelScope.launch {
             fetchData(all = true)
         }
