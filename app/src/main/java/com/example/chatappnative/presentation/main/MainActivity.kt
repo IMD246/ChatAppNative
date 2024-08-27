@@ -99,6 +99,9 @@ class MainActivity : ComponentActivity() {
         chatModel.updateItemPresence(
             event.userPresenceSocketModel
         )
+        contactModel.updateItemPresence(
+            event.userPresenceSocketModel
+        )
     }
 
     override fun onStart() {

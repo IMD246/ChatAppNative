@@ -1,6 +1,7 @@
 package com.example.chatappnative.presentation.main.contact.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
@@ -18,6 +19,7 @@ import androidx.compose.ui.unit.sp
 import com.example.chatappnative.data.model.FriendModel
 import com.example.chatappnative.presentation.composables.BaseList
 import com.example.chatappnative.presentation.composables.NetworkImage
+import com.example.chatappnative.presentation.composables.Presence
 import com.example.chatappnative.presentation.main.contact.ContactViewModel
 import com.example.chatappnative.ui.theme.Color191919
 
@@ -67,9 +69,12 @@ private fun ContactItem(item: FriendModel) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start,
     ) {
-        NetworkImage(
-            url = item.urlImage ?: "",
-        )
+        Column {
+            NetworkImage(
+                url = item.urlImage ?: "",
+            )
+            Presence(isPresence = item.presence, date = item.presenceTimestamp)
+        }
         Spacer(modifier = Modifier.width(8.dp))
         Text(
             text = item.name,

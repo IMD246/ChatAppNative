@@ -1,6 +1,7 @@
 package com.example.chatappnative.data.model
 
 import android.annotation.SuppressLint
+import com.google.gson.annotations.SerializedName
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.TimeZone
@@ -12,7 +13,8 @@ data class ChatModel(
     val timeLastMessage: String,
     val typeMessage: String,
     val urlImage: String,
-    val users: List<String>
+    val users: List<String>,
+    @SerializedName("presence_timestamp") val presenceTimestamp: String = "",
 ) {
 
     @SuppressLint("SimpleDateFormat")

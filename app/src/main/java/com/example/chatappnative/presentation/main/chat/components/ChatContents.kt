@@ -95,7 +95,7 @@ private fun ChatItem(item: ChatModel) {
             NetworkImage(
                 url = item.urlImage,
             )
-            Presence(isPresence = item.presence, date = item.timeLastMessage)
+            Presence(isPresence = item.presence, date = item.presenceTimestamp)
         }
         Spacer(modifier = Modifier.width(8.dp))
         Column {

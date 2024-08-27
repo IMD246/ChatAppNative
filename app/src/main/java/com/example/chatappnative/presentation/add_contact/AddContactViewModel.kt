@@ -64,7 +64,8 @@ class AddContactViewModel
 
         val index = contactListUpdated.indexOf(item)
 
-        contactListUpdated[index] = item.copy(presence = value.presence)
+        contactListUpdated[index] =
+            item.copy(presence = value.presence, presenceTimestamp = value.presenceTimestamp)
 
         _contactList.value = contactListUpdated
     }
@@ -192,6 +193,7 @@ class AddContactViewModel
                                     name = item.name,
                                     urlImage = item.urlImage,
                                     presence = item.presence,
+                                    presenceTimestamp = item.presenceTimestamp,
                                 ),
                             )
                         }

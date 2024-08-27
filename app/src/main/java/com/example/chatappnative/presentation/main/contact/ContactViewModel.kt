@@ -7,6 +7,7 @@ import com.example.chatappnative.data.api.APIConstants
 import com.example.chatappnative.data.api.ResponseState
 import com.example.chatappnative.data.model.FriendModel
 import com.example.chatappnative.data.model.PagedListModel
+import com.example.chatappnative.data.model.UserPresenceSocketModel
 import com.example.chatappnative.data.socket.SocketManager
 import com.example.chatappnative.domain.repository.ContactRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -165,5 +166,18 @@ class ContactViewModel
         }
 
         return _exceptFriendIds.joinToString(separator = ",")
+    }
+
+    fun updateItemPresence(userPresenceSocketModel: UserPresenceSocketModel) {
+        val data = _contactList.value.toMutableList()
+        val item = data.find { it.id == userPresenceSocketModel.userId } ?: return
+        val index = data.indexOf(item)
+
+        data[index] = data[index].copy(
+            presence = userPresenceSocketModel.presence,
+            presenceTimestamp = userPresenceSocketModel.presenceTimestamp
+        )
+
+        _contactList.value = data
     }
 }
