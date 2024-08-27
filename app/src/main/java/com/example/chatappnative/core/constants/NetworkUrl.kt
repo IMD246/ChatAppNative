@@ -1,9 +1,9 @@
 package com.example.chatappnative.core.constants
 
 object NetworkUrl {
-//    const val BASE_URL = "https://chat-node-server-eight.vercel.app"
+    const val BASE_URL = "https://chatnodeserver.onrender.com"
 
-    const val BASE_URL = "http://192.168.1.5:5000";
+//    const val BASE_URL = "http://192.168.1.5:5000";
 
     //Auth
     const val REGISTER = "/api/auth/register"

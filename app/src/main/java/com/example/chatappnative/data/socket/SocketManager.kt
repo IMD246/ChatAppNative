@@ -32,7 +32,6 @@ class SocketManager(
 
             onConnect {
                 Log.d("SocketManager", "socket connection: ${socket?.connected()}")
-                Log.d("SocketManager", "call onUserPresence from onConnect init")
 
                 onUserPresence()
             }
