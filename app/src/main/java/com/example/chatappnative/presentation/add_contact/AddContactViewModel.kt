@@ -8,19 +8,24 @@ import com.example.chatappnative.data.api.ResponseState
 import com.example.chatappnative.data.model.ContactModel
 import com.example.chatappnative.data.model.FriendModel
 import com.example.chatappnative.data.model.PagedListModel
+import com.example.chatappnative.data.model.UserPresenceSocketModel
+import com.example.chatappnative.data.socket.SocketManager
 import com.example.chatappnative.domain.repository.ContactRepository
 import com.example.chatappnative.helper.DialogAPIHelper
 import com.example.chatappnative.service.EventBusService
 import com.google.common.eventbus.EventBus
+import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import javax.inject.Inject
 
 @HiltViewModel
 class AddContactViewModel
 @Inject constructor(
+    private val socketManager: SocketManager,
     private val contactRepository: ContactRepository,
 ) : ViewModel() {
     val eventBus = EventBus("AddContact")
@@ -49,9 +54,26 @@ class AddContactViewModel
     var message = _message
 
     init {
+        socketManager.onUserPresence {
+            updateItemPresence(it)
+        }
         viewModelScope.launch {
             fetchData()
         }
+    }
+
+    private fun updateItemPresence(it: JSONObject) {
+        val userPresence = Gson().fromJson(it.toString(), UserPresenceSocketModel::class.java)
+
+        val contactListUpdated = contactList.value.toMutableList()
+
+        val item = contactListUpdated.find { it.id == userPresence.userId } ?: return
+
+        val index = contactListUpdated.indexOf(item)
+
+        contactListUpdated[index] = item.copy(presence = false)
+
+        _contactList.value = contactListUpdated
     }
 
     private suspend fun fetchData(

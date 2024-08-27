@@ -1,6 +1,5 @@
 package com.example.chatappnative.presentation.main
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.chatappnative.data.socket.SocketManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,7 +11,6 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
 
     fun init() {
-        Log.d("MainActivity", "Call emit logged in event")
         socketManager.emitLoggedInEvent()
     }
 }

@@ -52,11 +52,7 @@ object DateFormatUtil {
         val seconds = diffInMillis / 1000
 
         // if seconds is less than a minute
-        if (seconds in 0..59) {
-            return false
-        }
-
-        return true
+        return seconds !in 0..59
     }
 
     fun getCurrentLocalDate(): Date {
@@ -84,5 +80,39 @@ object DateFormatUtil {
     fun getFormattedDate(value: Date): String {
         val formatter = SimpleDateFormat("yyyy-MM-dd")
         return formatter.format(value)
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    fun presenceFormat(value: Date): String {
+        val currentDate = getCurrentLocalDate()
+
+        // calculate difference milliseconds
+        val diffInMillis = currentDate.time - value.time
+
+        // get seconds in milliseconds
+        val seconds = diffInMillis / 1000
+
+        // if seconds is less than a minute
+        if (seconds in 0..59) {
+            return "$seconds s"
+        }
+
+        // if seconds is less than an hour
+        if (seconds in 60..3599) {
+            val minutes = (seconds / 60).toInt()
+            return "$minutes m"
+        }
+
+        if (seconds in 3600..86399) {
+            val hours = (seconds / 3600).toInt()
+            return "$hours h"
+        }
+
+        if (seconds in 86400..2073600) {
+            val days = (seconds / 86400).toInt()
+            return "$days d"
+        }
+
+        return ""
     }
 }

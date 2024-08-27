@@ -1,6 +1,5 @@
 package com.example.chatappnative.presentation.main.chat.components
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,6 +11,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
@@ -28,11 +28,11 @@ import com.example.chatappnative.R
 import com.example.chatappnative.data.model.ChatModel
 import com.example.chatappnative.presentation.composables.BaseList
 import com.example.chatappnative.presentation.composables.NetworkImage
+import com.example.chatappnative.presentation.composables.Presence
 import com.example.chatappnative.presentation.main.chat.ChatViewModel
 import com.example.chatappnative.ui.theme.Color191919
 import com.example.chatappnative.util.DateFormatUtil
-import java.util.Timer
-import java.util.TimerTask
+import kotlinx.coroutines.delay
 
 @Composable
 fun ChatContent(chatModel: ChatViewModel) {
@@ -78,23 +78,25 @@ private fun ChatItem(item: ChatModel) {
         mutableStateOf(DateFormatUtil.dateMessageFormat(item.getDateTimeLastMessage()))
     }
 
-    Timer().schedule(object : TimerTask() {
-        override fun run() {
-            if (DateFormatUtil.isDiffSecondsMoreThanAMinute(item.getDateTimeLastMessage())) {
-                Log.d("ChatItem", "cancel")
-                cancel()
-            }
+    LaunchedEffect(Unit) {
+        while (true) {
+            if (DateFormatUtil.isDiffSecondsMoreThanAMinute(item.getDateTimeLastMessage())) break;
+
             dateDisplay.value = DateFormatUtil.dateMessageFormat(item.getDateTimeLastMessage())
+            delay(1000L)
         }
-    }, 1000)
+    }
 
     Row(
         modifier = Modifier.padding(bottom = 15.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        NetworkImage(
-            url = item.urlImage,
-        )
+        Column {
+            NetworkImage(
+                url = item.urlImage,
+            )
+            Presence(isPresence = item.presence, date = item.timeLastMessage)
+        }
         Spacer(modifier = Modifier.width(8.dp))
         Column {
             Text(

@@ -1,6 +1,7 @@
 package com.example.chatappnative.presentation.add_contact.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
@@ -24,6 +25,7 @@ import com.example.chatappnative.data.model.ContactModel
 import com.example.chatappnative.presentation.add_contact.AddContactViewModel
 import com.example.chatappnative.presentation.composables.BaseList
 import com.example.chatappnative.presentation.composables.NetworkImage
+import com.example.chatappnative.presentation.composables.Presence
 import com.example.chatappnative.ui.theme.Color191919
 import com.example.chatappnative.ui.theme.ColorPrimary
 
@@ -72,9 +74,12 @@ private fun AddContactItem(addContactModel: AddContactViewModel, item: ContactMo
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start,
     ) {
-        NetworkImage(
-            url = item.urlImage,
-        )
+        Column {
+            NetworkImage(
+                url = item.urlImage,
+            )
+            Presence(isPresence = item.presence, date = "2024-01-01")
+        }
         Spacer(modifier = Modifier.width(8.dp))
         Text(
             text = item.name,
