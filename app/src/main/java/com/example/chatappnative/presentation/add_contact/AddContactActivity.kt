@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.example.chatappnative.event.AddContactEvent
+import com.example.chatappnative.event.UpdateUserPresenceEvent
 import com.example.chatappnative.presentation.add_contact.components.AddContactContent
 import com.example.chatappnative.presentation.composables.BackButton
 import com.example.chatappnative.presentation.composables.BaseSearchBar
@@ -50,6 +51,13 @@ class AddContactActivity : ComponentActivity() {
         addContactModel.updateItemStatusWithoutAPI(
             event.friendStatusModel.friendId,
             event.friendStatusModel.friendStatus
+        )
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onUpdateUserPresenceEvent(event: UpdateUserPresenceEvent) {
+        addContactModel.updateItemPresence(
+            event.userPresenceSocketModel
         )
     }
 

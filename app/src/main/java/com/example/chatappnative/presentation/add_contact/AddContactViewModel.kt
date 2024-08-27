@@ -14,12 +14,10 @@ import com.example.chatappnative.domain.repository.ContactRepository
 import com.example.chatappnative.helper.DialogAPIHelper
 import com.example.chatappnative.service.EventBusService
 import com.google.common.eventbus.EventBus
-import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 import javax.inject.Inject
 
 @HiltViewModel
@@ -54,24 +52,19 @@ class AddContactViewModel
     var message = _message
 
     init {
-        socketManager.onUserPresence {
-            updateItemPresence(it)
-        }
         viewModelScope.launch {
             fetchData()
         }
     }
 
-    private fun updateItemPresence(it: JSONObject) {
-        val userPresence = Gson().fromJson(it.toString(), UserPresenceSocketModel::class.java)
-
+    fun updateItemPresence(value: UserPresenceSocketModel) {
         val contactListUpdated = contactList.value.toMutableList()
 
-        val item = contactListUpdated.find { it.id == userPresence.userId } ?: return
+        val item = contactListUpdated.find { it.id == value.userId } ?: return
 
         val index = contactListUpdated.indexOf(item)
 
-        contactListUpdated[index] = item.copy(presence = false)
+        contactListUpdated[index] = item.copy(presence = value.presence)
 
         _contactList.value = contactListUpdated
     }

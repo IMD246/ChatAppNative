@@ -2,8 +2,10 @@ package com.example.chatappnative.service
 
 import com.example.chatappnative.data.model.FriendModel
 import com.example.chatappnative.data.model.FriendStatusModel
+import com.example.chatappnative.data.model.UserPresenceSocketModel
 import com.example.chatappnative.event.AddContactEvent
 import com.example.chatappnative.event.AddFriendEvent
+import com.example.chatappnative.event.UpdateUserPresenceEvent
 import org.greenrobot.eventbus.EventBus
 
 object EventBusService {
@@ -23,6 +25,10 @@ object EventBusService {
 
     fun sendFriendEvent(status: Int, data: FriendModel) {
         eventBus.post(AddFriendEvent(status, data))
+    }
+
+    fun sendUpdateUserPresenceEvent(userPresenceSocketModel: UserPresenceSocketModel) {
+        eventBus.post(UpdateUserPresenceEvent(userPresenceSocketModel))
     }
 
     fun register(subscriber: Any) {

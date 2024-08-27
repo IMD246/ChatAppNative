@@ -43,6 +43,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.chatappnative.R
 import com.example.chatappnative.event.AddFriendEvent
+import com.example.chatappnative.event.UpdateUserPresenceEvent
 import com.example.chatappnative.presentation.add_contact.AddContactActivity
 import com.example.chatappnative.presentation.auth.login.LoginActivity
 import com.example.chatappnative.presentation.main.chat.ChatScreen
@@ -75,7 +76,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val tabIndex = intent.getIntExtra(TAB_INDEX, 0);
+        val tabIndex = intent.getIntExtra(TAB_INDEX, 0)
 
         requestNotificationPermission()
         setContent {
@@ -90,6 +91,13 @@ class MainActivity : ComponentActivity() {
         contactModel.updateContactFriend(
             event.status,
             event.friendModel
+        )
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onUpdateUserPresenceEvent(event: UpdateUserPresenceEvent) {
+        chatModel.updateItemPresence(
+            event.userPresenceSocketModel
         )
     }
 

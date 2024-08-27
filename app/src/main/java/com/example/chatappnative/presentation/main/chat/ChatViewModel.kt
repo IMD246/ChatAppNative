@@ -10,13 +10,11 @@ import com.example.chatappnative.data.model.PagedListModel
 import com.example.chatappnative.data.model.UserPresenceSocketModel
 import com.example.chatappnative.data.socket.SocketManager
 import com.example.chatappnative.domain.repository.ChatRepository
-import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 import javax.inject.Inject
 
 @HiltViewModel
@@ -55,11 +53,6 @@ class ChatViewModel
     var isChatListLoadMore = _isChatListLoadMore
 
     init {
-        socketManager.onUserPresence {
-            Log.d("ChatViewModel", ": $it")
-            updateItemPresence(it)
-        }
-
         viewModelScope.launch {
             fetchData(all = true)
         }
@@ -180,20 +173,19 @@ class ChatViewModel
         }
     }
 
-    private fun updateItemPresence(it: JSONObject) {
-        Log.d("ChatViewModel", "updateItemPresence: ${it}")
-        val userPresence = Gson().fromJson(it.toString(), UserPresenceSocketModel::class.java)
+    fun updateItemPresence(value: UserPresenceSocketModel) {
+        Log.d("ChatViewModel", "updateItemPresence: $value")
 
         val chatList = _chatList.value
         val chatListUpdated = _chatList.value.toMutableList()
 
         for (item in chatList) {
-            if (!item.users.contains(userPresence.userId)) {
+            if (!item.users.contains(value.userId)) {
                 continue
             }
 
             val index = chatList.indexOf(item)
-            chatListUpdated[index] = item.copy(presence = userPresence.presence)
+            chatListUpdated[index] = item.copy(presence = value.presence)
         }
         _chatList.value = chatListUpdated
     }

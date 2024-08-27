@@ -1,6 +1,8 @@
 package com.example.chatappnative.data.model
 
+import com.google.gson.annotations.SerializedName
+
 data class UserPresenceSocketModel(
-    val userId: String? = null,
-    val presence: Boolean = false,
+    @SerializedName("user_id") val userId: String? = null,
+    @SerializedName("presence") val presence: Boolean = false,
 )

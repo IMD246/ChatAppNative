@@ -3,6 +3,9 @@ package com.example.chatappnative.data.socket
 import android.util.Log
 import com.example.chatappnative.core.constants.NetworkUrl
 import com.example.chatappnative.data.local_database.Preferences
+import com.example.chatappnative.data.model.UserPresenceSocketModel
+import com.example.chatappnative.service.EventBusService
+import com.google.gson.Gson
 import io.socket.client.IO
 import io.socket.client.Socket
 import org.json.JSONObject
@@ -29,6 +32,9 @@ class SocketManager(
 
             onConnect {
                 Log.d("SocketManager", "socket connection: ${socket?.connected()}")
+                Log.d("SocketManager", "call onUserPresence from onConnect init")
+
+                onUserPresence()
             }
 
         } catch (e: URISyntaxException) {
@@ -52,12 +58,15 @@ class SocketManager(
 
     }
 
-    fun onUserPresence(action: (JSONObject) -> Unit) {
+    private fun onUserPresence() {
         socket?.on("updateUserPresence") {
-            Log.d("SocketManager", "onUserPresence: ")
             val data = it[0] as JSONObject
 
-            action(data)
+            Log.d("SocketManager", "onUserPresence: {$data}")
+
+            val userPresence = Gson().fromJson(data.toString(), UserPresenceSocketModel::class.java)
+
+            EventBusService.sendUpdateUserPresenceEvent(userPresence)
         }
     }
 
