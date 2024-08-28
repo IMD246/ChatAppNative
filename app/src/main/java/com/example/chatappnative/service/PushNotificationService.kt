@@ -146,16 +146,17 @@ class PushNotificationService : FirebaseMessagingService() {
             // when user click notification and sender friend's status is request
             // open a new activity add-contact and add to backstack
             2 -> {
-                val isLoggedIn = preferences.getIsLoggedIn()
-                if (!isLoggedIn) {
-                    preferences.saveActivityPending(AddContactActivity::class.java.name)
-                    return null
-                }
                 // send event friend's status to update add contact list
                 EventBusService.sendEvent(
                     notificationData.event,
                     friendStatus,
                 )
+
+                val isLoggedIn = preferences.getIsLoggedIn()
+                if (!isLoggedIn) {
+                    preferences.saveActivityPending(AddContactActivity::class.java.name)
+                    return null
+                }
 
                 val intent = Intent(this, AddContactActivity::class.java)
 
@@ -169,12 +170,6 @@ class PushNotificationService : FirebaseMessagingService() {
 
             // when friend is accepted
             3 -> {
-                val isLoggedIn = preferences.getIsLoggedIn()
-                if (!isLoggedIn) {
-                    preferences.saveActivityPending(MainActivity::class.java.name)
-                    return null
-                }
-
                 // send event friend's status to update add contact list
                 EventBusService.sendEvent(
                     notificationData.event,
@@ -186,6 +181,12 @@ class PushNotificationService : FirebaseMessagingService() {
                     friendStatus.senderStatus,
                     friendStatus.friendInfo,
                 )
+
+                val isLoggedIn = preferences.getIsLoggedIn()
+                if (!isLoggedIn) {
+                    preferences.saveActivityPending(MainActivity::class.java.name)
+                    return null
+                }
 
                 // when user click notification, clear all backstack and go to main activity with tab index = 1
                 // tab index = 1 means friend list page
