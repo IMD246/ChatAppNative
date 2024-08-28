@@ -11,6 +11,8 @@ class Preferences(context: Context) {
     private val ONBOARDING = "onboarding"
     private val ACCESS_TOKEN = "access_token"
     private val USER_INFO = "user_info"
+    private val IS_LOGGED_IN = "is_logged_in"
+    private val ACTIVITY_PENDING = "activity_pending"
 
     fun saveOnboarding() {
         sharedPreferences.edit().putBoolean(ONBOARDING, true).apply()
@@ -21,11 +23,28 @@ class Preferences(context: Context) {
     }
 
     fun saveAccessToken(value: String) {
+        saveIsLoggedIn(true)
         sharedPreferences.edit().putString(ACCESS_TOKEN, value).apply()
     }
 
     fun getAccessToken(): String {
         return sharedPreferences.getString(ACCESS_TOKEN, "") ?: ""
+    }
+
+    fun saveIsLoggedIn(value: Boolean) {
+        sharedPreferences.edit().putBoolean(IS_LOGGED_IN, value).apply()
+    }
+
+    fun getIsLoggedIn(): Boolean {
+        return sharedPreferences.getBoolean(IS_LOGGED_IN, false)
+    }
+
+    fun saveActivityPending(value: String) {
+        sharedPreferences.edit().putString(ACTIVITY_PENDING, value).apply()
+    }
+
+    fun getActivityPending(): String {
+        return sharedPreferences.getString(ACTIVITY_PENDING, "") ?: ""
     }
 
     fun saveUserInfo(value: UserInfoAccessModel) {

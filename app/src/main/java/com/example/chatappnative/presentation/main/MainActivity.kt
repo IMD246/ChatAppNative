@@ -115,6 +115,7 @@ class MainActivity : ComponentActivity() {
         super.onStop()
     }
 
+
     @Composable
     fun BottomNavigationBar(navController: NavHostController) {
         BottomNavigation(
@@ -174,8 +175,37 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
+    private fun HandlePendingActivity(navController: NavHostController) {
+        val getActivityPending = mainModel.getActivityPending()
+
+        LaunchedEffect(getActivityPending) {
+            when (getActivityPending) {
+                AddContactActivity::class.java.name -> {
+                    val intent = Intent(this@MainActivity, AddContactActivity::class.java)
+                    startActivity(intent)
+                }
+
+                MainActivity::class.java.name -> {
+                    navController.navigate(BottomNavItem.Contact.route) {
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
+                    }
+                }
+
+                else -> {
+                    // do nothing
+                }
+            }
+
+            mainModel.clearActivityPending()
+        }
+    }
+
+    @Composable
     fun MainScreen(tabIndex: Int = 0) {
         val navController = rememberNavController()
+
+        HandlePendingActivity(navController)
 
         LaunchedEffect(tabIndex) {
             if (tabIndex != 0) {

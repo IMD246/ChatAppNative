@@ -10,6 +10,7 @@ import android.os.Build.VERSION_CODES
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.chatappnative.R
+import com.example.chatappnative.data.local_database.Preferences
 import com.example.chatappnative.data.model.DataNotificationModel
 import com.example.chatappnative.data.model.FriendStatusModel
 import com.example.chatappnative.domain.repository.AuthRepository
@@ -31,6 +32,9 @@ class PushNotificationService : FirebaseMessagingService() {
 
     @Inject
     lateinit var authRepository: AuthRepository
+
+    @Inject
+    lateinit var preferences: Preferences
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
@@ -120,14 +124,17 @@ class PushNotificationService : FirebaseMessagingService() {
         )
 
         Log.d("PushNotificationService", "friendStatus: $friendStatus")
-        
+
         when (friendStatus.senderStatus) {
+            // when user click notification and sender friend's status is unfriend then do nothing
             1 -> {
+                // send event friend's status to update add contact list
                 EventBusService.sendEvent(
                     notificationData.event,
                     friendStatus,
                 )
 
+                // send event friend's status to update friend list
                 EventBusService.sendFriendEvent(
                     friendStatus.senderStatus,
                     friendStatus.friendInfo,
@@ -136,7 +143,15 @@ class PushNotificationService : FirebaseMessagingService() {
                 return null
             }
 
+            // when user click notification and sender friend's status is request
+            // open a new activity add-contact and add to backstack
             2 -> {
+                val isLoggedIn = preferences.getIsLoggedIn()
+                if (!isLoggedIn) {
+                    preferences.saveActivityPending(AddContactActivity::class.java.name)
+                    return null
+                }
+                // send event friend's status to update add contact list
                 EventBusService.sendEvent(
                     notificationData.event,
                     friendStatus,
@@ -144,23 +159,36 @@ class PushNotificationService : FirebaseMessagingService() {
 
                 val intent = Intent(this, AddContactActivity::class.java)
 
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
                 return PendingIntent.getActivity(
                     this, 0, intent,
                     PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE,
                 )
             }
 
+            // when friend is accepted
             3 -> {
+                val isLoggedIn = preferences.getIsLoggedIn()
+                if (!isLoggedIn) {
+                    preferences.saveActivityPending(MainActivity::class.java.name)
+                    return null
+                }
+
+                // send event friend's status to update add contact list
                 EventBusService.sendEvent(
                     notificationData.event,
                     friendStatus,
                 )
 
+                // send event friend's status to update friend list
                 EventBusService.sendFriendEvent(
                     friendStatus.senderStatus,
                     friendStatus.friendInfo,
                 )
 
+                // when user click notification, clear all backstack and go to main activity with tab index = 1
+                // tab index = 1 means friend list page
                 val intent = Intent(this, MainActivity::class.java)
                 intent.putExtra(MainActivity.TAB_INDEX, 1)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
