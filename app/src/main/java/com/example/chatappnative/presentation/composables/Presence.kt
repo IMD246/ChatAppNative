@@ -38,8 +38,11 @@ fun Presence(
 
     LaunchedEffect(Unit) {
         while (true) {
+            if (DateFormatUtil.isDiffSecondsMoreThanADay(toLocalDate)) break;
+
             dateDisplay = DateFormatUtil.presenceFormat(toLocalDate)
-            delay(1000L)
+
+            delay(DateFormatUtil.getDelayDiffMilliseconds(toLocalDate))
         }
     }
 

@@ -83,13 +83,13 @@ fun CallItem(item: ChatModel) {
 
     Timer().schedule(object : TimerTask() {
         override fun run() {
-            if (DateFormatUtil.isDiffSecondsMoreThanAMinute(Date())) {
+            if (DateFormatUtil.isDiffSecondsMoreThanADay(Date())) {
                 Log.d("ChatItem", "cancel")
                 cancel()
             }
             dateDisplay.value = DateFormatUtil.dateMessageFormat(Date())
         }
-    }, 1000)
+    }, DateFormatUtil.getDelayDiffMilliseconds(Date()))
 
     Row(
         modifier = Modifier.padding(bottom = 15.dp),

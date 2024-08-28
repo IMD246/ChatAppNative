@@ -6,21 +6,31 @@ import java.util.Date
 import java.util.TimeZone
 
 object DateFormatUtil {
-    val DATE_TIME_FORMAT: String = "yyyy-MM-ddTHH:mm:ssZ"
-    val DATE_TIME_FORMAT2: String = "dd/MM/yyyy HH:mm"
-    val DATE_TIME_FORMAT3: String = "HH:mm dd/MM/yyyy"
-    val DATE_TIME_FORMAT4: String = "HH:mm - dd/MM/yyyy"
-    val DATE_FORMAT: String = "dd/MM/yyyy"
-    val DATE_FORMAT2: String = "dd-MM-yyyy"
-    val DATE_OF_WEEK_FORMAT: String = "EEE, dd/MM"
-    val TIME_FORMAT: String = "HH:mm"
+    const val DATE_TIME_FORMAT: String = "yyyy-MM-ddTHH:mm:ssZ"
+    const val DATE_TIME_FORMAT2: String = "dd/MM/yyyy HH:mm"
+    const val DATE_TIME_FORMAT3: String = "HH:mm dd/MM/yyyy"
+    const val DATE_TIME_FORMAT4: String = "HH:mm - dd/MM/yyyy"
+    const val DATE_FORMAT: String = "dd/MM/yyyy"
+    const val DATE_FORMAT2: String = "dd-MM-yyyy"
+    const val DATE_OF_WEEK_FORMAT: String = "EEE, dd/MM"
+    const val TIME_FORMAT: String = "HH:mm"
 
     @SuppressLint("SimpleDateFormat")
     fun dateMessageFormat(value: Date): String {
-        val currentDate = getCurrentLocalDate()
+        val currentDate = Date()
+
+        val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+
+        val formattedDate = formatter.format(currentDate)
+
+        val tz = TimeZone.getDefault()
+
+        formatter.timeZone = tz;
+
+        val date = formatter.parse(formattedDate) as Date
 
         // calculate difference milliseconds
-        val diffInMillis = currentDate.time - value.time
+        val diffInMillis = date.time - value.time
 
         // get seconds in milliseconds
         val seconds = diffInMillis / 1000
@@ -42,7 +52,7 @@ object DateFormatUtil {
         return SimpleDateFormat(DATE_FORMAT).format(value)
     }
 
-    fun isDiffSecondsMoreThanAMinute(value: Date): Boolean {
+    fun isDiffSecondsLessThanAMinute(value: Date): Boolean {
         val currentDate = Date()
 
         // calculate difference milliseconds
@@ -52,7 +62,45 @@ object DateFormatUtil {
         val seconds = diffInMillis / 1000
 
         // if seconds is less than a minute
-        return seconds !in 0..59
+        return seconds in 0..59
+    }
+
+    fun isDiffSecondsMoreThanAnHour(value: Date): Boolean {
+        val currentDate = Date()
+
+        // calculate difference milliseconds
+        val diffInMillis = currentDate.time - value.time
+
+        // get seconds in milliseconds
+        val seconds = diffInMillis / 1000
+
+        // if seconds is less than a minute
+        return seconds in 60..3599
+    }
+
+    fun isDiffSecondsMoreThanADay(value: Date): Boolean {
+        val currentDate = Date()
+
+        // calculate difference milliseconds
+        val diffInMillis = currentDate.time - value.time
+
+        // get seconds in milliseconds
+        val seconds = diffInMillis / 1000
+
+        // if seconds is less than a minute
+        return seconds in 3600..86399
+    }
+
+    fun getDelayDiffMilliseconds(value: Date): Long {
+        if (isDiffSecondsLessThanAMinute(value)) {
+            return 1000L
+        }
+
+        if (isDiffSecondsMoreThanAnHour(value)) {
+            return 60000L
+        }
+
+        return 3600000L
     }
 
     fun getCurrentLocalDate(): Date {
@@ -84,33 +132,44 @@ object DateFormatUtil {
 
     @SuppressLint("SimpleDateFormat")
     fun presenceFormat(value: Date): String {
-        val currentDate = getCurrentLocalDate()
+        // Get the current date
+        val currentDate = Date()
+
+        val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+
+        val formattedDate = formatter.format(currentDate)
+
+        val tz = TimeZone.getDefault()
+
+        formatter.timeZone = tz;
+
+        val date = formatter.parse(formattedDate) as Date
 
         // calculate difference milliseconds
-        val diffInMillis = currentDate.time - value.time
+        val diffInMillis = date.time - value.time
 
         // get seconds in milliseconds
         val seconds = diffInMillis / 1000
 
         // if seconds is less than a minute
         if (seconds in 0..59) {
-            return "$seconds s"
+            return "${seconds}s"
         }
 
         // if seconds is less than an hour
         if (seconds in 60..3599) {
             val minutes = (seconds / 60).toInt()
-            return "$minutes m"
+            return "${minutes}m"
         }
 
         if (seconds in 3600..86399) {
             val hours = (seconds / 3600).toInt()
-            return "$hours h"
+            return "${hours}h"
         }
 
-        if (seconds in 86400..2073600) {
+        if (seconds in 86400..1209600) {
             val days = (seconds / 86400).toInt()
-            return "$days d"
+            return "${days}d"
         }
 
         return ""

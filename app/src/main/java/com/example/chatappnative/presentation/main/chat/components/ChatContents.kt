@@ -28,6 +28,7 @@ import com.example.chatappnative.R
 import com.example.chatappnative.data.model.ChatModel
 import com.example.chatappnative.presentation.composables.BaseList
 import com.example.chatappnative.presentation.composables.NetworkImage
+import com.example.chatappnative.presentation.composables.Presence
 import com.example.chatappnative.presentation.main.chat.ChatViewModel
 import com.example.chatappnative.ui.theme.Color191919
 import com.example.chatappnative.util.DateFormatUtil
@@ -79,10 +80,11 @@ private fun ChatItem(item: ChatModel) {
 
     LaunchedEffect(Unit) {
         while (true) {
-            if (DateFormatUtil.isDiffSecondsMoreThanAMinute(item.getDateTimeLastMessage())) break;
+            if (DateFormatUtil.isDiffSecondsMoreThanADay(item.getDateTimeLastMessage())) break;
 
             dateDisplay.value = DateFormatUtil.dateMessageFormat(item.getDateTimeLastMessage())
-            delay(1000L)
+            
+            delay(DateFormatUtil.getDelayDiffMilliseconds(item.getDateTimeLastMessage()))
         }
     }
 
@@ -94,7 +96,7 @@ private fun ChatItem(item: ChatModel) {
             NetworkImage(
                 url = item.urlImage,
             )
-//            Presence(isPresence = item.presence, date = item.presenceTimestamp)
+            Presence(isPresence = item.presence, date = item.presenceTimestamp)
         }
         Spacer(modifier = Modifier.width(8.dp))
         Column {
