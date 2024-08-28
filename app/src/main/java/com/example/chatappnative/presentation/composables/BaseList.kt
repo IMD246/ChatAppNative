@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.example.chatappnative.data.api.APIConstants
 
 @Composable
 fun <T> BaseList(
@@ -62,7 +63,7 @@ fun <T> BaseList(
             val lastVisibleItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()
                 ?: return@derivedStateOf true
 
-            lastVisibleItem.index == listState.layoutInfo.totalItemsCount - 1
+            lastVisibleItem.index == listState.layoutInfo.totalItemsCount - 1 && listState.layoutInfo.totalItemsCount - 1 >= APIConstants.PAGE_SIZE_LOAD_MORE
         }
     }
 

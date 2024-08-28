@@ -185,7 +185,8 @@ class ChatViewModel
             }
 
             val index = chatList.indexOf(item)
-            chatListUpdated[index] = item.copy(presence = value.presence)
+            chatListUpdated[index] =
+                item.copy(presence = value.presence, presenceTimestamp = value.presenceTimestamp)
         }
         _chatList.value = chatListUpdated
     }

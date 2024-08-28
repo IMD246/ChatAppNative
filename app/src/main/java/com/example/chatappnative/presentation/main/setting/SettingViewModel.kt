@@ -16,12 +16,13 @@ class SettingViewModel
     private val authRepository: AuthRepository,
     private val preferences: Preferences,
 ) : ViewModel() {
-
     fun onLogout() {
         viewModelScope.launch {
+            authRepository.logout().collect {
+
+            }
             socketManager.disconnect()
             preferences.logout()
-            authRepository.logout()
         }
     }
 }
