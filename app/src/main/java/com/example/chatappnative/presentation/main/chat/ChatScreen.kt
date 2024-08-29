@@ -98,6 +98,8 @@ fun AppBar(chatModel: ChatViewModel) {
 
     val tabs = chatModel.tabs
 
+    val userInfo = chatModel.getUserInfo()
+
     Box(
         modifier = Modifier
             .clip(
@@ -113,7 +115,8 @@ fun AppBar(chatModel: ChatViewModel) {
             BaseSearchBar(
                 hint = "Search by name, number...",
                 onSubmitted = chatModel.onSubmitted,
-                onClear = chatModel.onSubmitted
+                onClear = chatModel.onSubmitted,
+                name = userInfo?.name ?: ""
             )
             TabRow(
                 selectedTabIndex = selectedTabbarIndex,

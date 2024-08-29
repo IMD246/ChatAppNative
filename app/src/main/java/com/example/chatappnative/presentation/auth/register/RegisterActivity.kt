@@ -87,7 +87,7 @@ class RegisterActivity : ComponentActivity() {
         registerModel.dialogAPIHelper.DisplayDialog()
 
         val success = registerModel.success.collectAsState().value
-        LaunchedEffect(key1 = success) {
+        LaunchedEffect(success) {
             if (success) {
                 val intent = Intent(this@RegisterActivity, MainActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)

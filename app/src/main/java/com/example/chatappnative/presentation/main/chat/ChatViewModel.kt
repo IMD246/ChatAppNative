@@ -5,8 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.chatappnative.data.api.APIConstants
 import com.example.chatappnative.data.api.ResponseState
+import com.example.chatappnative.data.local_database.Preferences
 import com.example.chatappnative.data.model.ChatModel
 import com.example.chatappnative.data.model.PagedListModel
+import com.example.chatappnative.data.model.UserInfoAccessModel
 import com.example.chatappnative.data.model.UserPresenceSocketModel
 import com.example.chatappnative.data.socket.SocketManager
 import com.example.chatappnative.domain.repository.ChatRepository
@@ -22,6 +24,7 @@ class ChatViewModel
 @Inject constructor(
     private val socketManager: SocketManager,
     private val chatRepository: ChatRepository,
+    private val preferences: Preferences,
 ) : ViewModel() {
     private val pageSize = APIConstants.PAGE_SIZE
 
@@ -189,5 +192,9 @@ class ChatViewModel
                 item.copy(presence = value.presence, presenceTimestamp = value.presenceTimestamp)
         }
         _chatList.value = chatListUpdated
+    }
+
+    fun getUserInfo(): UserInfoAccessModel? {
+        return preferences.getUserInfo()
     }
 }

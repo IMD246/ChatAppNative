@@ -1,6 +1,8 @@
 package com.example.chatappnative.presentation.main
 
 
+//noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -16,9 +18,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.BottomNavigation
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -26,6 +26,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -149,6 +150,8 @@ class MainActivity : ComponentActivity() {
                     onClick = {
                         if (currentRoute == it.route) return@BottomNavigationItem
 
+                        mainModel.updateIsSettingScreen(it.route == BottomNavItem.Setting.route)
+
                         navController.navigate(it.route) {
                             popUpTo(navController.graph.startDestinationId)
                             launchSingleTop = true
@@ -177,7 +180,7 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    private fun HandlePendingActivity(navController: NavHostController) {
+    fun HandlePendingActivity(navController: NavHostController) {
         val getActivityPending = mainModel.getActivityPending()
 
         LaunchedEffect(getActivityPending) {
@@ -188,6 +191,7 @@ class MainActivity : ComponentActivity() {
                 }
 
                 MainActivity::class.java.name -> {
+                    mainModel.updateIsSettingScreen(false)
                     navController.navigate(BottomNavItem.Contact.route) {
                         popUpTo(navController.graph.startDestinationId)
                         launchSingleTop = true
@@ -206,11 +210,13 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun MainScreen(tabIndex: Int = 0) {
         val navController = rememberNavController()
+        val isSettingScreen = mainModel.isSettingScreen.collectAsState().value
 
         HandlePendingActivity(navController)
 
         LaunchedEffect(tabIndex) {
             if (tabIndex != 0) {
+                mainModel.updateIsSettingScreen(false)
                 navController.navigate(BottomNavItem.Contact.route) {
                     popUpTo(navController.graph.startDestinationId)
                     launchSingleTop = true
@@ -227,20 +233,21 @@ class MainActivity : ComponentActivity() {
                 BottomNavigationBar(navController)
             },
             floatingActionButton = {
-                FloatingActionButton(
-                    containerColor = ColorPrimary,
-                    shape = CircleShape,
-                    modifier = Modifier
-                        .size(60.dp),
-                    onClick = {
-                        startActivity(Intent(this@MainActivity, AddContactActivity::class.java))
-                    },
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_add_user),
-                        contentDescription = "",
-                    )
-                }
+                if (!isSettingScreen)
+                    FloatingActionButton(
+                        containerColor = ColorPrimary,
+                        shape = CircleShape,
+                        modifier = Modifier
+                            .size(60.dp),
+                        onClick = {
+                            startActivity(Intent(this@MainActivity, AddContactActivity::class.java))
+                        },
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_add_user),
+                            contentDescription = "",
+                        )
+                    }
             }
         ) {
             Box(

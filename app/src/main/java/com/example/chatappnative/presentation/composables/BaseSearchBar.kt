@@ -54,20 +54,37 @@ fun BaseSearchBar(
     maxLengths: Int? = null,
     onSubmitted: (String) -> Unit,
     onClear: (String) -> Unit,
+    name: String = ""
 ) {
+    val getAlphabetName = if (name.isNotEmpty()) {
+        name[0].toString()
+    } else {
+        ""
+    }
+
     val focusManager = LocalFocusManager.current
 
     val inputData = remember { mutableStateOf(value) }
 
     val visibleClearIcon: @Composable () -> Unit = if (inputData.value.isNotEmpty()) {
         {
-            Icon(
-                imageVector = Icons.Default.Clear, contentDescription = "Search",
-                tint = Color191919.copy(alpha = 0.75F)
-            )
+            IconButton(modifier = Modifier.size(24.dp), onClick = {
+                if (inputData.value.isNotEmpty()) {
+                    inputData.value = ""
+                    onClear("")
+                }
+            }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Clear, contentDescription = "Clear",
+                    tint = Color191919.copy(alpha = 0.75F)
+                )
+            }
         }
     } else {
-        {}
+        {
+            Box(modifier = Modifier.size(24.dp))
+        }
     }
 
     var isFocused: Boolean by remember { mutableStateOf(false) }
@@ -144,7 +161,7 @@ fun BaseSearchBar(
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
-                    text = "J",
+                    text = getAlphabetName.uppercase(),
                     style = TextStyle(
                         color = Color191919,
                         fontSize = 16.sp,
@@ -155,18 +172,17 @@ fun BaseSearchBar(
         },
         trailingIcon = {
             Row(modifier = Modifier.padding(horizontal = 10.dp)) {
+                visibleClearIcon()
                 IconButton(modifier = Modifier.size(24.dp), onClick = {
-                    if (inputData.value.isNotEmpty()) {
-                        inputData.value = ""
-                        onClear("")
-                    }
-                }) {
-                    visibleClearIcon()
+                    onSubmitted(inputData.value)
+                    focusManager.clearFocus(true)
                 }
-                Icon(
-                    imageVector = Icons.Default.Search, contentDescription = "Search",
-                    tint = Color191919.copy(alpha = 0.75F)
-                )
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Search, contentDescription = "Search",
+                        tint = Color191919.copy(alpha = 0.75F)
+                    )
+                }
             }
         },
     )

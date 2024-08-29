@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.chatappnative.data.api.APIConstants
 import com.example.chatappnative.data.api.ResponseState
+import com.example.chatappnative.data.local_database.Preferences
 import com.example.chatappnative.data.model.ContactModel
 import com.example.chatappnative.data.model.FriendModel
 import com.example.chatappnative.data.model.PagedListModel
@@ -22,6 +23,7 @@ import javax.inject.Inject
 class AddContactViewModel
 @Inject constructor(
     private val contactRepository: ContactRepository,
+    private val preferences: Preferences,
 ) : ViewModel() {
     val dialogAPIHelper = DialogAPIHelper()
 
@@ -205,4 +207,6 @@ class AddContactViewModel
     fun updateShowError() {
         message.value = ""
     }
+
+    fun getUserInfo() = preferences.getUserInfo()
 }

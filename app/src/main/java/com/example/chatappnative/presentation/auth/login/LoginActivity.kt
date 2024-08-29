@@ -90,7 +90,7 @@ class LoginActivity : ComponentActivity() {
 
         val isSuccess = loginModel.success.collectAsState().value
 
-        LaunchedEffect(key1 = isSuccess) {
+        LaunchedEffect(isSuccess) {
             if (isSuccess) {
                 val intent = Intent(this@LoginActivity, MainActivity::class.java)
                 startActivity(intent)

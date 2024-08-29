@@ -5,8 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.chatappnative.data.api.APIConstants
 import com.example.chatappnative.data.api.ResponseState
+import com.example.chatappnative.data.local_database.Preferences
 import com.example.chatappnative.data.model.FriendModel
 import com.example.chatappnative.data.model.PagedListModel
+import com.example.chatappnative.data.model.UserInfoAccessModel
 import com.example.chatappnative.data.model.UserPresenceSocketModel
 import com.example.chatappnative.data.socket.SocketManager
 import com.example.chatappnative.domain.repository.ContactRepository
@@ -21,6 +23,7 @@ class ContactViewModel
 @Inject constructor(
     private val socketManager: SocketManager,
     private val contactRepository: ContactRepository,
+    private val preferences: Preferences
 ) : ViewModel() {
     private val pageSize = APIConstants.PAGE_SIZE
 
@@ -179,5 +182,9 @@ class ContactViewModel
         )
 
         _contactList.value = data
+    }
+
+    fun getUserInfo(): UserInfoAccessModel? {
+        return preferences.getUserInfo()
     }
 }

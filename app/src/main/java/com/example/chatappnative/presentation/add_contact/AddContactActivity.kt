@@ -107,6 +107,8 @@ fun AddContactScreen(addContactViewModel: AddContactViewModel, context: Context)
 
 @Composable
 fun AppBar(addContactViewModel: AddContactViewModel) {
+    val userInfo = addContactViewModel.getUserInfo()
+
     Box(
         modifier = Modifier
             .clip(
@@ -124,7 +126,8 @@ fun AppBar(addContactViewModel: AddContactViewModel) {
             BaseSearchBar(
                 hint = "Search by name, number...",
                 onSubmitted = addContactViewModel.onSubmitted,
-                onClear = addContactViewModel.onSubmitted
+                onClear = addContactViewModel.onSubmitted,
+                name = userInfo?.name ?: "",
             )
             Spacer(modifier = Modifier.height(35.dp))
         }

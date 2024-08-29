@@ -34,7 +34,7 @@ fun ContactScreen(contactModel: ContactViewModel) {
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                com.example.chatappnative.presentation.main.setting.AppBar(contactModel)
+                AppBar(contactModel)
                 ContactContent(contactModel)
             }
         }
@@ -43,6 +43,8 @@ fun ContactScreen(contactModel: ContactViewModel) {
 
 @Composable
 fun AppBar(contactModel: ContactViewModel) {
+    val userInfo = contactModel.getUserInfo()
+
     Box(
         modifier = Modifier
             .clip(
@@ -58,7 +60,8 @@ fun AppBar(contactModel: ContactViewModel) {
             BaseSearchBar(
                 hint = "Search by name, number...",
                 onSubmitted = contactModel.onSubmitted,
-                onClear = contactModel.onSubmitted
+                onClear = contactModel.onSubmitted,
+                name = userInfo?.name ?: ""
             )
             Spacer(modifier = Modifier.height(35.dp))
         }
