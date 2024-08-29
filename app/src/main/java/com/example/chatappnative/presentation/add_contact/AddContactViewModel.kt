@@ -9,11 +9,9 @@ import com.example.chatappnative.data.model.ContactModel
 import com.example.chatappnative.data.model.FriendModel
 import com.example.chatappnative.data.model.PagedListModel
 import com.example.chatappnative.data.model.UserPresenceSocketModel
-import com.example.chatappnative.data.socket.SocketManager
 import com.example.chatappnative.domain.repository.ContactRepository
 import com.example.chatappnative.helper.DialogAPIHelper
 import com.example.chatappnative.service.EventBusService
-import com.google.common.eventbus.EventBus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -23,11 +21,8 @@ import javax.inject.Inject
 @HiltViewModel
 class AddContactViewModel
 @Inject constructor(
-    private val socketManager: SocketManager,
     private val contactRepository: ContactRepository,
 ) : ViewModel() {
-    val eventBus = EventBus("AddContact")
-
     val dialogAPIHelper = DialogAPIHelper()
 
     private val pageSize = APIConstants.PAGE_SIZE

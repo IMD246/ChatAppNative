@@ -159,19 +159,18 @@ class RegisterViewModel @Inject constructor(
                         val state = it
                         preferences.saveAccessToken(it.data?.accessToken ?: "")
                         preferences.saveUserInfo(it.data!!)
+
                         socketManager.connect()
+
                         socketManager.onConnect {
                             dialogAPIHelper.hideDialog()
                             dialogAPIHelper.showDialog(state)
 
                             viewModelScope.launch {
                                 delay(2000L)
-                                dialogAPIHelper.hideDialog()
                                 _success.value = true
                             }
                         }
-
-                        Log.d("Register", "onRegister: Success ${it.message}")
                     }
                 }
             }

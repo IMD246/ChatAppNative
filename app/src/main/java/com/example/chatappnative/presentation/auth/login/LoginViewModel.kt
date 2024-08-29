@@ -102,8 +102,6 @@ class LoginViewModel @Inject constructor(
                     is ResponseState.Error -> {
                         dialogAPIHelper.hideDialog()
                         dialogAPIHelper.showDialog(it)
-                        delay(2000)
-                        dialogAPIHelper.hideDialog()
                         _success.value = false
                         Log.d("Login", "onLogin: Error ${it.message}")
                     }
@@ -117,18 +115,15 @@ class LoginViewModel @Inject constructor(
                         val state = it
                         preferences.saveAccessToken(it.data?.accessToken ?: "")
                         preferences.saveUserInfo(it.data!!)
-                        Log.d(
-                            "LoginViewModel",
-                            "token_device:  $token"
-                        )
+
                         socketManager.connect()
 
                         socketManager.onConnect {
                             dialogAPIHelper.hideDialog()
                             dialogAPIHelper.showDialog(state)
+
                             viewModelScope.launch {
                                 delay(2000L)
-                                dialogAPIHelper.hideDialog()
                                 _success.value = true
                             }
                         }

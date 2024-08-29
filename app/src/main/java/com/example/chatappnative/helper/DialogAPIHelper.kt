@@ -29,7 +29,7 @@ import com.example.chatappnative.data.api.ResponseState
 import com.example.chatappnative.presentation.composables.GifImage
 import com.example.chatappnative.ui.theme.ColorF2F2F2
 import java.util.Timer
-import java.util.TimerTask
+import kotlin.concurrent.schedule
 
 class DialogAPIHelper {
     private val isShowDialog = mutableStateOf(false)
@@ -40,12 +40,10 @@ class DialogAPIHelper {
         responseState.value = stateAPI
 
         if (stateAPI is ResponseState.Error || stateAPI is ResponseState.Success) {
-            Timer().schedule(object : TimerTask() {
-                override fun run() {
-                    cancel()
-                    hideDialog()
-                }
-            }, 1000)
+            Timer().schedule(2000L) {
+                cancel()
+                hideDialog()
+            }
         }
     }
 
@@ -143,6 +141,7 @@ class DialogAPIHelper {
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(20.dp))
+                    .padding(horizontal = 30.dp)
                     .background(color = ColorF2F2F2, shape = RoundedCornerShape(20.dp)),
                 contentAlignment = Alignment.Center,
             ) {
@@ -186,6 +185,7 @@ class DialogAPIHelper {
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(20.dp))
+                    .padding(horizontal = 30.dp)
                     .background(color = ColorF2F2F2, shape = RoundedCornerShape(20.dp)),
                 contentAlignment = Alignment.Center,
             ) {

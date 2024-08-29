@@ -34,6 +34,8 @@ class SocketManager(
                 Log.d("SocketManager", "socket connection: ${socket?.connected()}")
 
                 onUserPresence()
+
+                onUserPresenceDisconnect()
             }
 
         } catch (e: URISyntaxException) {
@@ -62,6 +64,18 @@ class SocketManager(
             val data = it[0] as JSONObject
 
             Log.d("SocketManager", "onUserPresence: {$data}")
+
+            val userPresence = Gson().fromJson(data.toString(), UserPresenceSocketModel::class.java)
+
+            EventBusService.sendUpdateUserPresenceEvent(userPresence)
+        }
+    }
+
+    private fun onUserPresenceDisconnect() {
+        socket?.on("updateUserPresenceDisconnect") {
+            val data = it[0] as JSONObject
+
+            Log.d("SocketManager", "onUserPresenceDisconnect: {$data}")
 
             val userPresence = Gson().fromJson(data.toString(), UserPresenceSocketModel::class.java)
 
