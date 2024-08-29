@@ -69,6 +69,7 @@ fun ChatContent(chatModel: ChatViewModel) {
             chatModel.loadMore()
         },
         modifier = Modifier.padding(20.dp, 15.dp),
+        keyItem = { it.uuid }
     )
 }
 

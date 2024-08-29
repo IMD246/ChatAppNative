@@ -29,7 +29,10 @@ fun <T> BaseList(
     contentItem: @Composable (T) -> Unit,
     verticalArrangement: Arrangement.HorizontalOrVertical = Arrangement.Center,
     horizontalAlignment: Alignment.Horizontal = Alignment.CenterHorizontally,
+    keyItem: ((item: T) -> Any)? = null
 ) {
+    val loadMoreComposable = @Composable { loadMoreContent() ?: Box {} }
+
     if (isLoading) {
         return loadingContent() ?: Box {}
     }
@@ -84,14 +87,22 @@ fun <T> BaseList(
         verticalArrangement = verticalArrangement,
         state = listState,
     ) {
-        items.forEach {
-            item {
-                contentItem(it)
+        items(
+            count = items.size,
+            contentType = {
+                contentItem
+            },
+            key = { index ->
+                keyItem?.invoke(items[index]) ?: items[index].toString()
+            },
+            itemContent = { index ->
+                contentItem(items[index])
             }
-        }
+        )
+
         if (isLoadMore) {
-            item {
-                loadMoreContent() ?: Box {}
+            item(contentType = loadMoreComposable) {
+                loadMoreComposable()
             }
         }
     }

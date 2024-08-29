@@ -53,6 +53,7 @@ fun ContactContent(contactModel: ContactViewModel) {
         contentItem = {
             ContactItem(it)
         },
+        keyItem = { it.uuid },
         isLoadMore = isLoadMore,
         onLoadMore = {
             contactModel.loadMore()

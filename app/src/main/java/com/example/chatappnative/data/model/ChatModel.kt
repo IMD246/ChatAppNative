@@ -3,8 +3,10 @@ package com.example.chatappnative.data.model
 import com.example.chatappnative.util.DateFormatUtil
 import com.google.gson.annotations.SerializedName
 import java.util.Date
+import java.util.UUID
 
 data class ChatModel(
+    val uuid: String = UUID.randomUUID().toString(),
     val lastMessage: String,
     val name: String,
     val presence: Boolean,

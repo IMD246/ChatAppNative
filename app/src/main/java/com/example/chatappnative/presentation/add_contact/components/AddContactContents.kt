@@ -56,6 +56,7 @@ fun AddContactContent(addContactModel: AddContactViewModel) {
         contentItem = {
             AddContactItem(addContactModel, it)
         },
+        keyItem = { it.uuid },
         isLoadMore = isLoadMore,
         onLoadMore = {
             addContactModel.loadMore()

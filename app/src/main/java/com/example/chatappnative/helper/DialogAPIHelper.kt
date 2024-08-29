@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -141,6 +142,7 @@ class DialogAPIHelper {
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(20.dp))
+                    .defaultMinSize(minHeight = 150.dp)
                     .padding(horizontal = 30.dp)
                     .background(color = ColorF2F2F2, shape = RoundedCornerShape(20.dp)),
                 contentAlignment = Alignment.Center,
@@ -185,6 +187,7 @@ class DialogAPIHelper {
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(20.dp))
+                    .defaultMinSize(minHeight = 150.dp)
                     .padding(horizontal = 30.dp)
                     .background(color = ColorF2F2F2, shape = RoundedCornerShape(20.dp)),
                 contentAlignment = Alignment.Center,
