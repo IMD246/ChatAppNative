@@ -16,6 +16,7 @@ class SocketManager(
     private val preferences: Preferences
 ) {
     var socket: Socket? = null
+    private var needReconnect = false
 
     fun connect() {
         val options = IO.Options.builder().build()
@@ -85,5 +86,35 @@ class SocketManager(
 
     fun disconnect() {
         socket?.disconnect()
+    }
+
+    fun emitReconnect() {
+        if (needReconnect) return
+
+        val data = JSONObject()
+        data.put("access_token", preferences.getAccessToken())
+
+        Log.d("SocketManager", "reconnect: {$data}")
+
+        socket?.emit("reconnect", data)
+
+        needReconnect = true
+    }
+
+    fun updateNeedReconnect(value: Boolean) {
+        needReconnect = value
+    }
+
+    fun onDisconnect(action: () -> Unit) {
+        socket?.on(Socket.EVENT_DISCONNECT) {
+            action()
+        }
+    }
+
+    fun disconnectWifi() {
+        val data = JSONObject()
+        data.put("lost-internet", preferences.getAccessToken())
+
+        socket?.emit("disconnect", {})
     }
 }

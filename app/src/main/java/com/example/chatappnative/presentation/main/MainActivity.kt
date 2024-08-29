@@ -1,8 +1,5 @@
 package com.example.chatappnative.presentation.main
 
-
-//noinspection UsingMaterialAndMaterial3Libraries
-//noinspection UsingMaterialAndMaterial3Libraries
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -110,7 +107,6 @@ class MainActivity : ComponentActivity() {
     override fun onStart() {
         super.onStart()
         EventBusService.register(this)
-        mainModel.init()
     }
 
     override fun onStop() {
