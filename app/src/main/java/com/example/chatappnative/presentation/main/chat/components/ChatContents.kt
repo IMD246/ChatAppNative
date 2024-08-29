@@ -83,7 +83,7 @@ private fun ChatItem(item: ChatModel) {
             if (DateFormatUtil.isDiffSecondsMoreThanADay(item.getDateTimeLastMessage())) break;
 
             dateDisplay.value = DateFormatUtil.dateMessageFormat(item.getDateTimeLastMessage())
-            
+
             delay(DateFormatUtil.getDelayDiffMilliseconds(item.getDateTimeLastMessage()))
         }
     }
@@ -96,7 +96,7 @@ private fun ChatItem(item: ChatModel) {
             NetworkImage(
                 url = item.urlImage,
             )
-            Presence(isPresence = item.presence, date = item.presenceTimestamp)
+            Presence(isPresence = item.presence, date = item.getDateTimePresence())
         }
         Spacer(modifier = Modifier.width(8.dp))
         Column {

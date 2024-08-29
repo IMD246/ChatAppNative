@@ -1,10 +1,8 @@
 package com.example.chatappnative.data.model
 
-import android.annotation.SuppressLint
+import com.example.chatappnative.util.DateFormatUtil
 import com.google.gson.annotations.SerializedName
-import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.TimeZone
 
 data class ChatModel(
     val lastMessage: String,
@@ -17,14 +15,16 @@ data class ChatModel(
     @SerializedName("presence_timestamp") val presenceTimestamp: String = "",
 ) {
 
-    @SuppressLint("SimpleDateFormat")
     fun getDateTimeLastMessage(): Date {
-        val formatter = SimpleDateFormat("yyyy-MM-dd")
-        val tz = TimeZone.getDefault()
-        formatter.timeZone = tz;
+        val parseToUtc = DateFormatUtil.parseUtcToDate(timeLastMessage)
 
-        val date = formatter.parse(timeLastMessage)
+        return parseToUtc
+    }
 
-        return date as Date
+    fun getDateTimePresence(): Date {
+        val parseToUtc = DateFormatUtil.parseUtcToDate(presenceTimestamp)
+
+        return parseToUtc
+
     }
 }

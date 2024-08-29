@@ -1,8 +1,12 @@
 package com.example.chatappnative.util
 
 import android.annotation.SuppressLint
+import android.os.Build
 import java.text.SimpleDateFormat
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Date
+import java.util.Locale
 import java.util.TimeZone
 
 object DateFormatUtil {
@@ -12,6 +16,7 @@ object DateFormatUtil {
     const val DATE_TIME_FORMAT4: String = "HH:mm - dd/MM/yyyy"
     const val DATE_FORMAT: String = "dd/MM/yyyy"
     const val DATE_FORMAT2: String = "dd-MM-yyyy"
+    const val DATE_FORMAT3: String = "yyyy-MM-dd"
     const val DATE_OF_WEEK_FORMAT: String = "EEE, dd/MM"
     const val TIME_FORMAT: String = "HH:mm"
 
@@ -20,13 +25,10 @@ object DateFormatUtil {
         val currentDate = Date()
 
         val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-
-        val formattedDate = formatter.format(currentDate)
-
         val tz = TimeZone.getDefault()
-
         formatter.timeZone = tz;
 
+        val formattedDate = formatter.format(currentDate)
         val date = formatter.parse(formattedDate) as Date
 
         // calculate difference milliseconds
@@ -103,19 +105,23 @@ object DateFormatUtil {
         return 3600000L
     }
 
+    @SuppressLint("SimpleDateFormat")
     fun getCurrentLocalDate(): Date {
-        val date = Date()
+        val currentDate = Date()
 
-        val getFormattedDate = getFormattedDate(date)
+        val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        val tz = TimeZone.getDefault()
+        formatter.timeZone = tz;
 
-        val toLocalCurrentDate = parseToLocalDate(getFormattedDate)
+        val formattedDate = formatter.format(currentDate)
+        val date = formatter.parse(formattedDate) as Date
 
-        return toLocalCurrentDate
+        return date
     }
 
     @SuppressLint("SimpleDateFormat")
     fun parseToLocalDate(value: String): Date {
-        val formatter = SimpleDateFormat("yyyy-MM-dd")
+        val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         val tz = TimeZone.getDefault()
         formatter.timeZone = tz;
 
@@ -125,8 +131,8 @@ object DateFormatUtil {
     }
 
     @SuppressLint("SimpleDateFormat")
-    fun getFormattedDate(value: Date): String {
-        val formatter = SimpleDateFormat("yyyy-MM-dd")
+    fun getFormattedDate(value: Date, format: String = DATE_FORMAT3): String {
+        val formatter = SimpleDateFormat(format)
         return formatter.format(value)
     }
 
@@ -173,5 +179,19 @@ object DateFormatUtil {
         }
 
         return ""
+    }
+
+    fun parseUtcToDate(utcTimestamp: String): Date {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // For Android O and above
+            val utcDateTime =
+                ZonedDateTime.parse(utcTimestamp, DateTimeFormatter.ISO_ZONED_DATE_TIME)
+            Date.from(utcDateTime.toInstant())
+        } else {
+            // For versions below Android O
+            val utcFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+            utcFormat.timeZone = TimeZone.getTimeZone("UTC")
+            utcFormat.parse(utcTimestamp)!!
+        }
     }
 }

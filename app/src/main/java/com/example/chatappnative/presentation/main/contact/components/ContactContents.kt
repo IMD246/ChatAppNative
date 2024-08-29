@@ -73,7 +73,7 @@ private fun ContactItem(item: FriendModel) {
             NetworkImage(
                 url = item.urlImage ?: "",
             )
-            Presence(isPresence = item.presence, date = item.presenceTimestamp)
+            Presence(isPresence = item.presence, date = item.getDateTimePresence())
         }
         Spacer(modifier = Modifier.width(8.dp))
         Text(

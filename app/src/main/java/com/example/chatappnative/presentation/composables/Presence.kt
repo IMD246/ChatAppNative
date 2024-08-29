@@ -23,26 +23,25 @@ import androidx.compose.ui.unit.sp
 import com.example.chatappnative.ui.theme.Color191919
 import com.example.chatappnative.util.DateFormatUtil
 import kotlinx.coroutines.delay
+import java.util.Date
 
 @SuppressLint("SimpleDateFormat")
 @Composable
 fun Presence(
     isPresence: Boolean,
-    date: String,
+    date: Date,
 ) {
-    val toLocalDate = DateFormatUtil.parseToLocalDate(date)
-
     var dateDisplay by remember {
-        mutableStateOf(DateFormatUtil.presenceFormat(toLocalDate))
+        mutableStateOf(DateFormatUtil.presenceFormat(date))
     }
 
     LaunchedEffect(Unit) {
         while (true) {
-            if (DateFormatUtil.isDiffSecondsMoreThanADay(toLocalDate)) break;
+            if (DateFormatUtil.isDiffSecondsMoreThanADay(date)) break;
 
-            dateDisplay = DateFormatUtil.presenceFormat(toLocalDate)
+            dateDisplay = DateFormatUtil.presenceFormat(date)
 
-            delay(DateFormatUtil.getDelayDiffMilliseconds(toLocalDate))
+            delay(DateFormatUtil.getDelayDiffMilliseconds(date))
         }
     }
 
