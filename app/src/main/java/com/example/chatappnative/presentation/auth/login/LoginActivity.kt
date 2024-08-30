@@ -47,7 +47,6 @@ import com.example.chatappnative.presentation.main.MainActivity
 import com.example.chatappnative.ui.theme.ChatAppNativeTheme
 import com.example.chatappnative.ui.theme.Color191919
 import com.example.chatappnative.util.ValidatorUtil
-import com.google.firebase.FirebaseApp
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -57,7 +56,6 @@ class LoginActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        FirebaseApp.initializeApp(this)
         enableEdgeToEdge()
         setContent {
             ChatAppNativeTheme {

@@ -11,6 +11,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -30,14 +31,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.chatappnative.ui.theme.Color191919
 
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BaseInput(
     modifier: Modifier? = null,
     value: String = "",
     hint: String,
-    label: String,
+    label: String = "",
     onValueChange: (String) -> Unit,
     focusRequester: FocusRequester? = null,
     onValidation: @Composable (String) -> String,
@@ -47,7 +46,25 @@ fun BaseInput(
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     suffix: @Composable (() -> Unit)? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
+    colors: TextFieldColors? = null,
+    singleLine: Boolean = true,
+    prefix: @Composable (() -> Unit)? = null,
+    maxLines: Int = 1
 ) {
+    val labelComposable: @Composable (() -> Unit)? = if (label.isNotEmpty()) {
+        {
+            Text(
+                text = label,
+                style = TextStyle(
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color191919
+                )
+            )
+        }
+    } else {
+        null
+    }
 
     var isFocused: Boolean by remember { mutableStateOf(false) }
 
@@ -59,6 +76,9 @@ fun BaseInput(
 
     if (modifier != null) {
         dataModifier = modifier
+            .onFocusChanged {
+                isFocused = it.hasFocus
+            }
     } else {
         dataModifier = Modifier
             .fillMaxWidth()
@@ -96,8 +116,9 @@ fun BaseInput(
         keyboardActions = keyboardActions,
         keyboardOptions = keyboardOptions,
         isError = errorMode,
-        singleLine = true,
-        colors = TextFieldDefaults.colors(
+        singleLine = singleLine,
+        prefix = prefix,
+        colors = colors ?: TextFieldDefaults.colors(
             focusedIndicatorColor = MaterialTheme.colorScheme.primary,
             unfocusedIndicatorColor = MaterialTheme.colorScheme.primary,
             errorLabelColor = MaterialTheme.colorScheme.error,
@@ -105,6 +126,7 @@ fun BaseInput(
             unfocusedContainerColor = Color.White,
             focusedContainerColor = Color.White,
         ),
+        maxLines = maxLines,
         supportingText = {
             if (errorMode) {
                 Text(
@@ -140,16 +162,7 @@ fun BaseInput(
                 ),
             )
         },
-        label = {
-            Text(
-                label,
-                style = TextStyle(
-                    color = colorLabel,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Normal,
-                ),
-            )
-        },
+        label = labelComposable,
         suffix = suffix,
         visualTransformation = visualTransformation,
     )

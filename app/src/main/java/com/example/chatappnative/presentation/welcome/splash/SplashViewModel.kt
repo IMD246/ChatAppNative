@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SplashViewModel @Inject constructor(
-    private val preferences: Preferences
+    private val preferences: Preferences,
 ) : ViewModel() {
     private val navigateChannel = Channel<NavigateSplashScreen>()
     val navigateChannelFlow = navigateChannel.receiveAsFlow()

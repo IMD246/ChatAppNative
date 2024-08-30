@@ -181,6 +181,51 @@ object DateFormatUtil {
         return ""
     }
 
+    @SuppressLint("SimpleDateFormat")
+    fun presenceMessageFormat(value: Date): String {
+        // Get the current date
+        val currentDate = Date()
+
+        val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+
+        val formattedDate = formatter.format(currentDate)
+
+        val tz = TimeZone.getDefault()
+
+        formatter.timeZone = tz;
+
+        val date = formatter.parse(formattedDate) as Date
+
+        // calculate difference milliseconds
+        val diffInMillis = date.time - value.time
+
+        // get seconds in milliseconds
+        val seconds = diffInMillis / 1000
+
+        // if seconds is less than a minute
+        if (seconds in 0..59) {
+            return "Hoạt động $seconds giây trước"
+        }
+
+        // if seconds is less than an hour
+        if (seconds in 60..3599) {
+            val minutes = (seconds / 60).toInt()
+            return "Hoạt động $minutes phút trước"
+        }
+
+        if (seconds in 3600..86399) {
+            val hours = (seconds / 3600).toInt()
+            return "Hoạt động $hours giờ trước"
+        }
+
+        if (seconds in 86400..1209600) {
+            val days = (seconds / 86400).toInt()
+            return "Hoạt động $days ngày trước"
+        }
+
+        return ""
+    }
+
     fun parseUtcToDate(utcTimestamp: String): Date {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // For Android O and above

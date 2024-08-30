@@ -28,10 +28,16 @@ class MainViewModel @Inject constructor(
     val isSettingScreen = _isSettingScreen
 
     init {
+        checkSocketInitFirstTime()
         handleActivityPending()
-        socketManager.emitLoggedInEvent()
         viewModelScope.launch {
             handleConnectivity()
+        }
+    }
+
+    private fun checkSocketInitFirstTime() {
+        if (socketManager.socket?.connected() == true) {
+            socketManager.emitLoggedInEvent()
         }
     }
 
@@ -39,6 +45,15 @@ class MainViewModel @Inject constructor(
         connectivityInternetObserver.isConnected.collectLatest { connected ->
             Log.d("MainViewModel", "handleConnectivity: $connected")
             if (!connected) return@collectLatest
+
+            if (socketManager.socket == null) {
+                socketManager.connect()
+                socketManager.onConnect {
+                    socketManager.emitLoggedInEvent()
+                }
+                return@collectLatest
+            }
+
             if (socketManager.socket?.connected() == true) return@collectLatest
 
             socketManager.socket?.connect()

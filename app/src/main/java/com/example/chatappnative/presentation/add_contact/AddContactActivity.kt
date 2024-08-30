@@ -42,7 +42,10 @@ class AddContactActivity : ComponentActivity() {
 
         setContent {
             ChatAppNativeTheme {
-                AddContactScreen(addContactViewModel = addContactModel, context = this)
+                AddContactScreen(
+                    addContactViewModel = addContactModel,
+                    context = this,
+                )
             }
         }
     }

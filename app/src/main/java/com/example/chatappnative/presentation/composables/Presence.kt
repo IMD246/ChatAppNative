@@ -18,6 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.chatappnative.ui.theme.Color191919
@@ -30,6 +31,10 @@ import java.util.Date
 fun Presence(
     isPresence: Boolean,
     date: Date,
+    xOffset: Dp = 24.dp,
+    yOffset: Dp = (-10).dp,
+    shouldDisplayTimeStamp: Boolean = true,
+    size: Dp = 12.dp,
 ) {
     var dateDisplay by remember {
         mutableStateOf(DateFormatUtil.presenceFormat(date))
@@ -50,8 +55,8 @@ fun Presence(
             // presence is true
             Box(
                 Modifier
-                    .size(12.dp)
-                    .absoluteOffset(y = (-10).dp, x = 24.dp)
+                    .size(size)
+                    .absoluteOffset(y = yOffset, x = xOffset)
                     .background(
                         color = Color(0xFF48D357),
                         shape = CircleShape,
@@ -60,10 +65,10 @@ fun Presence(
         } else {
             // presence is false
             // show date when dateDisplay is not empty
-            if (dateDisplay.isNotEmpty()) {
+            if (dateDisplay.isNotEmpty() && shouldDisplayTimeStamp) {
                 Box(
                     Modifier
-                        .absoluteOffset(y = (-10).dp, x = 24.dp)
+                        .absoluteOffset(y = yOffset, x = xOffset)
                         .background(
                             color = Color(0xFF48D357).copy(alpha = 0.5F),
                             shape = RoundedCornerShape(
