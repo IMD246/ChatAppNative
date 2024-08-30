@@ -14,8 +14,10 @@ import com.example.chatappnative.domain.repository.ContactRepository
 import com.example.chatappnative.helper.DialogAPIHelper
 import com.example.chatappnative.service.EventBusService
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -45,8 +47,8 @@ class AddContactViewModel
     private val _isContactListLoadMore = MutableStateFlow(false)
     var isContactListLoadMore = _isContactListLoadMore
 
-    private val _message = MutableStateFlow("")
-    var message = _message
+    private val channelShowToastMessage = Channel<String>()
+    val showToastMessageChannelFlow = channelShowToastMessage.receiveAsFlow()
 
     init {
         viewModelScope.launch {
@@ -170,7 +172,7 @@ class AddContactViewModel
             ).collect {
                 when (it) {
                     is ResponseState.Error -> {
-                        message.value = "Đã có lỗi xảy ra vui lòng thử lại!"
+                        channelShowToastMessage.send("Đã có lỗi xảy ra vui lòng thử lại!")
                         dialogAPIHelper.hideDialog()
                     }
 
@@ -180,7 +182,8 @@ class AddContactViewModel
 
                     is ResponseState.Success -> {
                         dialogAPIHelper.hideDialog()
-                        message.value = "Đã cập nhật thành công!"
+                        channelShowToastMessage.send("Đã cập nhật thành công!")
+
                         data[index] =
                             data[index].copy(status = it.data?.user_status ?: data[index].status)
 
@@ -202,10 +205,6 @@ class AddContactViewModel
                 }
             }
         }
-    }
-
-    fun updateShowError() {
-        message.value = ""
     }
 
     fun getUserInfo() = preferences.getUserInfo()

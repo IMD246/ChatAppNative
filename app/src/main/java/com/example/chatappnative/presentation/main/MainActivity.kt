@@ -46,6 +46,7 @@ import com.example.chatappnative.event.AddFriendEvent
 import com.example.chatappnative.event.UpdateUserPresenceEvent
 import com.example.chatappnative.presentation.add_contact.AddContactActivity
 import com.example.chatappnative.presentation.auth.login.LoginActivity
+import com.example.chatappnative.presentation.composables.ObserverAsEvent
 import com.example.chatappnative.presentation.main.chat.ChatScreen
 import com.example.chatappnative.presentation.main.chat.ChatViewModel
 import com.example.chatappnative.presentation.main.components.BottomNavItem
@@ -146,11 +147,18 @@ class MainActivity : ComponentActivity() {
                     onClick = {
                         if (currentRoute == it.route) return@BottomNavigationItem
 
-                        mainModel.updateIsSettingScreen(it.route == BottomNavItem.Setting.route)
+                        when (it.route) {
+                            BottomNavItem.Setting.route -> {
+                                mainModel.onNavigateChanged(NavigateMainScreen.SETTING)
+                            }
 
-                        navController.navigate(it.route) {
-                            popUpTo(navController.graph.startDestinationId)
-                            launchSingleTop = true
+                            BottomNavItem.Contact.route -> {
+                                mainModel.onNavigateChanged(NavigateMainScreen.CONTACT)
+                            }
+
+                            BottomNavItem.Chat.route -> {
+                                mainModel.onNavigateChanged(NavigateMainScreen.CHAT)
+                            }
                         }
                     },
                     icon = {
@@ -176,46 +184,59 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun HandlePendingActivity(navController: NavHostController) {
-        val getActivityPending = mainModel.getActivityPending()
-
-        LaunchedEffect(getActivityPending) {
-            when (getActivityPending) {
-                AddContactActivity::class.java.name -> {
-                    val intent = Intent(this@MainActivity, AddContactActivity::class.java)
-                    startActivity(intent)
-                }
-
-                MainActivity::class.java.name -> {
-                    mainModel.updateIsSettingScreen(false)
-                    navController.navigate(BottomNavItem.Contact.route) {
-                        popUpTo(navController.graph.startDestinationId)
-                        launchSingleTop = true
-                    }
-                }
-
-                else -> {
-                    // do nothing
-                }
-            }
-
-            mainModel.clearActivityPending()
-        }
-    }
-
-    @Composable
     fun MainScreen(tabIndex: Int = 0) {
         val navController = rememberNavController()
         val isSettingScreen = mainModel.isSettingScreen.collectAsState().value
 
-        HandlePendingActivity(navController)
-
         LaunchedEffect(tabIndex) {
-            if (tabIndex != 0) {
-                mainModel.updateIsSettingScreen(false)
-                navController.navigate(BottomNavItem.Contact.route) {
-                    popUpTo(navController.graph.startDestinationId)
-                    launchSingleTop = true
+            if (tabIndex == 0) return@LaunchedEffect
+
+            when (tabIndex) {
+                1 -> {
+                    mainModel.onNavigateChanged(NavigateMainScreen.CONTACT)
+                }
+
+                2 -> {
+                    mainModel.onNavigateChanged(NavigateMainScreen.SETTING)
+                }
+            }
+        }
+
+        val channelFlow = mainModel.navigateChannelFlow
+
+        ObserverAsEvent(channelFlow) {
+            when (it) {
+                NavigateMainScreen.CHAT -> {
+                    navController.navigate(BottomNavItem.Chat.route) {
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
+                    }
+                    mainModel.updateIsSettingScreen(false)
+                }
+
+                NavigateMainScreen.CONTACT -> {
+                    navController.navigate(BottomNavItem.Contact.route) {
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
+                    }
+                    mainModel.updateIsSettingScreen(false)
+                }
+
+                NavigateMainScreen.SETTING -> {
+                    navController.navigate(BottomNavItem.Setting.route) {
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
+                    }
+                    mainModel.updateIsSettingScreen(true)
+                }
+
+                NavigateMainScreen.ADDCONTACT -> {
+                    startActivity(Intent(this@MainActivity, AddContactActivity::class.java))
+                }
+
+                NavigateMainScreen.LOGIN -> {
+                    startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                    finish()
                 }
             }
         }

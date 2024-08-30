@@ -10,12 +10,11 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.example.chatappnative.R
 import com.example.chatappnative.presentation.auth.login.LoginActivity
+import com.example.chatappnative.presentation.composables.ObserverAsEvent
 import com.example.chatappnative.presentation.main.MainActivity
 import com.example.chatappnative.presentation.welcome.onboarding.OnboardingActivity
 import com.example.chatappnative.ui.theme.ChatAppNativeTheme
@@ -40,21 +39,28 @@ class SplashActivity : ComponentActivity() {
 
     @Composable
     fun SplashScreen() {
-        val isOnboarding = splashModel.getIsOnboarding().collectAsState().value
-        val accessToken = splashModel.getAccessToken().collectAsState().value
+        val channelFlow = splashModel.navigateChannelFlow
 
-        LaunchedEffect(key1 = isOnboarding, key2 = accessToken) {
-            val intent: Intent = if (isOnboarding) {
-                if (accessToken.isEmpty()) {
-                    Intent(this@SplashActivity, LoginActivity::class.java)
-                } else {
-                    Intent(this@SplashActivity, MainActivity::class.java)
-                }
-            } else {
-                Intent(this@SplashActivity, OnboardingActivity::class.java)
+        ObserverAsEvent(channelFlow) {
+            val intent: Intent = when (it) {
+                NavigateSplashScreen.Login -> Intent(
+                    this@SplashActivity,
+                    LoginActivity::class.java
+                )
+
+                NavigateSplashScreen.Main -> Intent(
+                    this@SplashActivity,
+                    MainActivity::class.java
+                )
+
+                NavigateSplashScreen.Onboarding -> Intent(
+                    this@SplashActivity,
+                    OnboardingActivity::class.java
+                )
             }
 
             startActivity(intent)
+            finish()
         }
 
         Image(

@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import com.example.chatappnative.R
 import com.example.chatappnative.presentation.auth.login.LoginActivity
 import com.example.chatappnative.presentation.composables.BaseButton
+import com.example.chatappnative.presentation.composables.ObserverAsEvent
 import com.example.chatappnative.ui.theme.ChatAppNativeTheme
 import com.example.chatappnative.ui.theme.Color191919
 import com.example.chatappnative.ui.theme.ColorE9FEFE
@@ -56,6 +57,20 @@ class OnboardingActivity : ComponentActivity() {
 
     @Composable
     fun OnboardingScreen() {
+        val channelFlow = onboardingModel.navigateChannelFlow
+
+        ObserverAsEvent(channelFlow) {
+            val intent: Intent = when (it) {
+                NavigateOnboardingScreen.Login -> Intent(
+                    this@OnboardingActivity,
+                    LoginActivity::class.java
+                )
+            }
+            startActivity(intent)
+            finish()
+        }
+
+
         val pagerState = rememberPagerState(
             pageCount = {
                 3
@@ -128,12 +143,6 @@ class OnboardingActivity : ComponentActivity() {
                 title = "Skip",
                 onClick = {
                     onboardingModel.onSkipOrGetStarted()
-                    startActivity(
-                        Intent(
-                            this@OnboardingActivity,
-                            LoginActivity::class.java
-                        )
-                    )
                 },
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -185,12 +194,6 @@ class OnboardingActivity : ComponentActivity() {
                 title = "Skip",
                 onClick = {
                     onboardingModel.onSkipOrGetStarted()
-                    startActivity(
-                        Intent(
-                            this@OnboardingActivity,
-                            LoginActivity::class.java
-                        )
-                    )
                 },
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -272,12 +275,6 @@ class OnboardingActivity : ComponentActivity() {
                 title = "Get Started",
                 onClick = {
                     onboardingModel.onSkipOrGetStarted()
-                    startActivity(
-                        Intent(
-                            this@OnboardingActivity,
-                            LoginActivity::class.java
-                        )
-                    )
                 },
             )
             Spacer(modifier = Modifier.height(60.dp))

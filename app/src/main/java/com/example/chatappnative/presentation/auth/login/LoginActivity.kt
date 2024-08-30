@@ -23,7 +23,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -42,6 +41,7 @@ import com.example.chatappnative.presentation.composables.BaseButton
 import com.example.chatappnative.presentation.composables.BaseInput
 import com.example.chatappnative.presentation.composables.ButtonWithoutOuterPadding
 import com.example.chatappnative.presentation.composables.LargeTopSection
+import com.example.chatappnative.presentation.composables.ObserverAsEvent
 import com.example.chatappnative.presentation.composables.PasswordInput
 import com.example.chatappnative.presentation.main.MainActivity
 import com.example.chatappnative.ui.theme.ChatAppNativeTheme
@@ -88,13 +88,20 @@ class LoginActivity : ComponentActivity() {
         // show dialog
         loginModel.dialogAPIHelper.DisplayDialog()
 
-        val isSuccess = loginModel.success.collectAsState().value
+        val channelFlow = loginModel.navigateChannelFlow
 
-        LaunchedEffect(isSuccess) {
-            if (isSuccess) {
-                val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                startActivity(intent)
-                finish()
+        ObserverAsEvent(channelFlow) {
+            when (it) {
+                is NavigateLoginScreen.Register -> {
+                    val intent = Intent(this@LoginActivity, RegisterActivity::class.java)
+                    startActivity(intent)
+                }
+
+                is NavigateLoginScreen.Main -> {
+                    val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                }
             }
         }
 
@@ -174,7 +181,7 @@ class LoginActivity : ComponentActivity() {
                     Spacer(modifier = Modifier.width(4.dp))
                     ButtonWithoutOuterPadding(
                         onClick = {
-                            startActivity(Intent(baseContext, RegisterActivity::class.java))
+                            loginModel.onRegister()
                         }) {
                         Text(
                             text = "Register", style = TextStyle(

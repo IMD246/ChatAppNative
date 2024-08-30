@@ -25,6 +25,7 @@ import com.example.chatappnative.event.UpdateUserPresenceEvent
 import com.example.chatappnative.presentation.add_contact.components.AddContactContent
 import com.example.chatappnative.presentation.composables.BackButton
 import com.example.chatappnative.presentation.composables.BaseSearchBar
+import com.example.chatappnative.presentation.composables.ObserverAsEvent
 import com.example.chatappnative.service.EventBusService
 import com.example.chatappnative.ui.theme.ChatAppNativeTheme
 import com.example.chatappnative.ui.theme.ColorPrimary
@@ -75,14 +76,14 @@ class AddContactActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddContactScreen(addContactViewModel: AddContactViewModel, context: Context) {
-    val message = addContactViewModel.message.collectAsState().value
     val dialogAPIHelper = addContactViewModel.dialogAPIHelper
 
     dialogAPIHelper.DisplayDialog()
 
-    if (message.isNotEmpty()) {
+    val channelToastFlow = addContactViewModel.showToastMessageChannelFlow
+
+    ObserverAsEvent(channelToastFlow) { message ->
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-        addContactViewModel.updateShowError()
     }
 
     val isRefreshing = addContactViewModel.isRefreshing.collectAsState().value

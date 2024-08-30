@@ -23,8 +23,8 @@ class Preferences(context: Context) {
     }
 
     fun saveAccessToken(value: String) {
-        saveIsLoggedIn(true)
         sharedPreferences.edit().putString(ACCESS_TOKEN, value).apply()
+        saveIsLoggedIn(true)
     }
 
     fun getAccessToken(): String {

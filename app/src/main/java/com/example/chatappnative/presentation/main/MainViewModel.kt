@@ -5,10 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.chatappnative.data.local_database.Preferences
 import com.example.chatappnative.data.socket.SocketManager
+import com.example.chatappnative.presentation.add_contact.AddContactActivity
 import com.example.chatappnative.service.ConnectivityInternetObserver
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,10 +21,14 @@ class MainViewModel @Inject constructor(
     private val preferences: Preferences,
     private val connectivityInternetObserver: ConnectivityInternetObserver
 ) : ViewModel() {
+    private val navigateChannel = Channel<NavigateMainScreen>()
+    val navigateChannelFlow = navigateChannel.receiveAsFlow()
+
     private val _isSettingScreen = MutableStateFlow(false)
     val isSettingScreen = _isSettingScreen
 
     init {
+        handleActivityPending()
         socketManager.emitLoggedInEvent()
         viewModelScope.launch {
             handleConnectivity()
@@ -43,15 +50,43 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun getActivityPending(): String {
-        return preferences.getActivityPending()
+    private fun handleActivityPending(): Unit {
+        val activityPending = preferences.getActivityPending()
+
+        if (activityPending.isEmpty()) return
+
+        when (activityPending) {
+            AddContactActivity::class.java.name -> {
+                onNavigateChanged(NavigateMainScreen.ADDCONTACT)
+                clearActivityPending()
+            }
+
+            MainActivity::class.java.name -> {
+                onNavigateChanged(NavigateMainScreen.CONTACT)
+                clearActivityPending()
+            }
+        }
     }
 
-    fun clearActivityPending(): Unit {
+    private fun clearActivityPending() {
         preferences.saveActivityPending("")
     }
 
     fun updateIsSettingScreen(isSettingScreen: Boolean) {
         _isSettingScreen.value = isSettingScreen
     }
+
+    fun onNavigateChanged(navigateMainScreen: NavigateMainScreen) {
+        viewModelScope.launch {
+            navigateChannel.send(navigateMainScreen)
+        }
+    }
+}
+
+sealed class NavigateMainScreen {
+    data object CHAT : NavigateMainScreen()
+    data object CONTACT : NavigateMainScreen()
+    data object SETTING : NavigateMainScreen()
+    data object LOGIN : NavigateMainScreen()
+    data object ADDCONTACT : NavigateMainScreen()
 }

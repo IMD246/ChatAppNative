@@ -13,10 +13,12 @@ import com.example.chatappnative.util.ValidatorUtil
 import com.google.firebase.Firebase
 import com.google.firebase.messaging.messaging
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -27,10 +29,10 @@ class RegisterViewModel @Inject constructor(
     private val socketManager: SocketManager,
     private val preferences: Preferences,
 ) : ViewModel() {
-    val dialogAPIHelper = DialogAPIHelper()
+    private val navigateChannel = Channel<NavigateRegisterScreen>()
+    val navigateChannelFlow = navigateChannel.receiveAsFlow()
 
-    private val _success = MutableStateFlow(false)
-    var success = _success.asStateFlow()
+    val dialogAPIHelper = DialogAPIHelper()
 
     private val _nameController = MutableStateFlow("")
     var nameController = _nameController.asStateFlow()
@@ -146,12 +148,10 @@ class RegisterViewModel @Inject constructor(
                         dialogAPIHelper.showDialog(it)
                         delay(2000)
                         dialogAPIHelper.hideDialog()
-                        _success.value = false
                         Log.d("Register", "onRegister: Error ${it.message}")
                     }
 
                     is ResponseState.Loading -> {
-                        _success.value = false
                         dialogAPIHelper.showDialog(stateAPI = it)
                     }
 
@@ -168,7 +168,7 @@ class RegisterViewModel @Inject constructor(
 
                             viewModelScope.launch {
                                 delay(2000L)
-                                _success.value = true
+                                navigateChannel.send(NavigateRegisterScreen.Main)
                             }
                         }
                     }
@@ -176,4 +176,16 @@ class RegisterViewModel @Inject constructor(
             }
         }
     }
+
+    fun onLogin() {
+        viewModelScope.launch {
+            navigateChannel.send(NavigateRegisterScreen.Login)
+        }
+    }
+}
+
+sealed class NavigateRegisterScreen {
+    data object Main : NavigateRegisterScreen()
+    data object Login : NavigateRegisterScreen()
+
 }

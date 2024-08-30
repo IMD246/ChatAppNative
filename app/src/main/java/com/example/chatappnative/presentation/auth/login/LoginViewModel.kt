@@ -12,10 +12,12 @@ import com.example.chatappnative.util.ValidatorUtil
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.ktx.messaging
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -26,10 +28,10 @@ class LoginViewModel @Inject constructor(
     private val preferences: Preferences,
     private val socketManager: SocketManager
 ) : ViewModel() {
-    val dialogAPIHelper = DialogAPIHelper()
+    private val navigateChannel = Channel<NavigateLoginScreen>()
+    val navigateChannelFlow = navigateChannel.receiveAsFlow()
 
-    private val _success = MutableStateFlow(false)
-    var success = _success.asStateFlow()
+    val dialogAPIHelper = DialogAPIHelper()
 
     private val _passwordController = MutableStateFlow("123456")
     var passwordController = _passwordController.asStateFlow()
@@ -102,12 +104,10 @@ class LoginViewModel @Inject constructor(
                     is ResponseState.Error -> {
                         dialogAPIHelper.hideDialog()
                         dialogAPIHelper.showDialog(it)
-                        _success.value = false
                         Log.d("Login", "onLogin: Error ${it.message}")
                     }
 
                     is ResponseState.Loading -> {
-                        _success.value = false
                         dialogAPIHelper.showDialog(stateAPI = it)
                     }
 
@@ -124,7 +124,7 @@ class LoginViewModel @Inject constructor(
 
                             viewModelScope.launch {
                                 delay(2000L)
-                                _success.value = true
+                                navigateChannel.send(NavigateLoginScreen.Main)
                             }
                         }
 
@@ -134,4 +134,15 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
+
+    fun onRegister() {
+        viewModelScope.launch {
+            navigateChannel.send(NavigateLoginScreen.Register)
+        }
+    }
+}
+
+sealed class NavigateLoginScreen {
+    data object Register : NavigateLoginScreen()
+    data object Main : NavigateLoginScreen()
 }
