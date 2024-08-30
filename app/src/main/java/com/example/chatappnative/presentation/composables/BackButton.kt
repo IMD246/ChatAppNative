@@ -13,11 +13,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun BackButton() {
+fun BackButton(modifier: Modifier = Modifier) {
     val onBackPressedDispatcher = current?.onBackPressedDispatcher
 
     IconButton(
-        modifier = Modifier.size(22.dp),
+        modifier = modifier.size(20.dp),
         onClick = {
             onBackPressedDispatcher?.onBackPressed()
         }, colors = IconButtonDefaults.iconButtonColors(

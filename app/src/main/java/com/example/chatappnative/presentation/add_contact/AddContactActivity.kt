@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -125,7 +126,7 @@ fun AppBar(addContactViewModel: AddContactViewModel) {
     ) {
         Column {
             Spacer(modifier = Modifier.height(10.dp))
-            BackButton()
+            BackButton(modifier = Modifier.padding(horizontal = 16.dp))
             Spacer(modifier = Modifier.height(10.dp))
             BaseSearchBar(
                 hint = "Search by name, number...",

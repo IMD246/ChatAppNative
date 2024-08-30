@@ -3,6 +3,7 @@ package com.example.chatappnative.presentation.composables
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner.current
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LargeTopAppBar
@@ -28,7 +29,7 @@ fun LargeTopSection(
     val onBackPressedDispatcher = current?.onBackPressedDispatcher
 
     val navigationIcon: @Composable () -> Unit = {
-        if (useBackNavigation) BackButton()
+        if (useBackNavigation) BackButton(modifier = Modifier.padding(horizontal = 16.dp))
     }
 
     LargeTopAppBar(
