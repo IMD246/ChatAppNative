@@ -69,7 +69,7 @@ fun ChatContent(chatModel: ChatViewModel) {
             chatModel.loadMore()
         },
         modifier = Modifier.padding(20.dp, 15.dp),
-        keyItem = { it.uuid }
+        keyItem = { it.id }
     )
 }
 
@@ -97,12 +97,12 @@ private fun ChatItem(item: ChatModel) {
             NetworkImage(
                 url = item.urlImage,
             )
-            Presence(isPresence = item.presence, date = item.getDateTimePresence())
+            Presence(isPresence = item.getPresence(), date = item.getDateTimePresence())
         }
         Spacer(modifier = Modifier.width(8.dp))
         Column {
             Text(
-                text = item.name,
+                text = item.nameChat,
                 style = TextStyle(
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
@@ -126,7 +126,7 @@ private fun ChatItem(item: ChatModel) {
 
 @Composable
 private fun Message(item: ChatModel) {
-    when (item.typeMessage) {
+    when ("text") {
         "image" -> Row {
             Icon(
                 modifier = Modifier.size(12.dp),

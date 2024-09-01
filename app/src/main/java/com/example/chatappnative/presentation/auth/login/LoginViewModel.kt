@@ -33,13 +33,13 @@ class LoginViewModel @Inject constructor(
 
     val dialogAPIHelper = DialogAPIHelper()
 
+    private val _emailController = MutableStateFlow("duybagai@gmail.com")
+    var emailController = _emailController.asStateFlow()
+    private var _errorEmail = ""
+
     private val _passwordController = MutableStateFlow("123456")
     var passwordController = _passwordController.asStateFlow()
     private var _errorPassword = ""
-
-    private val _emailController = MutableStateFlow("devnguyen123456@gmail.com")
-    var emailController = _emailController.asStateFlow()
-    private var _errorEmail = ""
 
     private val _showError = MutableStateFlow(false)
     var showError = _showError.asStateFlow()

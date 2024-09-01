@@ -16,11 +16,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.example.chatappnative.presentation.composables.BaseSearchBar
+import com.example.chatappnative.presentation.composables.ObserverAsEvent
 import com.example.chatappnative.presentation.main.contact.ContactViewModel
 import com.example.chatappnative.ui.theme.ColorPrimary
 
 @Composable
 fun SettingScreen(settingViewModel: SettingViewModel, onLogout: () -> Unit) {
+    val navigateFlow = settingViewModel.navigateChannelFlow
+
+    ObserverAsEvent(navigateFlow) {
+        when (it) {
+            NavigateSettingScreen.Main -> {
+                onLogout()
+            }
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -29,7 +40,6 @@ fun SettingScreen(settingViewModel: SettingViewModel, onLogout: () -> Unit) {
     ) {
         OutlinedButton(onClick = {
             settingViewModel.onLogout()
-            onLogout()
         }) {
             Text(text = "Logout")
         }

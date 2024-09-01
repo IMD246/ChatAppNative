@@ -1,6 +1,7 @@
 package com.example.chatappnative.data.local_database
 
 import android.content.Context
+import android.util.Log
 import com.example.chatappnative.data.model.UserInfoAccessModel
 import com.google.gson.Gson
 
@@ -23,6 +24,7 @@ class Preferences(context: Context) {
     }
 
     fun saveAccessToken(value: String) {
+        Log.d("Preferences", "saveAccessToken: $value")
         sharedPreferences.edit().putString(ACCESS_TOKEN, value).apply()
         saveIsLoggedIn(true)
     }
@@ -63,6 +65,9 @@ class Preferences(context: Context) {
     }
 
     fun logout() {
-        sharedPreferences.edit().clear().apply()
+        sharedPreferences.edit().remove(ACCESS_TOKEN).apply()
+        sharedPreferences.edit().remove(USER_INFO).apply()
+        sharedPreferences.edit().remove(IS_LOGGED_IN).apply()
+        sharedPreferences.edit().remove(ACTIVITY_PENDING).apply()
     }
 }

@@ -101,7 +101,7 @@ fun CallItem(item: ChatModel) {
         Spacer(modifier = Modifier.width(8.dp))
         Column {
             Text(
-                text = item.name,
+                text = item.nameChat,
                 style = TextStyle(
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,

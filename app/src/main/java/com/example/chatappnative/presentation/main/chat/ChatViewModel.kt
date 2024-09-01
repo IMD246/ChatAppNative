@@ -183,13 +183,35 @@ class ChatViewModel
         val chatListUpdated = _chatList.value.toMutableList()
 
         for (item in chatList) {
-            if (!item.users.contains(value.userId)) {
+            // check userId is in userPresence list of chat item
+            if (!item.usersPresence.any { it.userID == value.userId }) {
                 continue
             }
 
+            // get index of chat item
             val index = chatList.indexOf(item)
+
+            // continue if userPresence list of chat item is empty
+            if (item.usersPresence.isEmpty()) continue
+
+            // get new userPresence list of chat item
+            val newUsersPresence = item.usersPresence.toMutableList()
+
+            // continue if userPresence not found in userPresence list
+            var findUserPresence = newUsersPresence.find { it.userID == value.userId } ?: continue
+            val getIndexUserPresence = newUsersPresence.indexOf(findUserPresence)
+
+            findUserPresence = findUserPresence.copy(
+                presence = value.presence,
+                presenceTimeStamp = value.presenceTimestamp
+            )
+
+            newUsersPresence[getIndexUserPresence] = findUserPresence
+
             chatListUpdated[index] =
-                item.copy(presence = value.presence, presenceTimestamp = value.presenceTimestamp)
+                item.copy(
+                    usersPresence = newUsersPresence
+                )
         }
         _chatList.value = chatListUpdated
     }
