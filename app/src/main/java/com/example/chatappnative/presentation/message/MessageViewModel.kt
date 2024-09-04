@@ -1,13 +1,17 @@
 ﻿package com.example.chatappnative.presentation.message
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.chatappnative.data.api.APIConstants
 import com.example.chatappnative.data.local_database.Preferences
 import com.example.chatappnative.data.model.MessageModel
+import com.example.chatappnative.data.model.PagedListModel
 import com.example.chatappnative.data.model.UserPresenceSocketModel
 import com.example.chatappnative.helper.DialogAPIHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -17,6 +21,9 @@ class MessageViewModel
 ) : ViewModel() {
     val dialogAPIHelper = DialogAPIHelper()
 
+    private val _triggerScroll = MutableStateFlow(false)
+    val triggerScroll = _triggerScroll
+
     private val pageSize = APIConstants.PAGE_SIZE
 
     private val _messageList = MutableStateFlow(arrayOf<MessageModel>().toList())
@@ -25,31 +32,28 @@ class MessageViewModel
     private var _messageText = MutableStateFlow("")
     val messageText = _messageText
 
-    //    private val _isLoadingContactList = MutableStateFlow(false)
-//    val isLoadingContactList = _isLoadingContactList
-//
-//    private var _pagedContactList = PagedListModel<ContactModel>()
-//
-//    private val _contactList = MutableStateFlow(arrayOf<ContactModel>().toList())
-//    val contactList = _contactList
-//
-//    private var _keyword: String? = null
-//
+    private var _isTyping = MutableStateFlow(false)
+    val isTyping = _isTyping
+
+    private val _isLoadingMessageList = MutableStateFlow(false)
+    val isLoadingMessageList = _isLoadingMessageList
+
+
+    private var _pagedMessageList = PagedListModel<MessageModel>()
+
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing
 
     private var _audioMode = MutableStateFlow(false)
     val audioMode = _audioMode
-//
-//    private val _isContactListLoadMore = MutableStateFlow(false)
-//    var isContactListLoadMore = _isContactListLoadMore
+
+    private val _isMessageListLoadMore = MutableStateFlow(false)
+    val isMessageListLoadMore = _isMessageListLoadMore
 
     init {
-        _messageList.value = MessageModel.getMessages()
-
-//        viewModelScope.launch {
-//            fetchData()
-//        }
+        viewModelScope.launch {
+            fetchData()
+        }
     }
 
     fun updateItemPresence(value: UserPresenceSocketModel) {
@@ -68,22 +72,30 @@ class MessageViewModel
 //        _contactList.value = contactListUpdated
     }
 
-//    private suspend fun fetchData(
-//        clear: Boolean = false,
-//        isLoadMore: Boolean = false,
-//    ) {
-//        if (clear) {
-//            _contactList.value = listOf()
-//            _pagedContactList = PagedListModel()
-//        }
-//
-//        viewModelScope.launch {
-//            getContactList(isLoadMore)
-//        }.join()
-//    }
+    private suspend fun fetchData(
+        clear: Boolean = false,
+        isLoadMore: Boolean = false,
+    ) {
+        if (clear) {
+            _messageList.value = listOf()
+        }
 
-//    private suspend fun getContactList(isLoadMore: Boolean = false) {
-//        viewModelScope.launch {
+        viewModelScope.launch {
+            getMessageList(isLoadMore)
+        }.join()
+    }
+
+    private suspend fun getMessageList(isLoadMore: Boolean = false) {
+        viewModelScope.launch {
+            if (!isLoadMore) {
+                _isLoadingMessageList.value = true
+            }
+            val messageList = MessageModel.getMessages().plus(_messageList.value)
+            delay(2000L)
+            _messageList.value = messageList
+            if (!isLoadMore) {
+                _isLoadingMessageList.value = false
+            }
 //            contactRepository.getContactList(
 //                page = _pagedContactList.currentPage + 1,
 //                keyword = _keyword,
@@ -113,33 +125,38 @@ class MessageViewModel
 //                    }
 //                }
 //            }
-//        }.join()
-//    }
+        }.join()
+    }
 
-//    fun onRefresh() {
-//        viewModelScope.launch {
-//            _isRefreshing.value = true
-//            fetchData(clear = true)
-//            _isRefreshing.value = false
-//        }
-//    }
+    fun onRefresh() {
+        viewModelScope.launch {
+            _isRefreshing.value = true
+            fetchData(clear = true)
+            _isRefreshing.value = false
+        }
+    }
 
-//    suspend fun loadMore() {
-//        if (_isContactListLoadMore.value) return
-//
-//        if (_pagedContactList.currentPage >= _pagedContactList.totalPages) return
-//
-//        viewModelScope.launch {
-//            _isContactListLoadMore.value = true
-//            fetchData(isLoadMore = true)
-//            _isContactListLoadMore.value = false
-//        }
-//    }
+    suspend fun loadMore() {
+        if (_isLoadingMessageList.value) return
+
+//        if (_pagedMessageList.currentPage >= _pagedMessageList.totalPages) return
+
+        viewModelScope.launch {
+            _isMessageListLoadMore.value = true
+            fetchData(isLoadMore = true)
+            _isMessageListLoadMore.value = false
+        }
+    }
 
     fun getUserInfo() = preferences.getUserInfo()
 
     val onChangedMessageText: (String) -> Unit = {
         _messageText.value = it
+        onUpdateIsTyping()
+    }
+
+    private fun onUpdateIsTyping() {
+        _isTyping.value = _messageText.value.isNotEmpty()
     }
 
     fun onAudio() {
@@ -155,21 +172,10 @@ class MessageViewModel
             )
         )
         _messageText.value = ""
+        _triggerScroll.value = true
     }
-}
 
-enum class MessageStatus {
-    TYPING,
-    SENT,
-    READ,
-    NOT_SENT,
-}
-
-private fun getMessageStatusValue(messageStatus: MessageStatus): String {
-    return when (messageStatus) {
-        MessageStatus.SENT -> "sent"
-        MessageStatus.READ -> "read"
-        MessageStatus.NOT_SENT -> "not-sent"
-        MessageStatus.TYPING -> "typing"
+    fun onUpdateTriggerScroll(value: Boolean) {
+        _triggerScroll.value = value
     }
 }

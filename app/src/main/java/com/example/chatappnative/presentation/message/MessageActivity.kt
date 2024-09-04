@@ -85,7 +85,7 @@ fun MessageScreen(
     PullToRefreshBox(
         isRefreshing = isRefreshing,
         onRefresh = {
-//            messageViewModel.onRefresh()
+            messageViewModel.onRefresh()
         },
     ) {
         Box(

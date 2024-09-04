@@ -8,12 +8,14 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -33,27 +35,60 @@ import com.example.chatappnative.presentation.composables.GifImage
 import com.example.chatappnative.presentation.composables.NetworkImage
 import com.example.chatappnative.presentation.message.MessageViewModel
 import com.example.chatappnative.ui.theme.Color191919
+import com.example.chatappnative.ui.theme.ColorPrimary
 
 @Composable
 fun MessageContent(messageViewModel: MessageViewModel) {
     val messageList = messageViewModel.messageList.collectAsState().value.asReversed()
+    val isLoadingMessageList = messageViewModel.isLoadingMessageList.collectAsState().value
+    val isLoadMore = messageViewModel.isMessageListLoadMore.collectAsState().value
+    val isTyping = messageViewModel.isTyping.collectAsState().value
+
+    val triggerScroll =
+        messageViewModel.triggerScroll.collectAsState().value
 
     BaseListReverse(
         items = messageList,
+        triggerScroll = triggerScroll,
+        isLoadMore = isLoadMore,
+        isLoading = isLoadingMessageList,
+        onTriggerScroll = {
+            messageViewModel.onUpdateTriggerScroll(false)
+        },
         contentItem = {
             MessageItem(item = it)
         },
         emptyContent = {
             Text(text = "No message")
         },
-        loadingContent = {},
-        loadMoreContent = {},
+        loadingContent = {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                CircularProgressIndicator(
+                    color = ColorPrimary
+                )
+            }
+        },
+        loadMoreContent = {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(30.dp),
+                    color = ColorPrimary
+                )
+            }
+        },
         onLoadMore = {
-
+            messageViewModel.loadMore()
         },
         keyItem = { it.id },
         verticalArrangement = Arrangement.Bottom,
-        autoScrollToBottom = true,
+        isTyping = isTyping,
     )
 }
 
