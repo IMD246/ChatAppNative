@@ -122,6 +122,7 @@ fun MessageScreen(
                 }
                 MessageInput(messageViewModel)
             }
+
         }
     }
 }
