@@ -29,9 +29,11 @@ fun <T> BaseListReverse(
     autoScrollToBottom: Boolean = false,
     isTyping: Boolean = false,
 ) {
-    if (autoScrollToBottom || !isTyping) {
+    if (autoScrollToBottom) {
         LaunchedEffect(items.size) {
-            listState.scrollToItem(0)
+            if (!isTyping) {
+                listState.scrollToItem(0)
+            }
         }
     }
 
