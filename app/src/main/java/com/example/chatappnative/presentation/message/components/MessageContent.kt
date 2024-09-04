@@ -36,6 +36,8 @@ import com.example.chatappnative.presentation.composables.NetworkImage
 import com.example.chatappnative.presentation.message.MessageViewModel
 import com.example.chatappnative.ui.theme.Color191919
 import com.example.chatappnative.ui.theme.ColorPrimary
+import com.example.chatappnative.util.DateFormatUtil
+import java.util.Date
 
 @Composable
 fun MessageContent(messageViewModel: MessageViewModel) {
@@ -106,7 +108,7 @@ private fun MessageItem(item: MessageModel) {
     ) {
         if (!item.isMine) {
             NetworkImage(
-                url = "https://fps.cdnpk.net/images/home/subhome-ai.webp?w=649&h=649",
+                url = item.senderAvatar,
                 size = 26.dp,
                 modifier = Modifier.align(alignment = Alignment.CenterVertically),
             )
@@ -159,7 +161,7 @@ private fun TextMessage(maxWidth: Dp, item: MessageModel) {
                     horizontalArrangement = Arrangement.End,
                 ) {
                     Box(modifier = Modifier.align(alignment = Alignment.Bottom)) {
-                        TimeStamp()
+                        TimeStamp(item.getDateTimeMessage())
                     }
                     Spacer(modifier = Modifier.width(4.dp))
                     Box(modifier = Modifier.align(alignment = Alignment.Bottom)) {
@@ -183,9 +185,9 @@ private fun TextMessage(maxWidth: Dp, item: MessageModel) {
 }
 
 @Composable
-private fun TimeStamp() {
+private fun TimeStamp(date: Date) {
     Text(
-        text = "6:05",
+        text = DateFormatUtil.getFormattedDate(date, format = DateFormatUtil.TIME_FORMAT2),
         style = TextStyle(
             fontSize = 8.sp,
             color = Color191919.copy(alpha = 0.6F),
@@ -196,7 +198,7 @@ private fun TimeStamp() {
 @Composable
 private fun StatusMessage(type: String) {
     val statusComposable = @Composable {
-        when (type) {
+        when (type.lowercase()) {
             "not-sent" -> {
                 Image(
                     painter = painterResource(id = R.drawable.ic_sent_message),

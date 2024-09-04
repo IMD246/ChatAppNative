@@ -12,13 +12,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.TopAppBar
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,36 +38,47 @@ import com.example.chatappnative.R
 import com.example.chatappnative.presentation.composables.BackButton
 import com.example.chatappnative.presentation.composables.NetworkImage
 import com.example.chatappnative.presentation.message.MessageViewModel
+import com.example.chatappnative.ui.theme.ColorPrimary
 import com.example.chatappnative.util.DateFormatUtil
 import kotlinx.coroutines.delay
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppBarMessage(messageModel: MessageViewModel) {
-    val presence = false
-    val date = DateFormatUtil.getCurrentLocalDate()
+    val chatDetail = messageModel.chatDetail.collectAsState().value
 
-    val presenceValue = if (presence) {
-        "Đang hoạt động"
-    } else {
-        DateFormatUtil.presenceMessageFormat(date)
-    }
+    val presence = chatDetail?.getPresence() ?: false
 
     var presenceText by remember {
-        mutableStateOf(presenceValue)
+        mutableStateOf("")
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(chatDetail) {
+        if (chatDetail == null) return@LaunchedEffect
+
         while (true) {
-            if (DateFormatUtil.isDiffSecondsMoreThanADay(date)) break;
+            if (!presence) {
+                if (DateFormatUtil.isDiffSecondsMoreThanADay(chatDetail.getDateTimePresence())) break
 
-            presenceText = DateFormatUtil.presenceMessageFormat(date)
+                presenceText =
+                    DateFormatUtil.presenceMessageFormat(chatDetail.getDateTimePresence())
 
-            delay(DateFormatUtil.getDelayDiffMilliseconds(date))
+                delay(DateFormatUtil.getDelayDiffMilliseconds(chatDetail.getDateTimePresence()))
+            } else {
+                presenceText = "Đang hoạt động"
+                break
+            }
         }
     }
 
     TopAppBar(
-        backgroundColor = MaterialTheme.colorScheme.primary,
+        colors = TopAppBarColors(
+            containerColor = ColorPrimary,
+            navigationIconContentColor = Color.White,
+            actionIconContentColor = Color.White,
+            titleContentColor = Color.White,
+            scrolledContainerColor = Color(0xFF252525),
+        ),
         modifier = Modifier.clip(
             RoundedCornerShape(
                 bottomEnd = 25.dp,
@@ -85,7 +98,8 @@ fun AppBarMessage(messageModel: MessageViewModel) {
                             .align(Alignment.Center)
                     ) {
                         NetworkImage(
-                            url = "https://www.simplilearn.com/ice9/free_resources_article_thumb/what_is_image_Processing.jpg",
+                            url = chatDetail?.urlImage
+                                ?: "https://www.simplilearn.com/ice9/free_resources_article_thumb/what_is_image_Processing.jpg",
                             size = 30.dp,
                         )
                     }
@@ -94,7 +108,7 @@ fun AppBarMessage(messageModel: MessageViewModel) {
                             .align(Alignment.BottomEnd)
                             .padding(start = 20.dp, end = 0.dp, top = 12.dp)
                     ) {
-                        Presence()
+                        Presence(presence = presence)
                     }
                 }
                 Spacer(modifier = Modifier.width(6.dp))
@@ -103,7 +117,7 @@ fun AppBarMessage(messageModel: MessageViewModel) {
                     horizontalAlignment = Alignment.Start,
                 ) {
                     Text(
-                        text = "Test1", style = TextStyle(
+                        text = chatDetail?.nameChat ?: "", style = TextStyle(
                             color = Color.White,
                             fontWeight = FontWeight.Medium,
                             fontSize = 12.sp,
@@ -164,9 +178,7 @@ fun AppBarMessage(messageModel: MessageViewModel) {
 }
 
 @Composable
-private fun Presence() {
-    val presence = false
-
+private fun Presence(presence: Boolean = false) {
     val presenceComposable: @Composable () -> Unit = {
         if (presence) {
             Box(

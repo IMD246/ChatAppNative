@@ -1,77 +1,24 @@
 package com.example.chatappnative.data.model
 
+import com.example.chatappnative.util.DateFormatUtil
+import com.google.gson.annotations.SerializedName
+import java.util.Date
 import java.util.UUID
 
 data class MessageModel(
-    val message: String = "",
+    @SerializedName("message") val message: String = "",
     val isMine: Boolean = false,
-    val timeStamp: String = "",
-    val status: String = "not-sent",
+    @SerializedName("stampTimeMessage") val timeStamp: String = "",
+    @SerializedName("messageStatus") val status: String = "not-sent",
     val uuid: String = "",
-    val id: String = UUID.randomUUID().toString(),
-    val type: String = "text",
+    @SerializedName("_id") val id: String = UUID.randomUUID().toString(),
+    @SerializedName("typeMessage") val type: String = "text",
     val senderName: String = "",
-    val senderAvatar: String = "",
+    @SerializedName("avatar") val senderAvatar: String = "",
 ) {
-    companion object {
-        fun getMessages(): List<MessageModel> {
-            return listOf(
-                MessageModel(
-                    message = "Hello",
-                    isMine = true,
-                    status = "not-sent",
-                ),
-                MessageModel(
-                    message = "asdadsasdjoajsdojioxjciozjxcojzxocjozxjciozxjcojzxocjasd;asdpasdmapsdmpasmdkoasmdoksamodkkmaosdmokasmd",
-                    isMine = false,
-                    status = "sent",
-                ),
-                MessageModel(
-                    message = "Hello",
-                    isMine = false,
-                    status = "read",
-                ),
-                MessageModel(
-                    message = "Hello",
-                    isMine = true,
-                    status = "not-sent",
-                ),
-                MessageModel(
-                    message = "asdadsasdjoajsdojioxjciozjxcojzxocjozxjciozxjcojzxocjasd;asdpasdmapsdmpasmdkoasmdoksamodkkmaosdmokasmd",
-                    isMine = false,
-                    status = "sent",
-                ),
-                MessageModel(
-                    message = "Hello",
-                    isMine = false,
-                    status = "read",
-                ),
-                MessageModel(
-                    message = "asdadsasdjoajsdojioxjciozjxcojzxocjozxjciozxjcojzxocjasd;asdpasdmapsdmpasmdkoasmdoksamodkkmaosdmokasmd",
-                    isMine = false,
-                    status = "typing",
-                ),
-                MessageModel(
-                    message = "Hello",
-                    isMine = true,
-                    status = "not-sent",
-                ),
-                MessageModel(
-                    message = "asdadsasdjoajsdojioxjciozjxcojzxocjozxjciozxjcojzxocjasd;asdpasdmapsdmpasmdkoasmdoksamodkkmaosdmokasmd",
-                    isMine = false,
-                    status = "sent",
-                ),
-                MessageModel(
-                    message = "Hello",
-                    isMine = false,
-                    status = "read",
-                ),
-                MessageModel(
-                    message = "asdadsasdjoajsdojioxjciozjxcojzxocjozxjciozxjcojzxocjasd;asdpasdmapsdmpasmdkoasmdoksamodkkmaosdmokasmd",
-                    isMine = false,
-                    status = "typing",
-                ),
-            )
-        }
+    fun getDateTimeMessage(): Date {
+        val parseToUtc = DateFormatUtil.parseUtcToDate(timeStamp)
+
+        return parseToUtc
     }
 }

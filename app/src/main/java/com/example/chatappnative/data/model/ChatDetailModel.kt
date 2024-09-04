@@ -4,7 +4,7 @@ import com.example.chatappnative.util.DateFormatUtil
 import com.google.gson.annotations.SerializedName
 import java.util.Date
 
-data class ChatModel(
+data class ChatDetailModel(
     @SerializedName("_id") val id: String = "",
     val lastMessage: String = "",
     val nameChat: String = "",
@@ -13,8 +13,9 @@ data class ChatModel(
     val urlImage: String = "",
     val userIDLastMessage: String = "",
     val userNameLastMessage: String = "",
-    @SerializedName("typeMessage") val typeMessage: String = "",
+    val typeMessage: String = "",
     @SerializedName("users") val usersPresence: List<UserPresence> = arrayListOf(),
+    @SerializedName("messages") val messages: List<MessageModel> = arrayListOf(),
 ) {
     fun getDateTimeLastMessage(): Date {
         val parseToUtc = DateFormatUtil.parseUtcToDate(timeLastMessage)

@@ -1,6 +1,9 @@
 package com.example.chatappnative.presentation.message
 
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -25,7 +28,9 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.chatappnative.R
+import com.example.chatappnative.data.model.ChatDetailParamModel
 import com.example.chatappnative.event.UpdateUserPresenceEvent
+import com.example.chatappnative.presentation.composables.ObserverAsEvent
 import com.example.chatappnative.presentation.message.components.AppBarMessage
 import com.example.chatappnative.presentation.message.components.MessageContent
 import com.example.chatappnative.presentation.message.components.MessageInput
@@ -39,12 +44,25 @@ import org.greenrobot.eventbus.ThreadMode
 class MessageActivity : ComponentActivity() {
     private val messageModel: MessageViewModel by viewModels()
 
+    companion object {
+        const val CHAT_PARAMS = "chat_params"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val data = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getSerializableExtra(CHAT_PARAMS, ChatDetailParamModel::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            intent.getSerializableExtra(CHAT_PARAMS) as? ChatDetailParamModel
+        }
+
+        messageModel.init(data)
+
         setContent {
             ChatAppNativeTheme {
-                MessageScreen(messageViewModel = messageModel)
+                MessageScreen(messageViewModel = messageModel, context = this)
             }
         }
     }
@@ -70,11 +88,18 @@ class MessageActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MessageScreen(
-    messageViewModel: MessageViewModel
+    messageViewModel: MessageViewModel,
+    context: Context,
 ) {
     val dialogAPIHelper = messageViewModel.dialogAPIHelper
 
     dialogAPIHelper.DisplayDialog()
+
+    val channelToastFlow = messageViewModel.messageErrorFlow
+
+    ObserverAsEvent(channelToastFlow) { message ->
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    }
 
     val isRefreshing = messageViewModel.isRefreshing.collectAsState().value
 
@@ -122,7 +147,6 @@ fun MessageScreen(
                 }
                 MessageInput(messageViewModel)
             }
-
         }
     }
 }

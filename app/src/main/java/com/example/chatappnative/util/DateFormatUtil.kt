@@ -19,6 +19,7 @@ object DateFormatUtil {
     const val DATE_FORMAT3: String = "yyyy-MM-dd"
     const val DATE_OF_WEEK_FORMAT: String = "EEE, dd/MM"
     const val TIME_FORMAT: String = "HH:mm"
+    const val TIME_FORMAT2: String = "H:mm"
 
     @SuppressLint("SimpleDateFormat")
     fun dateMessageFormat(value: Date): String {
