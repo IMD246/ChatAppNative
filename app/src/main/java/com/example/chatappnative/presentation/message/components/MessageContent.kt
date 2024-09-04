@@ -1,6 +1,5 @@
 package com.example.chatappnative.presentation.message.components
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,7 +17,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,9 +36,7 @@ import com.example.chatappnative.ui.theme.Color191919
 
 @Composable
 fun MessageContent(messageViewModel: MessageViewModel) {
-    val messageList = messageViewModel.messageList.collectAsState().value
-
-    val scope = rememberCoroutineScope()
+    val messageList = messageViewModel.messageList.collectAsState().value.asReversed()
 
     BaseListReverse(
         items = messageList,
@@ -53,17 +49,13 @@ fun MessageContent(messageViewModel: MessageViewModel) {
         loadingContent = {},
         loadMoreContent = {},
         onLoadMore = {
-            loadMore()
+
         },
         keyItem = { it.id },
         verticalArrangement = Arrangement.Bottom,
+        autoScrollToBottom = true,
     )
 }
-
-fun loadMore() {
-    Log.d("MessageContent", "MessageContent: onloadMore")
-}
-
 
 @Composable
 private fun MessageItem(item: MessageModel) {

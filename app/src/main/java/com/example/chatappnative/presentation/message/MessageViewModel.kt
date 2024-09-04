@@ -147,6 +147,29 @@ class MessageViewModel
     }
 
     fun onSend() {
-        messageText.value = ""
+        _messageList.value = _messageList.value.plus(
+            MessageModel(
+                message = _messageText.value,
+                status = "not-sent",
+                isMine = true,
+            )
+        )
+        _messageText.value = ""
+    }
+}
+
+enum class MessageStatus {
+    TYPING,
+    SENT,
+    READ,
+    NOT_SENT,
+}
+
+private fun getMessageStatusValue(messageStatus: MessageStatus): String {
+    return when (messageStatus) {
+        MessageStatus.SENT -> "sent"
+        MessageStatus.READ -> "read"
+        MessageStatus.NOT_SENT -> "not-sent"
+        MessageStatus.TYPING -> "typing"
     }
 }

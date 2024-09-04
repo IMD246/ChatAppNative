@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
@@ -24,8 +25,16 @@ fun <T> BaseListReverse(
     contentItem: @Composable (T) -> Unit,
     verticalArrangement: Arrangement.Vertical = Arrangement.Center,
     horizontalAlignment: Alignment.Horizontal = Alignment.CenterHorizontally,
-    keyItem: ((item: T) -> Any)? = null
+    keyItem: ((item: T) -> Any)? = null,
+    autoScrollToBottom: Boolean = false,
+    isTyping: Boolean = false,
 ) {
+    if (autoScrollToBottom || !isTyping) {
+        LaunchedEffect(items.size) {
+            listState.scrollToItem(0)
+        }
+    }
+
     val loadMoreComposable = @Composable { loadMoreContent() ?: Box {} }
 
     if (isLoading) {
@@ -45,6 +54,7 @@ fun <T> BaseListReverse(
             }
         }
     }
+
 
 //    remember {
 //        derivedStateOf {
