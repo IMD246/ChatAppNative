@@ -3,6 +3,7 @@
 import androidx.lifecycle.ViewModel
 import com.example.chatappnative.data.api.APIConstants
 import com.example.chatappnative.data.local_database.Preferences
+import com.example.chatappnative.data.model.MessageModel
 import com.example.chatappnative.data.model.UserPresenceSocketModel
 import com.example.chatappnative.helper.DialogAPIHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,6 +18,9 @@ class MessageViewModel
     val dialogAPIHelper = DialogAPIHelper()
 
     private val pageSize = APIConstants.PAGE_SIZE
+
+    private val _messageList = MutableStateFlow(arrayOf<MessageModel>().toList())
+    val messageList = _messageList
 
     private var _messageText = MutableStateFlow("")
     val messageText = _messageText
@@ -41,6 +45,8 @@ class MessageViewModel
 //    var isContactListLoadMore = _isContactListLoadMore
 
     init {
+        _messageList.value = MessageModel.getMessages()
+
 //        viewModelScope.launch {
 //            fetchData()
 //        }

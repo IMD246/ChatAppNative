@@ -111,10 +111,4 @@ class SocketManager(
         }
     }
 
-    fun disconnectWifi() {
-        val data = JSONObject()
-        data.put("lost-internet", preferences.getAccessToken())
-
-        socket?.emit("disconnect", {})
-    }
 }
