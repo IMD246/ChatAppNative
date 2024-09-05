@@ -1,6 +1,7 @@
 package com.example.chatappnative.presentation.add_contact
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -27,6 +28,7 @@ import com.example.chatappnative.presentation.add_contact.components.AddContactC
 import com.example.chatappnative.presentation.composables.BackButton
 import com.example.chatappnative.presentation.composables.BaseSearchBar
 import com.example.chatappnative.presentation.composables.ObserverAsEvent
+import com.example.chatappnative.presentation.message.MessageActivity
 import com.example.chatappnative.service.EventBusService
 import com.example.chatappnative.ui.theme.ChatAppNativeTheme
 import com.example.chatappnative.ui.theme.ColorPrimary
@@ -84,10 +86,20 @@ fun AddContactScreen(addContactViewModel: AddContactViewModel, context: Context)
 
     dialogAPIHelper.DisplayDialog()
 
-    val channelToastFlow = addContactViewModel.showToastMessageChannelFlow
+    val channelToastFlow = addContactViewModel.channelFlow
 
-    ObserverAsEvent(channelToastFlow) { message ->
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    ObserverAsEvent(channelToastFlow) { event ->
+        when (event) {
+            is ChannelEventAddContact.ShowToastMessage -> {
+                Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+            }
+
+            is ChannelEventAddContact.ClickItem -> {
+                val intent = Intent(context, MessageActivity::class.java)
+                intent.putExtra(MessageActivity.CHAT_PARAMS, event.chatDetailParamModel)
+                context.startActivity(intent)
+            }
+        }
     }
 
     val isRefreshing = addContactViewModel.isRefreshing.collectAsState().value

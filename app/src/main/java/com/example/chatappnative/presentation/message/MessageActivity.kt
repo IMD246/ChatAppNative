@@ -1,7 +1,6 @@
 package com.example.chatappnative.presentation.message
 
 import android.content.Context
-import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -28,7 +27,6 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.chatappnative.R
-import com.example.chatappnative.data.model.ChatDetailParamModel
 import com.example.chatappnative.event.UpdateUserPresenceEvent
 import com.example.chatappnative.presentation.composables.ObserverAsEvent
 import com.example.chatappnative.presentation.message.components.AppBarMessage
@@ -50,15 +48,6 @@ class MessageActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val data = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getSerializableExtra(CHAT_PARAMS, ChatDetailParamModel::class.java)
-        } else {
-            @Suppress("DEPRECATION")
-            intent.getSerializableExtra(CHAT_PARAMS) as? ChatDetailParamModel
-        }
-
-        messageModel.init(data)
 
         setContent {
             ChatAppNativeTheme {

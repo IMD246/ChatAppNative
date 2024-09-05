@@ -1,5 +1,6 @@
 package com.example.chatappnative.presentation.add_contact.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -69,7 +70,11 @@ fun AddContactContent(addContactModel: AddContactViewModel) {
 @Composable
 private fun AddContactItem(addContactModel: AddContactViewModel, item: ContactModel) {
     Row(
-        modifier = Modifier.padding(bottom = 15.dp),
+        modifier = Modifier
+            .clickable {
+                addContactModel.selectContactItem(item)
+            }
+            .padding(bottom = 15.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start,
     ) {

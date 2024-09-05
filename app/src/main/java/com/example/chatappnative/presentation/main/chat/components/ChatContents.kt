@@ -1,5 +1,6 @@
 package com.example.chatappnative.presentation.main.chat.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -62,7 +63,10 @@ fun ChatContent(chatModel: ChatViewModel) {
         },
         isLoading = isLoading,
         contentItem = {
-            ChatItem(it)
+            ChatItem(
+                it,
+                onClickItem = chatModel::selectChatItem
+            )
         },
         isLoadMore = isLoadMore,
         onLoadMore = {
@@ -74,7 +78,7 @@ fun ChatContent(chatModel: ChatViewModel) {
 }
 
 @Composable
-private fun ChatItem(item: ChatModel) {
+private fun ChatItem(item: ChatModel, onClickItem: (ChatModel) -> Unit = {}) {
     val dateDisplay: MutableState<String> = remember {
         mutableStateOf(DateFormatUtil.dateMessageFormat(item.getDateTimeLastMessage()))
     }
@@ -90,7 +94,11 @@ private fun ChatItem(item: ChatModel) {
     }
 
     Row(
-        modifier = Modifier.padding(bottom = 15.dp),
+        modifier = Modifier
+            .padding(bottom = 15.dp)
+            .clickable {
+                onClickItem(item)
+            },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column {

@@ -6,9 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.chatappnative.data.api.APIConstants
 import com.example.chatappnative.data.api.ResponseState
 import com.example.chatappnative.data.local_database.Preferences
+import com.example.chatappnative.data.model.ChatDetailParamModel
 import com.example.chatappnative.data.model.ContactModel
 import com.example.chatappnative.data.model.FriendModel
 import com.example.chatappnative.data.model.PagedListModel
+import com.example.chatappnative.data.model.TypeChat
 import com.example.chatappnative.data.model.UserPresenceSocketModel
 import com.example.chatappnative.domain.repository.ContactRepository
 import com.example.chatappnative.helper.DialogAPIHelper
@@ -47,8 +49,8 @@ class AddContactViewModel
     private val _isContactListLoadMore = MutableStateFlow(false)
     var isContactListLoadMore = _isContactListLoadMore
 
-    private val channelShowToastMessage = Channel<String>()
-    val showToastMessageChannelFlow = channelShowToastMessage.receiveAsFlow()
+    private val channelEvent = Channel<ChannelEventAddContact>()
+    val channelFlow = channelEvent.receiveAsFlow()
 
     init {
         viewModelScope.launch {
@@ -172,7 +174,7 @@ class AddContactViewModel
             ).collect {
                 when (it) {
                     is ResponseState.Error -> {
-                        channelShowToastMessage.send("Đã có lỗi xảy ra vui lòng thử lại!")
+                        channelEvent.send(ChannelEventAddContact.ShowToastMessage("Đã có lỗi xảy ra vui lòng thử lại!"))
                         dialogAPIHelper.hideDialog()
                     }
 
@@ -182,7 +184,7 @@ class AddContactViewModel
 
                     is ResponseState.Success -> {
                         dialogAPIHelper.hideDialog()
-                        channelShowToastMessage.send("Đã cập nhật thành công!")
+                        channelEvent.send(ChannelEventAddContact.ShowToastMessage("Đã cập nhật thành công!"))
 
                         data[index] =
                             data[index].copy(status = it.data?.user_status ?: data[index].status)
@@ -208,4 +210,22 @@ class AddContactViewModel
     }
 
     fun getUserInfo() = preferences.getUserInfo()
+
+    fun selectContactItem(it: ContactModel) {
+        viewModelScope.launch {
+            channelEvent.send(
+                ChannelEventAddContact.ClickItem(
+                    ChatDetailParamModel(
+                        listUserID = listOf(it.id),
+                        type = TypeChat.PERSONAL.type,
+                    )
+                )
+            )
+        }
+    }
+}
+
+sealed class ChannelEventAddContact {
+    data class ShowToastMessage(val message: String) : ChannelEventAddContact()
+    data class ClickItem(val chatDetailParamModel: ChatDetailParamModel) : ChannelEventAddContact()
 }

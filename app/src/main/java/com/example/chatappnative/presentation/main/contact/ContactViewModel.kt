@@ -6,15 +6,19 @@ import androidx.lifecycle.viewModelScope
 import com.example.chatappnative.data.api.APIConstants
 import com.example.chatappnative.data.api.ResponseState
 import com.example.chatappnative.data.local_database.Preferences
+import com.example.chatappnative.data.model.ChatDetailParamModel
 import com.example.chatappnative.data.model.FriendModel
 import com.example.chatappnative.data.model.PagedListModel
+import com.example.chatappnative.data.model.TypeChat
 import com.example.chatappnative.data.model.UserInfoAccessModel
 import com.example.chatappnative.data.model.UserPresenceSocketModel
 import com.example.chatappnative.data.socket.SocketManager
 import com.example.chatappnative.domain.repository.ContactRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -44,6 +48,9 @@ class ContactViewModel
     var isContactListLoadMore = _isContactListLoadMore
 
     private val _exceptFriendIds = mutableListOf<String>()
+
+    private val channelEvent = Channel<ChannelEventContact>()
+    val channelEventFlow = channelEvent.receiveAsFlow()
 
     init {
         viewModelScope.launch {
@@ -187,4 +194,22 @@ class ContactViewModel
     fun getUserInfo(): UserInfoAccessModel? {
         return preferences.getUserInfo()
     }
+
+    fun selectContactItem(friendModel: FriendModel) {
+        viewModelScope.launch {
+            channelEvent.send(
+                ChannelEventContact.ClickItemContact(
+                    ChatDetailParamModel(
+                        listUserID = arrayListOf(friendModel.id),
+                        type = TypeChat.PERSONAL.type
+                    )
+                )
+            )
+        }
+    }
+}
+
+sealed class ChannelEventContact {
+    data class ClickItemContact(val chatDetailParamModel: ChatDetailParamModel) :
+        ChannelEventContact()
 }

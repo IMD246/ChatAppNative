@@ -1,5 +1,6 @@
 ﻿package com.example.chatappnative.presentation.message
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.chatappnative.data.api.APIConstants
@@ -25,6 +26,7 @@ class MessageViewModel
 @Inject constructor(
     private val preferences: Preferences,
     private val chatRepository: ChatRepository,
+    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     val dialogAPIHelper = DialogAPIHelper()
 
@@ -64,12 +66,16 @@ class MessageViewModel
     private val messageError = Channel<String>()
     val messageErrorFlow = messageError.receiveAsFlow()
 
-    fun init(chatDetailParam: ChatDetailParamModel?) {
-        _chatDetailParam = ChatDetailParamModel(
-            listUserID = arrayListOf(
-                "66c8c716cc3c12aa2e8107ff"
-            )
-        )
+    init {
+        savedStateHandle.get<ChatDetailParamModel>(MessageActivity.CHAT_PARAMS)?.let {
+            _chatDetailParam = it
+
+//            _chatDetailParam = ChatDetailParamModel(
+//                listUserID = arrayListOf(
+//                    "66c8c716cc3c12aa2e8107ff"
+//                )
+//            )
+        }
 
         viewModelScope.launch {
             getChatDetail()

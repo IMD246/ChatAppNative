@@ -45,8 +45,8 @@ class ChatRepositoryImpl @Inject constructor(
                     listUserID = listUserID,
                     type = type,
                 ),
-//                accessToken = "Bearer ${preferences.getAccessToken()}"
-                accessToken = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2YmEzNjY2Zjk5M2E4NDVhZmI2MzVlOSIsImlhdCI6MTcyNTQ2MzYzNywiZXhwIjoxNzI1NDY3MjM3fQ.26BeFf7uEZim_x7AYz5vb-kMEPRJdWe9CmxBCCyTniU"
+                accessToken = "Bearer ${preferences.getAccessToken()}"
+//                accessToken = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2YmEzNjY2Zjk5M2E4NDVhZmI2MzVlOSIsImlhdCI6MTcyNTQ2MzYzNywiZXhwIjoxNzI1NDY3MjM3fQ.26BeFf7uEZim_x7AYz5vb-kMEPRJdWe9CmxBCCyTniU"
             )
         }
     }

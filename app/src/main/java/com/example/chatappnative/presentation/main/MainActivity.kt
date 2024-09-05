@@ -288,10 +288,10 @@ class MainActivity : ComponentActivity() {
     fun NavigationHost(navController: NavHostController) {
         NavHost(navController, startDestination = BottomNavItem.Chat.route) {
             composable(BottomNavItem.Chat.route) {
-                ChatScreen(chatModel = chatModel)
+                ChatScreen(context = this@MainActivity, chatModel = chatModel)
             }
             composable(BottomNavItem.Contact.route) {
-                ContactScreen(contactModel = contactModel)
+                ContactScreen(this@MainActivity, contactModel = contactModel)
             }
             composable(BottomNavItem.Setting.route) {
                 SettingScreen(settingViewModel = settingViewModel) {

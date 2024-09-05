@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.chatappnative.data.api.APIConstants
 import com.example.chatappnative.data.api.ResponseState
 import com.example.chatappnative.data.local_database.Preferences
+import com.example.chatappnative.data.model.ChatDetailParamModel
 import com.example.chatappnative.data.model.ChatModel
 import com.example.chatappnative.data.model.PagedListModel
 import com.example.chatappnative.data.model.UserInfoAccessModel
@@ -13,9 +14,11 @@ import com.example.chatappnative.data.model.UserPresenceSocketModel
 import com.example.chatappnative.data.socket.SocketManager
 import com.example.chatappnative.domain.repository.ChatRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -54,6 +57,9 @@ class ChatViewModel
 
     private val _isChatListLoadMore = MutableStateFlow(false)
     var isChatListLoadMore = _isChatListLoadMore
+
+    private val _channelNavigateChat = Channel<NavigateChatEvent>()
+    val channelFlowNavigateChat = _channelNavigateChat.receiveAsFlow()
 
     init {
         viewModelScope.launch {
@@ -219,4 +225,18 @@ class ChatViewModel
     fun getUserInfo(): UserInfoAccessModel? {
         return preferences.getUserInfo()
     }
+
+    fun selectChatItem(it: ChatModel) {
+        viewModelScope.launch {
+            _channelNavigateChat.send(
+                NavigateChatEvent.ChatDetail(
+                    ChatDetailParamModel(chatID = it.id)
+                )
+            )
+        }
+    }
+}
+
+sealed class NavigateChatEvent {
+    data class ChatDetail(val chatDetailParam: ChatDetailParamModel) : NavigateChatEvent()
 }

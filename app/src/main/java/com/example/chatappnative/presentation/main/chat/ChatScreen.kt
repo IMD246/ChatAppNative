@@ -1,5 +1,7 @@
 package com.example.chatappnative.presentation.main.chat
 
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,20 +29,34 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.chatappnative.presentation.composables.BaseSearchBar
+import com.example.chatappnative.presentation.composables.ObserverAsEvent
 import com.example.chatappnative.presentation.main.chat.components.CallContent
 import com.example.chatappnative.presentation.main.chat.components.ChatContent
+import com.example.chatappnative.presentation.message.MessageActivity
 import com.example.chatappnative.ui.theme.ColorPrimary
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChatScreen(chatModel: ChatViewModel) {
+fun ChatScreen(context: Context, chatModel: ChatViewModel) {
     val selectedTabbarIndex = chatModel.selectedTabbarIndex.collectAsState().value
 
     val tabs = chatModel.tabs
 
     val pagerState = rememberPagerState {
         tabs.size
+    }
+
+    val channelFlowNavigateChat = chatModel.channelFlowNavigateChat
+
+    ObserverAsEvent(channelFlowNavigateChat) {
+        when (it) {
+            is NavigateChatEvent.ChatDetail -> {
+                val intent = Intent(context, MessageActivity::class.java)
+                intent.putExtra(MessageActivity.CHAT_PARAMS, it.chatDetailParam)
+                context.startActivity(intent)
+            }
+        }
     }
 
     LaunchedEffect(Unit) {

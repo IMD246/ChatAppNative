@@ -1,9 +1,11 @@
 package com.example.chatappnative.presentation.main.contact.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
@@ -51,7 +53,7 @@ fun ContactContent(contactModel: ContactViewModel) {
         },
         isLoading = isLoading,
         contentItem = {
-            ContactItem(it)
+            ContactItem(it, onItemClick = contactModel::selectContactItem)
         },
         keyItem = { it.uuid },
         isLoadMore = isLoadMore,
@@ -64,9 +66,14 @@ fun ContactContent(contactModel: ContactViewModel) {
 }
 
 @Composable
-private fun ContactItem(item: FriendModel) {
+private fun ContactItem(item: FriendModel, onItemClick: (FriendModel) -> Unit = {}) {
     Row(
-        modifier = Modifier.padding(bottom = 15.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                onItemClick(item)
+            }
+            .padding(bottom = 15.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start,
     ) {
