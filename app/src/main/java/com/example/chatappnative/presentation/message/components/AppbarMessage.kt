@@ -98,8 +98,7 @@ fun AppBarMessage(messageModel: MessageViewModel) {
                             .align(Alignment.Center)
                     ) {
                         NetworkImage(
-                            url = chatDetail?.urlImage
-                                ?: "https://www.simplilearn.com/ice9/free_resources_article_thumb/what_is_image_Processing.jpg",
+                            url = chatDetail?.urlImage ?: "",
                             size = 30.dp,
                         )
                     }
@@ -137,7 +136,7 @@ fun AppBarMessage(messageModel: MessageViewModel) {
         actions = {
             IconButton(
                 modifier = Modifier
-                    .size(16.dp),
+                    .size(20.dp),
                 onClick = {}
             ) {
                 Icon(
@@ -150,7 +149,7 @@ fun AppBarMessage(messageModel: MessageViewModel) {
             Spacer(modifier = Modifier.width(16.dp))
             IconButton(
                 modifier = Modifier
-                    .size(16.dp), onClick = {}
+                    .size(20.dp), onClick = {}
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_video),
