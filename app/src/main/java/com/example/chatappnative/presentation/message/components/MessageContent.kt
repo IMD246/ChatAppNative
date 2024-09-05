@@ -1,5 +1,6 @@
 package com.example.chatappnative.presentation.message.components
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -39,9 +40,11 @@ import com.example.chatappnative.ui.theme.ColorPrimary
 import com.example.chatappnative.util.DateFormatUtil
 import java.util.Date
 
+@SuppressLint("SimpleDateFormat")
 @Composable
 fun MessageContent(messageViewModel: MessageViewModel) {
-    val messageList = messageViewModel.messageList.collectAsState().value.asReversed()
+    val groupedByMessages = messageViewModel.groupedByMessages.collectAsState().value
+
     val isLoadingMessageList = messageViewModel.isLoadingMessageList.collectAsState().value
     val isLoadMore = messageViewModel.isMessageListLoadMore.collectAsState().value
     val isTyping = messageViewModel.isTyping.collectAsState().value
@@ -50,7 +53,7 @@ fun MessageContent(messageViewModel: MessageViewModel) {
         messageViewModel.triggerScroll.collectAsState().value
 
     BaseListReverse(
-        items = messageList,
+        items = groupedByMessages,
         triggerScroll = triggerScroll,
         isLoadMore = isLoadMore,
         isLoading = isLoadingMessageList,
@@ -58,7 +61,15 @@ fun MessageContent(messageViewModel: MessageViewModel) {
             messageViewModel.onUpdateTriggerScroll(false)
         },
         contentItem = {
-            MessageItem(item = it)
+            Column {
+                Text(
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    text = it.first.split("T")[0]
+                )
+                it.second.forEach {
+                    MessageItem(item = it)
+                }
+            }
         },
         emptyContent = {
             Text(text = "No message")
@@ -88,7 +99,7 @@ fun MessageContent(messageViewModel: MessageViewModel) {
         onLoadMore = {
             messageViewModel.loadMore()
         },
-        keyItem = { it.id },
+        keyItem = { it.first },
         verticalArrangement = Arrangement.Bottom,
         isTyping = isTyping,
     )

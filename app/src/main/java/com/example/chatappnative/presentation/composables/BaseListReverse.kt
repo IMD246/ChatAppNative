@@ -1,5 +1,6 @@
 package com.example.chatappnative.presentation.composables
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,7 +25,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.chatappnative.R
-import com.example.chatappnative.data.api.APIConstants
 
 @Composable
 fun <T> BaseListReverse(
@@ -44,10 +44,9 @@ fun <T> BaseListReverse(
     isTyping: Boolean = false,
     triggerScroll: Boolean = false,
     onTriggerScroll: () -> Unit = {},
+    rangeLoadMore: Int = 300,
 ) {
     var triggerScrollToEnd by remember { mutableStateOf(false) }
-
-    var enableButtonScrollToEnd by remember { mutableStateOf(false) }
 
     LaunchedEffect(triggerScrollToEnd) {
         if (!triggerScrollToEnd) return@LaunchedEffect
@@ -83,43 +82,56 @@ fun <T> BaseListReverse(
         }
     }
 
-    remember {
+    val enableButtonScrollToEnd by remember {
         derivedStateOf {
-            val layoutInfo = listState.layoutInfo
-            val totalItemsNumber = layoutInfo.totalItemsCount
-            val lastVisibleItemIndex = (layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0) + 1
+            val lastVisibleItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()
+                ?: return@derivedStateOf false
 
-            lastVisibleItemIndex > (totalItemsNumber - 2)
+            val layoutInfo = listState.layoutInfo
+            val viewportHeight = layoutInfo.viewportEndOffset + layoutInfo.viewportStartOffset
+            val totalOffset = lastVisibleItem.size
+            val currentOffset = listState.firstVisibleItemScrollOffset
+
+            if (totalOffset <= viewportHeight) return@derivedStateOf false
+
+            if (currentOffset >= viewportHeight - 200) return@derivedStateOf true
+
+            return@derivedStateOf false
         }
     }
 
-    LaunchedEffect(listState) {
-        snapshotFlow { listState.layoutInfo.visibleItemsInfo }
-            .collect { visibleItems ->
-
-                if (visibleItems.isEmpty()) {
-                    enableButtonScrollToEnd = false
-                    return@collect
-                }
-
-                val lastVisibleItemIndex = visibleItems.first().index
-
-                enableButtonScrollToEnd = lastVisibleItemIndex > 2
-            }
-    }
-
-    val shouldLoadMore = remember {
+    val shouldLoadMore by remember {
         derivedStateOf {
             val lastVisibleItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()
-                ?: return@derivedStateOf true
+                ?: return@derivedStateOf false
 
-            lastVisibleItem.index == listState.layoutInfo.totalItemsCount - 1 && listState.layoutInfo.totalItemsCount - 1 >= APIConstants.PAGE_SIZE_LOAD_MORE
+            val layoutInfo = listState.layoutInfo
+            val viewportHeight = layoutInfo.viewportEndOffset + layoutInfo.viewportStartOffset
+            val totalOffset = lastVisibleItem.size
+            val currentOffset = listState.firstVisibleItemScrollOffset
+
+            val totalContentHeight = (layoutInfo.visibleItemsInfo.sumOf { it.size } +
+                    listState.layoutInfo.visibleItemsInfo.lastOrNull()?.offset!!)
+
+            // Check if all items are visible
+            totalContentHeight + (layoutInfo.viewportEndOffset - layoutInfo.viewportStartOffset)
+
+            Log.d(
+                "BaseListReverse",
+                "viewportHeight: $viewportHeight, totalOffset: $totalOffset, currentOffset: $currentOffset:, totalContentHeight: $totalContentHeight"
+            )
+
+            if (totalOffset <= viewportHeight - 100) return@derivedStateOf false
+
+            if (currentOffset + viewportHeight >= totalContentHeight - rangeLoadMore) return@derivedStateOf true
+
+            return@derivedStateOf false
         }
     }
 
     if (onLoadMore != null) {
         LaunchedEffect(shouldLoadMore) {
-            snapshotFlow { shouldLoadMore.value }
+            snapshotFlow { shouldLoadMore }
                 .collect {
                     if (it) {
                         onLoadMore()

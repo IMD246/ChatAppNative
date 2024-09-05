@@ -1,5 +1,6 @@
 ﻿package com.example.chatappnative.presentation.message
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -28,7 +29,7 @@ class MessageViewModel
 @Inject constructor(
     private val preferences: Preferences,
     private val chatRepository: ChatRepository,
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     val dialogAPIHelper = DialogAPIHelper()
 
@@ -39,6 +40,10 @@ class MessageViewModel
 
     private val _messageList = MutableStateFlow(arrayOf<MessageModel>().toList())
     val messageList = _messageList
+
+    private val _groupedByMessages: MutableStateFlow<List<Pair<String, List<MessageModel>>>> =
+        MutableStateFlow(emptyList())
+    val groupedByMessages = _groupedByMessages
 
     private var _messageText = MutableStateFlow("")
     val messageText = _messageText
@@ -79,9 +84,27 @@ class MessageViewModel
 //            )
         }
 
+        _messageList.value = MessageModel.getMessages()
         viewModelScope.launch {
-            getChatDetail()
+            updateGroupedByMessages(_messageList.value)
         }
+//        viewModelScope.launch {
+//            getChatDetail()
+//        }
+    }
+
+    private fun updateGroupedByMessages(
+        messages: List<MessageModel>,
+    ) {
+        if (messages.isEmpty()) return
+
+        _groupedByMessages.value = messages
+            .groupBy { item ->
+                item.timeStamp.substringBefore('T')
+            }
+            .toSortedMap(reverseOrder())
+            .toList()
+
     }
 
     fun updateItemPresence(value: UserPresenceSocketModel) {
@@ -152,6 +175,14 @@ class MessageViewModel
 
     private suspend fun getMessageList(isLoadMore: Boolean = false) {
         viewModelScope.launch {
+            val data = MessageModel.getMessages()
+
+            val newMessages = listOf<MessageModel>().plus(data + _messageList.value)
+
+            _messageList.value = newMessages
+
+            updateGroupedByMessages(_messageList.value)
+
 //            if (!isLoadMore) {
 //                _isLoadingMessageList.value = true
 //            }
@@ -208,6 +239,7 @@ class MessageViewModel
     suspend fun loadMore() {
         if (_isLoadingMessageList.value) return
 
+        Log.d("MessageViewModel", "onloadMore ")
 //        if (_pagedMessageList.currentPage >= _pagedMessageList.totalPages) return
 
         viewModelScope.launch {
@@ -239,16 +271,21 @@ class MessageViewModel
             format = DATE_TIME_FORMAT5
         )
 
+        val newMessage = MessageModel(
+            message = _messageText.value,
+            status = "not-sent",
+            isMine = true,
+            timeStamp = getFormatDate
+        )
+
         _messageList.value = _messageList.value.plus(
-            MessageModel(
-                message = _messageText.value,
-                status = "not-sent",
-                isMine = true,
-                timeStamp = getFormatDate
-            )
+            newMessage
         )
 
         _messageText.value = ""
+
+        updateGroupedByMessages(_messageList.value)
+
         _triggerScroll.value = true
     }
 

@@ -10,11 +10,11 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.example.chatappnative.data.api.APIConstants
 
 @Composable
 fun <T> BaseList(
@@ -30,7 +30,8 @@ fun <T> BaseList(
     contentItem: @Composable (T) -> Unit,
     verticalArrangement: Arrangement.HorizontalOrVertical = Arrangement.Center,
     horizontalAlignment: Alignment.Horizontal = Alignment.CenterHorizontally,
-    keyItem: ((item: T) -> Any)? = null
+    keyItem: ((item: T) -> Any)? = null,
+    rangeLoadMore: Int = 300,
 ) {
     val loadMoreComposable = @Composable { loadMoreContent() ?: Box {} }
 
@@ -52,30 +53,47 @@ fun <T> BaseList(
         }
     }
 
-    remember {
-        derivedStateOf {
-            val layoutInfo = listState.layoutInfo
-            val totalItemsNumber = layoutInfo.totalItemsCount
-            val lastVisibleItemIndex = (layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0) + 1
-
-            Log.d("BaseListReverse", "lastVisibleItem: $lastVisibleItemIndex ")
-
-            lastVisibleItemIndex > (totalItemsNumber - 2)
-        }
-    }
-
-    val shouldLoadMore = remember {
+    val shouldLoadMore by remember {
         derivedStateOf {
             val lastVisibleItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()
-                ?: return@derivedStateOf true
+                ?: return@derivedStateOf false
 
-            lastVisibleItem.index == listState.layoutInfo.totalItemsCount - 1 && listState.layoutInfo.totalItemsCount - 1 >= APIConstants.PAGE_SIZE_LOAD_MORE
+            val layoutInfo = listState.layoutInfo
+            val viewportHeight = layoutInfo.viewportEndOffset + layoutInfo.viewportStartOffset
+            val totalOffset = lastVisibleItem.size
+            val currentOffset = listState.firstVisibleItemScrollOffset
+
+            val totalContentHeight = (layoutInfo.visibleItemsInfo.sumOf { it.size } +
+                    listState.layoutInfo.visibleItemsInfo.lastOrNull()?.offset!!)
+
+            // Check if all items are visible
+            totalContentHeight + (layoutInfo.viewportEndOffset - layoutInfo.viewportStartOffset)
+
+            Log.d(
+                "BaseList",
+                "viewportHeight: $viewportHeight, totalOffset: $totalOffset, currentOffset: $currentOffset: "
+            )
+
+            if (totalOffset <= viewportHeight) return@derivedStateOf false
+
+            if (currentOffset + viewportHeight >= totalContentHeight - rangeLoadMore) return@derivedStateOf true
+
+            return@derivedStateOf false
         }
     }
+
+//    val shouldLoadMore = remember {
+//        derivedStateOf {
+//            val lastVisibleItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()
+//                ?: return@derivedStateOf true
+//
+//            lastVisibleItem.index == listState.layoutInfo.totalItemsCount - 1 && listState.layoutInfo.totalItemsCount - 1 >= APIConstants.PAGE_SIZE_LOAD_MORE
+//        }
+//    }
 
     if (onLoadMore != null) {
         LaunchedEffect(shouldLoadMore) {
-            snapshotFlow { shouldLoadMore.value }
+            snapshotFlow { shouldLoadMore }
                 .collect {
                     if (it) {
                         onLoadMore()
