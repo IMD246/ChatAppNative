@@ -10,10 +10,11 @@ import java.util.Locale
 import java.util.TimeZone
 
 object DateFormatUtil {
-    const val DATE_TIME_FORMAT: String = "yyyy-MM-ddTHH:mm:ssZ"
+    const val DATE_TIME_FORMAT: String = "yyyy-MM-dd'T'HH:mm:ssZ"
     const val DATE_TIME_FORMAT2: String = "dd/MM/yyyy HH:mm"
     const val DATE_TIME_FORMAT3: String = "HH:mm dd/MM/yyyy"
     const val DATE_TIME_FORMAT4: String = "HH:mm - dd/MM/yyyy"
+    const val DATE_TIME_FORMAT5: String = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
     const val DATE_FORMAT: String = "dd/MM/yyyy"
     const val DATE_FORMAT2: String = "dd-MM-yyyy"
     const val DATE_FORMAT3: String = "yyyy-MM-dd"
@@ -138,6 +139,18 @@ object DateFormatUtil {
     }
 
     @SuppressLint("SimpleDateFormat")
+    fun getFormattedUTCDate(value: Date, format: String = DATE_FORMAT3): String {
+        // Create a SimpleDateFormat instance with the provided format
+        val formatter = SimpleDateFormat(DATE_TIME_FORMAT5)
+
+        // Set the formatter's time zone to UTC
+        formatter.timeZone = TimeZone.getTimeZone("UTC")
+
+        // Format the provided Date object
+        return formatter.format(value)
+    }
+
+    @SuppressLint("SimpleDateFormat")
     fun presenceFormat(value: Date): String {
         // Get the current date
         val currentDate = Date()
@@ -238,6 +251,19 @@ object DateFormatUtil {
             val utcFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
             utcFormat.timeZone = TimeZone.getTimeZone("UTC")
             utcFormat.parse(utcTimestamp)!!
+        }
+    }
+
+    fun getCurrentUtc0Date(): Date {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // For Android O and above
+            val utcDateTime = ZonedDateTime.now()
+            Date.from(utcDateTime.toInstant())
+        } else {
+            // For versions below Android O
+            val utcFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+            utcFormat.timeZone = TimeZone.getTimeZone("UTC")
+            utcFormat.parse(utcFormat.format(Date()))!!
         }
     }
 }

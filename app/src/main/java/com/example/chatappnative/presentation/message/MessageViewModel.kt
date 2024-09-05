@@ -13,6 +13,8 @@ import com.example.chatappnative.data.model.PagedListModel
 import com.example.chatappnative.data.model.UserPresenceSocketModel
 import com.example.chatappnative.domain.repository.ChatRepository
 import com.example.chatappnative.helper.DialogAPIHelper
+import com.example.chatappnative.util.DateFormatUtil
+import com.example.chatappnative.util.DateFormatUtil.DATE_TIME_FORMAT5
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -231,13 +233,21 @@ class MessageViewModel
     }
 
     fun onSend() {
+        val currentDateUtc0 = DateFormatUtil.getCurrentUtc0Date()
+        val getFormatDate = DateFormatUtil.getFormattedUTCDate(
+            currentDateUtc0,
+            format = DATE_TIME_FORMAT5
+        )
+
         _messageList.value = _messageList.value.plus(
             MessageModel(
                 message = _messageText.value,
                 status = "not-sent",
                 isMine = true,
+                timeStamp = getFormatDate
             )
         )
+
         _messageText.value = ""
         _triggerScroll.value = true
     }
