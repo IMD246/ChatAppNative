@@ -62,6 +62,7 @@ import com.example.chatappnative.ui.theme.Color191919
 import com.example.chatappnative.ui.theme.ColorF9FFFF
 import com.example.chatappnative.ui.theme.ColorPrimary
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
@@ -199,6 +200,24 @@ class MainActivity : ComponentActivity() {
     fun MainScreen(tabIndex: Int = 0) {
         val navController = rememberNavController()
         val isSettingScreen = mainModel.isSettingScreen.collectAsState().value
+        val internetConnected = mainModel.internetConnectedFlow.collectAsState().value
+
+        LaunchedEffect(internetConnected) {
+            val toast = Toast.makeText(
+                this@MainActivity,
+                "Hãy kiểm tra lại kết nối mạng của bạn !",
+                Toast.LENGTH_SHORT
+            )
+
+            if (internetConnected) {
+                toast.cancel()
+            }
+
+            while (!internetConnected) {
+                toast.show()
+                delay(2000L)
+            }
+        }
 
         LaunchedEffect(tabIndex) {
             if (tabIndex == 0) return@LaunchedEffect

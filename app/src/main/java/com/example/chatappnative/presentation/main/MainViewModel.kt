@@ -24,6 +24,9 @@ class MainViewModel @Inject constructor(
     private val navigateChannel = Channel<NavigateMainScreen>()
     val navigateChannelFlow = navigateChannel.receiveAsFlow()
 
+    private val internetConnected = MutableStateFlow(true)
+    val internetConnectedFlow = internetConnected
+
     private val _isSettingScreen = MutableStateFlow(false)
     val isSettingScreen = _isSettingScreen
 
@@ -44,6 +47,7 @@ class MainViewModel @Inject constructor(
     private suspend fun handleConnectivity() {
         connectivityInternetObserver.isConnected.collectLatest { connected ->
             Log.d("MainViewModel", "handleConnectivity: $connected")
+            internetConnected.value = connected
             if (!connected) return@collectLatest
 
             if (socketManager.socket == null) {

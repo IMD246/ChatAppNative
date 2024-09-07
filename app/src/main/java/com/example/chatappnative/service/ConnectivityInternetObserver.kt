@@ -10,7 +10,7 @@ class ConnectivityInternetObserver(
     private val connectivityManager =
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-    private val _isConnected = MutableStateFlow(false)
+    private val _isConnected = MutableStateFlow(true)
     val isConnected = _isConnected
 
     init {
