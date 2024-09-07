@@ -16,6 +16,7 @@ data class ChatDetailModel(
     val typeMessage: String = "",
     @SerializedName("users") val usersPresence: List<UserPresence> = arrayListOf(),
     @SerializedName("messages") val messages: List<MessageModel> = arrayListOf(),
+    @SerializedName("totalPages") val totalPages: Int = 0
 ) {
     fun getDateTimeLastMessage(): Date {
         val parseToUtc = DateFormatUtil.parseUtcToDate(timeLastMessage)

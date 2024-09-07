@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 
 @Composable
 fun <T> BaseList(
@@ -34,6 +35,9 @@ fun <T> BaseList(
     rangeLoadMore: Int = 300,
     isGroupByList: Boolean = false,
 ) {
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp
+
     val loadMoreComposable = @Composable { loadMoreContent() ?: Box {} }
 
     if (isLoading) {
@@ -66,7 +70,7 @@ fun <T> BaseList(
             val totalVisibleItemHeight = layoutInfo.visibleItemsInfo.sumOf { it.size }
             val totalItemsCount = layoutInfo.totalItemsCount
 
-            if (totalVisibleItemHeight < viewportHeight) return@derivedStateOf false
+            if (totalVisibleItemHeight < screenHeight - 50) return@derivedStateOf false
 
             if (isGroupByList) {
                 Log.d(

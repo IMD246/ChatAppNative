@@ -29,7 +29,6 @@ data class ChatModel(
     }
 
     fun getDateTimePresence(): Date {
-        return Date()
         var getDate = ""
 
         if (usersPresence.isEmpty()) {

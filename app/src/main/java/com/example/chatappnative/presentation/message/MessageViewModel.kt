@@ -52,7 +52,7 @@ class MessageViewModel
     val isLoadingMessageList = _isLoadingMessageList
 
     private var _pagedMessageList =
-        PagedListModel<MessageModel>(currentPage = 1, pageSize = APIConstants.PAGE_SIZE)
+        PagedListModel<MessageModel>(currentPage = 0, pageSize = APIConstants.PAGE_SIZE)
 
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing
@@ -138,6 +138,7 @@ class MessageViewModel
                 chatID = _chatDetailParam?.chatID,
                 listUserID = _chatDetailParam?.listUserID,
                 type = _chatDetailParam?.type ?: "personal",
+                pageSizeMessage = _pagedMessageList.pageSize,
             ).collectLatest {
                 when (it) {
                     is ResponseState.Error -> {
@@ -155,6 +156,10 @@ class MessageViewModel
 
                         _chatDetail.value = data
                         _messageList.value = data.messages
+                        _pagedMessageList = _pagedMessageList.copy(
+                            currentPage = _pagedMessageList.currentPage + 1,
+                            totalPages = data.totalPages,
+                        )
                         updateGroupedByMessages(_messageList.value)
                     }
                 }

@@ -22,6 +22,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.chatappnative.R
@@ -47,20 +48,23 @@ fun <T> BaseListReverse(
     rangeLoadMore: Int = 300,
     isGroupByList: Boolean = false,
 ) {
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp
+
     var triggerScrollToEnd by remember { mutableStateOf(false) }
-
-    LaunchedEffect(triggerScrollToEnd) {
-        if (!triggerScrollToEnd) return@LaunchedEffect
-
-        listState.scrollToItem(0)
-        triggerScrollToEnd = false
-    }
 
     LaunchedEffect(triggerScroll) {
         if (!triggerScroll) return@LaunchedEffect
 
         listState.scrollToItem(0)
         onTriggerScroll()
+    }
+
+    LaunchedEffect(triggerScrollToEnd) {
+        if (!triggerScrollToEnd) return@LaunchedEffect
+
+        listState.scrollToItem(0)
+        triggerScrollToEnd = false
     }
 
     val loadMoreComposable = @Composable { loadMoreContent() ?: Box {} }
@@ -98,14 +102,16 @@ fun <T> BaseListReverse(
             val lastVisibleItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()
                 ?: return@derivedStateOf false
 
+            if (isLoading) return@derivedStateOf false
+
             val layoutInfo = listState.layoutInfo
-            val viewportHeight = layoutInfo.viewportEndOffset + layoutInfo.viewportStartOffset
+            val viewportHeight = layoutInfo.viewportSize.height
             val currentOffset = listState.firstVisibleItemScrollOffset
 
             val totalVisibleItemHeight = layoutInfo.visibleItemsInfo.sumOf { it.size }
             val totalItemsCount = layoutInfo.totalItemsCount
 
-            if (totalVisibleItemHeight < viewportHeight) return@derivedStateOf false
+            if (totalVisibleItemHeight < screenHeight - 50) return@derivedStateOf false
 
             if (isGroupByList) {
                 Log.d(
