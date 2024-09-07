@@ -32,6 +32,7 @@ fun <T> BaseList(
     horizontalAlignment: Alignment.Horizontal = Alignment.CenterHorizontally,
     keyItem: ((item: T) -> Any)? = null,
     rangeLoadMore: Int = 300,
+    isGroupByList: Boolean = false,
 ) {
     val loadMoreComposable = @Composable { loadMoreContent() ?: Box {} }
 
@@ -60,36 +61,34 @@ fun <T> BaseList(
 
             val layoutInfo = listState.layoutInfo
             val viewportHeight = layoutInfo.viewportEndOffset + layoutInfo.viewportStartOffset
-            val totalOffset = lastVisibleItem.size
             val currentOffset = listState.firstVisibleItemScrollOffset
 
-            val totalContentHeight = (layoutInfo.visibleItemsInfo.sumOf { it.size } +
-                    listState.layoutInfo.visibleItemsInfo.lastOrNull()?.offset!!)
+            val totalVisibleItemHeight = layoutInfo.visibleItemsInfo.sumOf { it.size }
+            val totalItemsCount = layoutInfo.totalItemsCount
 
-            // Check if all items are visible
-            totalContentHeight + (layoutInfo.viewportEndOffset - layoutInfo.viewportStartOffset)
+            if (totalVisibleItemHeight < viewportHeight) return@derivedStateOf false
 
-            Log.d(
-                "BaseList",
-                "viewportHeight: $viewportHeight, totalOffset: $totalOffset, currentOffset: $currentOffset: "
-            )
+            if (isGroupByList) {
+                Log.d(
+                    "BaseList",
+                    "totalItemsCount: ${totalItemsCount - 1}, lastVisibleItemIndex: ${lastVisibleItem.index} "
+                )
 
-            if (totalOffset <= viewportHeight) return@derivedStateOf false
+                Log.d(
+                    "BaseList",
+                    "currentOffset: $currentOffset, viewportHeight: $viewportHeight, totalVisibleItemHeight: ${totalVisibleItemHeight - rangeLoadMore} "
+                )
 
-            if (currentOffset + viewportHeight >= totalContentHeight - rangeLoadMore) return@derivedStateOf true
+                if (totalItemsCount - 1 == lastVisibleItem.index) {
+                    return@derivedStateOf (currentOffset + viewportHeight >= totalVisibleItemHeight - rangeLoadMore)
+                }
 
-            return@derivedStateOf false
+                return@derivedStateOf false
+            } else {
+                return@derivedStateOf (totalItemsCount - 3 == lastVisibleItem.index + 1)
+            }
         }
     }
-
-//    val shouldLoadMore = remember {
-//        derivedStateOf {
-//            val lastVisibleItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()
-//                ?: return@derivedStateOf true
-//
-//            lastVisibleItem.index == listState.layoutInfo.totalItemsCount - 1 && listState.layoutInfo.totalItemsCount - 1 >= APIConstants.PAGE_SIZE_LOAD_MORE
-//        }
-//    }
 
     if (onLoadMore != null) {
         LaunchedEffect(shouldLoadMore) {

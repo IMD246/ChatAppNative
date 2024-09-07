@@ -3,6 +3,7 @@ package com.example.chatappnative.domain.repository
 import com.example.chatappnative.data.api.ResponseState
 import com.example.chatappnative.data.model.ChatDetailModel
 import com.example.chatappnative.data.model.ChatModel
+import com.example.chatappnative.data.model.MessageModel
 import com.example.chatappnative.data.model.PagedListModel
 import kotlinx.coroutines.flow.Flow
 
@@ -19,4 +20,10 @@ interface ChatRepository {
         listUserID: List<String>? = null,
         type: String = "personal",
     ): Flow<ResponseState<ChatDetailModel>>
+
+    suspend fun getChatMessages(
+        page: Int = 1,
+        chatID: String = "",
+        pageSize: Int = 15,
+    ): Flow<ResponseState<PagedListModel<MessageModel>>>
 }

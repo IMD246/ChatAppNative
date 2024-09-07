@@ -6,6 +6,7 @@ import com.example.chatappnative.data.local_database.Preferences
 import com.example.chatappnative.data.model.ChatDetailModel
 import com.example.chatappnative.data.model.ChatDetailParamModel
 import com.example.chatappnative.data.model.ChatModel
+import com.example.chatappnative.data.model.MessageModel
 import com.example.chatappnative.data.model.PagedListModel
 import com.example.chatappnative.domain.repository.ChatRepository
 import kotlinx.coroutines.flow.Flow
@@ -46,7 +47,21 @@ class ChatRepositoryImpl @Inject constructor(
                     type = type,
                 ),
                 accessToken = "Bearer ${preferences.getAccessToken()}"
-//                accessToken = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2YmEzNjY2Zjk5M2E4NDVhZmI2MzVlOSIsImlhdCI6MTcyNTQ2MzYzNywiZXhwIjoxNzI1NDY3MjM3fQ.26BeFf7uEZim_x7AYz5vb-kMEPRJdWe9CmxBCCyTniU"
+            )
+        }
+    }
+
+    override suspend fun getChatMessages(
+        page: Int,
+        chatID: String,
+        pageSize: Int
+    ): Flow<ResponseState<PagedListModel<MessageModel>>> {
+        return BaseRepository.callAPI {
+            chatDataSource.getChatMessages(
+                page = page,
+                chatID = chatID,
+                pageSize = pageSize,
+                accessToken = "Bearer ${preferences.getAccessToken()}"
             )
         }
     }

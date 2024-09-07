@@ -45,6 +45,7 @@ fun <T> BaseListReverse(
     triggerScroll: Boolean = false,
     onTriggerScroll: () -> Unit = {},
     rangeLoadMore: Int = 300,
+    isGroupByList: Boolean = false,
 ) {
     var triggerScrollToEnd by remember { mutableStateOf(false) }
 
@@ -84,19 +85,11 @@ fun <T> BaseListReverse(
 
     val enableButtonScrollToEnd by remember {
         derivedStateOf {
-            val lastVisibleItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()
-                ?: return@derivedStateOf false
+            if (listState.layoutInfo.totalItemsCount == 0) return@derivedStateOf false
 
-            val layoutInfo = listState.layoutInfo
-            val viewportHeight = layoutInfo.viewportEndOffset + layoutInfo.viewportStartOffset
-            val totalOffset = lastVisibleItem.size
             val currentOffset = listState.firstVisibleItemScrollOffset
 
-            if (totalOffset <= viewportHeight) return@derivedStateOf false
-
-            if (currentOffset >= viewportHeight - 200) return@derivedStateOf true
-
-            return@derivedStateOf false
+            return@derivedStateOf (currentOffset >= 200)
         }
     }
 
@@ -107,25 +100,32 @@ fun <T> BaseListReverse(
 
             val layoutInfo = listState.layoutInfo
             val viewportHeight = layoutInfo.viewportEndOffset + layoutInfo.viewportStartOffset
-            val totalOffset = lastVisibleItem.size
             val currentOffset = listState.firstVisibleItemScrollOffset
 
-            val totalContentHeight = (layoutInfo.visibleItemsInfo.sumOf { it.size } +
-                    listState.layoutInfo.visibleItemsInfo.lastOrNull()?.offset!!)
+            val totalVisibleItemHeight = layoutInfo.visibleItemsInfo.sumOf { it.size }
+            val totalItemsCount = layoutInfo.totalItemsCount
 
-            // Check if all items are visible
-            totalContentHeight + (layoutInfo.viewportEndOffset - layoutInfo.viewportStartOffset)
+            if (totalVisibleItemHeight < viewportHeight) return@derivedStateOf false
 
-            Log.d(
-                "BaseListReverse",
-                "viewportHeight: $viewportHeight, totalOffset: $totalOffset, currentOffset: $currentOffset:, totalContentHeight: $totalContentHeight"
-            )
+            if (isGroupByList) {
+                Log.d(
+                    "BaseListReverse",
+                    "totalItemsCount: ${totalItemsCount - 1}, lastVisibleItemIndex: ${lastVisibleItem.index} "
+                )
 
-            if (totalOffset <= viewportHeight - 100) return@derivedStateOf false
+                Log.d(
+                    "BaseListReverse",
+                    "currentOffset: $currentOffset, viewportHeight: $viewportHeight, totalVisibleItemHeight: ${totalVisibleItemHeight - rangeLoadMore} "
+                )
 
-            if (currentOffset + viewportHeight >= totalContentHeight - rangeLoadMore) return@derivedStateOf true
+                if (totalItemsCount - 1 == lastVisibleItem.index) {
+                    return@derivedStateOf (currentOffset + viewportHeight >= totalVisibleItemHeight - rangeLoadMore)
+                }
 
-            return@derivedStateOf false
+                return@derivedStateOf false
+            } else {
+                return@derivedStateOf (totalItemsCount - 3 == lastVisibleItem.index + 1)
+            }
         }
     }
 

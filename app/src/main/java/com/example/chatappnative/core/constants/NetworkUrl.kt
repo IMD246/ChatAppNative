@@ -21,4 +21,7 @@ object NetworkUrl {
     const val GET_CHAT_LIST = "/api/chat/get-chats"
     const val TAKE_ROOM_CHAT = "/api/chat/take-room-chat"
 
+    //Message
+    const val TAKE_MESSAGE_LIST = "/api/message/takeMessages"
+
 }

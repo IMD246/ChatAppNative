@@ -65,7 +65,8 @@ fun ChatContent(chatModel: ChatViewModel) {
         contentItem = {
             ChatItem(
                 it,
-                onClickItem = chatModel::selectChatItem
+                onClickItem = chatModel::selectChatItem,
+                chatModel,
             )
         },
         isLoadMore = isLoadMore,
@@ -78,7 +79,11 @@ fun ChatContent(chatModel: ChatViewModel) {
 }
 
 @Composable
-private fun ChatItem(item: ChatModel, onClickItem: (ChatModel) -> Unit = {}) {
+private fun ChatItem(
+    item: ChatModel,
+    onClickItem: (ChatModel) -> Unit = {},
+    chatViewModel: ChatViewModel,
+) {
     val dateDisplay: MutableState<String> = remember {
         mutableStateOf(DateFormatUtil.dateMessageFormat(item.getDateTimeLastMessage()))
     }
@@ -118,7 +123,7 @@ private fun ChatItem(item: ChatModel, onClickItem: (ChatModel) -> Unit = {}) {
                 )
             )
             Spacer(modifier = Modifier.height(6.dp))
-            Message(item)
+            Message(item, chatViewModel)
         }
         Spacer(modifier = Modifier.weight(1F))
         Text(
@@ -133,8 +138,18 @@ private fun ChatItem(item: ChatModel, onClickItem: (ChatModel) -> Unit = {}) {
 }
 
 @Composable
-private fun Message(item: ChatModel) {
-    when ("text") {
+private fun Message(item: ChatModel, chatViewModel: ChatViewModel) {
+    val userInfo = chatViewModel.getUserInfo()!!
+
+    val getNameLastMessage = {
+        if (userInfo.name == item.userNameLastMessage) {
+            "Bạn"
+        } else {
+            item.userNameLastMessage
+        }
+    }
+
+    when (item.typeMessage) {
         "image" -> Row {
             Icon(
                 modifier = Modifier.size(12.dp),
@@ -190,7 +205,7 @@ private fun Message(item: ChatModel) {
         }
 
         else -> Text(
-            text = item.lastMessage,
+            text = "${getNameLastMessage()}: ${item.lastMessage}",
             style = TextStyle(
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Normal,

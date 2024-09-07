@@ -1,6 +1,5 @@
 ﻿package com.example.chatappnative.presentation.message
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -36,8 +35,6 @@ class MessageViewModel
     private val _triggerScroll = MutableStateFlow(false)
     val triggerScroll = _triggerScroll
 
-    private val pageSize = APIConstants.PAGE_SIZE
-
     private val _messageList = MutableStateFlow(arrayOf<MessageModel>().toList())
     val messageList = _messageList
 
@@ -54,7 +51,8 @@ class MessageViewModel
     private val _isLoadingMessageList = MutableStateFlow(false)
     val isLoadingMessageList = _isLoadingMessageList
 
-    private var _pagedMessageList = PagedListModel<MessageModel>(currentPage = 1)
+    private var _pagedMessageList =
+        PagedListModel<MessageModel>(currentPage = 1, pageSize = APIConstants.PAGE_SIZE)
 
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing
@@ -76,21 +74,11 @@ class MessageViewModel
     init {
         savedStateHandle.get<ChatDetailParamModel>(MessageActivity.CHAT_PARAMS)?.let {
             _chatDetailParam = it
-
-//            _chatDetailParam = ChatDetailParamModel(
-//                listUserID = arrayListOf(
-//                    "66c8c716cc3c12aa2e8107ff"
-//                )
-//            )
         }
 
-        _messageList.value = MessageModel.getMessages()
         viewModelScope.launch {
-            updateGroupedByMessages(_messageList.value)
+            getChatDetail()
         }
-//        viewModelScope.launch {
-//            getChatDetail()
-//        }
     }
 
     private fun updateGroupedByMessages(
@@ -167,6 +155,7 @@ class MessageViewModel
 
                         _chatDetail.value = data
                         _messageList.value = data.messages
+                        updateGroupedByMessages(_messageList.value)
                     }
                 }
             }
@@ -175,52 +164,41 @@ class MessageViewModel
 
     private suspend fun getMessageList(isLoadMore: Boolean = false) {
         viewModelScope.launch {
-            val data = MessageModel.getMessages()
+            chatRepository.getChatMessages(
+                page = _pagedMessageList.currentPage + 1,
+                pageSize = _pagedMessageList.pageSize,
+                chatID = _chatDetailParam?.chatID ?: "",
+            ).collectLatest {
+                when (it) {
+                    is ResponseState.Error -> {
+                        if (!isLoadMore) {
+                            _isLoadingMessageList.value = false
+                        }
+                    }
 
-            val newMessages = listOf<MessageModel>().plus(data + _messageList.value)
+                    is ResponseState.Loading -> {
+                        if (!isLoadMore) {
+                            _isLoadingMessageList.value = true
+                        }
+                    }
 
-            _messageList.value = newMessages
+                    is ResponseState.Success -> {
+                        if (!isLoadMore) {
+                            _isLoadingMessageList.value = false
+                        }
+                        val data = it.data ?: return@collectLatest
 
-            updateGroupedByMessages(_messageList.value)
+                        _pagedMessageList = data
 
-//            if (!isLoadMore) {
-//                _isLoadingMessageList.value = true
-//            }
-//            val messageList = MessageModel.getMessages().plus(_messageList.value)
-//            delay(2000L)
-//            _messageList.value = messageList
-//            if (!isLoadMore) {
-//                _isLoadingMessageList.value = false
-//            }
-//            contactRepository.getContactList(
-//                page = _pagedContactList.currentPage + 1,
-//                keyword = _keyword,
-//                pageSize = pageSize,
-//            ).collectLatest {
-//                when (it) {
-//                    is ResponseState.Error -> {
-//                        if (!isLoadMore) {
-//                            _isLoadingContactList.value = false
-//                        }
-//                    }
-//
-//                    is ResponseState.Loading -> {
-//                        if (!isLoadMore) {
-//                            _isLoadingContactList.value = true
-//                        }
-//                    }
-//
-//                    is ResponseState.Success -> {
-//                        if (!isLoadMore) {
-//                            _isLoadingContactList.value = false
-//                        }
-//                        val data = it.data ?: return@collectLatest
-//
-//                        _pagedContactList = data
-//                        _contactList.value = _contactList.value.plus(data.data)
-//                    }
-//                }
-//            }
+                        val newMessages =
+                            listOf<MessageModel>().plus(data.data + _messageList.value)
+
+                        _messageList.value = newMessages
+
+                        updateGroupedByMessages(_messageList.value)
+                    }
+                }
+            }
         }.join()
     }
 
@@ -239,8 +217,9 @@ class MessageViewModel
     suspend fun loadMore() {
         if (_isLoadingMessageList.value) return
 
-        Log.d("MessageViewModel", "onloadMore ")
-//        if (_pagedMessageList.currentPage >= _pagedMessageList.totalPages) return
+        if (_isMessageListLoadMore.value) return
+
+        if (_pagedMessageList.currentPage >= _pagedMessageList.totalPages) return
 
         viewModelScope.launch {
             _isMessageListLoadMore.value = true

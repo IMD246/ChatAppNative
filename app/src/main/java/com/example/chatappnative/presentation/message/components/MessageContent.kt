@@ -53,6 +53,7 @@ fun MessageContent(messageViewModel: MessageViewModel) {
         messageViewModel.triggerScroll.collectAsState().value
 
     BaseListReverse(
+        isGroupByList = true,
         items = groupedByMessages,
         triggerScroll = triggerScroll,
         isLoadMore = isLoadMore,
