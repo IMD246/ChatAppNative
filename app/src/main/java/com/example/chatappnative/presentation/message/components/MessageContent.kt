@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
@@ -26,10 +27,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.chatappnative.R
+import com.example.chatappnative.data.model.ChatDetailModel
 import com.example.chatappnative.data.model.MessageModel
 import com.example.chatappnative.presentation.composables.BaseListReverse
 import com.example.chatappnative.presentation.composables.GifImage
@@ -44,7 +47,7 @@ import java.util.Date
 @Composable
 fun MessageContent(messageViewModel: MessageViewModel) {
     val groupedByMessages = messageViewModel.groupedByMessages.collectAsState().value
-
+    val chatDetail = messageViewModel.chatDetail.collectAsState().value
     val isLoadingMessageList = messageViewModel.isLoadingMessageList.collectAsState().value
     val isLoadMore = messageViewModel.isMessageListLoadMore.collectAsState().value
     val isTyping = messageViewModel.isTyping.collectAsState().value
@@ -73,7 +76,7 @@ fun MessageContent(messageViewModel: MessageViewModel) {
             }
         },
         emptyContent = {
-            Text(text = "No message")
+            EmptyContent(chatDetail = chatDetail)
         },
         loadingContent = {
             Column(
@@ -104,6 +107,29 @@ fun MessageContent(messageViewModel: MessageViewModel) {
         verticalArrangement = Arrangement.Bottom,
         isTyping = isTyping,
     )
+}
+
+@Composable
+private fun EmptyContent(chatDetail: ChatDetailModel?) {
+    Column(
+        verticalArrangement = Arrangement.Bottom,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        NetworkImage(
+            chatDetail?.urlImage
+                ?: "",
+            size = 100.dp,
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        Text(
+            text = chatDetail?.nameChat ?: "", style = TextStyle(
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color191919.copy(alpha = 0.95F),
+            )
+        )
+        Spacer(modifier = Modifier.height(20.dp))
+    }
 }
 
 @Composable
