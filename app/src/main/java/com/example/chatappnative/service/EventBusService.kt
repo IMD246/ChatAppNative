@@ -5,6 +5,7 @@ import com.example.chatappnative.data.model.FriendStatusModel
 import com.example.chatappnative.data.model.UserPresenceSocketModel
 import com.example.chatappnative.event.AddContactEvent
 import com.example.chatappnative.event.AddFriendEvent
+import com.example.chatappnative.event.UnauthorizedEvent
 import com.example.chatappnative.event.UpdateUserPresenceEvent
 import org.greenrobot.eventbus.EventBus
 
@@ -29,6 +30,10 @@ object EventBusService {
 
     fun sendUpdateUserPresenceEvent(userPresenceSocketModel: UserPresenceSocketModel) {
         eventBus.post(UpdateUserPresenceEvent(userPresenceSocketModel))
+    }
+
+    fun sendUnauthorizedEvent(message: String = "Phiên đăng nhập của bạn đã hết hạn!") {
+        eventBus.post(UnauthorizedEvent(message))
     }
 
     fun register(subscriber: Any) {

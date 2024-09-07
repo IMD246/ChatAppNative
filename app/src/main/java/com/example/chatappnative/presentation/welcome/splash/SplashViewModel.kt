@@ -23,12 +23,18 @@ class SplashViewModel @Inject constructor(
     private fun onNavigate() {
         val isOnboarding = preferences.getOnboarding()
         val accessToken = preferences.getAccessToken()
-
+        val userInfo = preferences.getUserInfo()
         viewModelScope.launch {
             if (isOnboarding) {
-                if (accessToken.isEmpty() || accessToken.isBlank()) {
+                if (accessToken.isEmpty() || accessToken.isBlank() || userInfo == null) {
                     navigateChannel.send(NavigateSplashScreen.Login)
                 } else {
+                    if (userInfo.isExpired()) {
+                        preferences.logout()
+                        navigateChannel.send(NavigateSplashScreen.Login)
+                        return@launch
+                    }
+
                     navigateChannel.send(NavigateSplashScreen.Main)
                 }
             } else {

@@ -96,6 +96,10 @@ class MainViewModel @Inject constructor(
             navigateChannel.send(navigateMainScreen)
         }
     }
+
+    fun logout() {
+        preferences.logout()
+    }
 }
 
 sealed class NavigateMainScreen {

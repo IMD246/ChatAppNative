@@ -4,6 +4,7 @@ import com.example.chatappnative.data.api.APIException
 import com.example.chatappnative.data.api.BaseResponse
 import com.example.chatappnative.data.api.ErrorResponse
 import com.example.chatappnative.data.api.ResponseState
+import com.example.chatappnative.service.EventBusService
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -20,10 +21,12 @@ object BaseRepository {
             val response = action()
 
             val data = response.body()
-
             if (response.code() == 200) {
                 emit(ResponseState.Success(data?.data, message = data?.message))
             } else {
+                if (response.code() == 401) {
+                    EventBusService.sendUnauthorizedEvent()
+                }
                 val dataError = response.errorBody()?.string()
                 val errorResponse = Gson().fromJson(dataError, ErrorResponse::class.java)
                 emit(ResponseState.Error(message = errorResponse.message))

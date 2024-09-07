@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -43,6 +44,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.chatappnative.R
 import com.example.chatappnative.event.AddFriendEvent
+import com.example.chatappnative.event.UnauthorizedEvent
 import com.example.chatappnative.event.UpdateUserPresenceEvent
 import com.example.chatappnative.presentation.add_contact.AddContactActivity
 import com.example.chatappnative.presentation.auth.login.LoginActivity
@@ -85,6 +87,16 @@ class MainActivity : ComponentActivity() {
                 MainScreen(tabIndex)
             }
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onUnauthorizedEvent(event: UnauthorizedEvent) {
+        mainModel.logout()
+        Toast.makeText(this, event.message, Toast.LENGTH_SHORT).show()
+        val intent = Intent(this, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+        startActivity(intent)
+        finish()
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

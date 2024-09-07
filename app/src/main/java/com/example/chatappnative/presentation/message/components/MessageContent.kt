@@ -67,7 +67,9 @@ fun MessageContent(messageViewModel: MessageViewModel) {
         contentItem = {
             Column {
                 Text(
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    modifier = Modifier
+                        .padding(top = 10.dp)
+                        .align(Alignment.CenterHorizontally),
                     text = it.first.split("T")[0]
                 )
                 it.second.forEach {
