@@ -3,7 +3,9 @@ package com.example.chatappnative.data.socket
 import android.util.Log
 import com.example.chatappnative.core.constants.NetworkUrl
 import com.example.chatappnative.data.local_database.Preferences
+import com.example.chatappnative.data.model.MessageModel
 import com.example.chatappnative.data.model.UserPresenceSocketModel
+import com.example.chatappnative.event.UpdateSentMessageEvent
 import com.example.chatappnative.service.EventBusService
 import com.google.gson.Gson
 import io.socket.client.IO
@@ -35,8 +37,9 @@ class SocketManager(
                 Log.d("SocketManager", "socket connection: ${socket?.connected()}")
 
                 onUserPresence()
-
                 onUserPresenceDisconnect()
+                onUpdateSentMessages()
+                onNewMessage()
             }
 
         } catch (e: URISyntaxException) {
@@ -84,6 +87,39 @@ class SocketManager(
         }
     }
 
+    fun emitClientSendMessage(
+        message: MessageModel,
+        chatID: String,
+        userId: String,
+    ) {
+        // Convert MessageModel to JSON string using Gson
+        val jsonString = Gson().toJson(message)
+
+        // Parse JSON string into JSONObject
+        val jsonObject = JSONObject(jsonString)
+
+        jsonObject.put("chatID", chatID)
+        jsonObject.put("userID", userId)
+        Log.d("SocketManager", "emitClientSendMessage: $jsonObject")
+        socket?.emit("clientSendMessage", jsonObject)
+    }
+
+    fun joinRoom(chatID: String) {
+        Log.d("SocketManager", "joinRoom: $chatID")
+        val data = JSONObject()
+        data.put("chatID", chatID)
+
+        socket?.emit("joinRoom", chatID)
+    }
+
+    fun leaveRoom(chatID: String) {
+        Log.d("SocketManager", "leaveRoom: $chatID")
+        val data = JSONObject()
+        data.put("chatID", chatID)
+
+        socket?.emit("leaveRoom", chatID)
+    }
+
     fun disconnect() {
         socket?.disconnect()
     }
@@ -105,10 +141,35 @@ class SocketManager(
         needReconnect = value
     }
 
+    private fun onUpdateSentMessages() {
+        socket?.on("updateSentMessages") {
+            val data = it[0] as JSONObject
+
+            Log.d("SocketManager", "onUpdateSentMessages: {$data}")
+
+            val sentMessageEvent =
+                Gson().fromJson(data.toString(), UpdateSentMessageEvent::class.java)
+
+            EventBusService.sendUpdateSentMessageEvent(sentMessageEvent)
+        }
+    }
+
+    private fun onNewMessage() {
+        socket?.on("newMessage") {
+            val data = it[0] as JSONObject
+
+            Log.d("SocketManager", "onNewMessage: {$data}")
+
+            val newMessage =
+                Gson().fromJson(data.toString(), MessageModel::class.java)
+
+            EventBusService.sendNewMessageEvent(newMessage)
+        }
+    }
+
     fun onDisconnect(action: () -> Unit) {
         socket?.on(Socket.EVENT_DISCONNECT) {
             action()
         }
     }
-
 }

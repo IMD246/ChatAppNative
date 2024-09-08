@@ -27,6 +27,8 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.chatappnative.R
+import com.example.chatappnative.event.NewMessageEvent
+import com.example.chatappnative.event.UpdateSentMessageEvent
 import com.example.chatappnative.event.UpdateUserPresenceEvent
 import com.example.chatappnative.presentation.composables.ObserverAsEvent
 import com.example.chatappnative.presentation.message.components.AppBarMessage
@@ -63,6 +65,22 @@ class MessageActivity : ComponentActivity() {
         )
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onUpdateSentMessage(event: UpdateSentMessageEvent) {
+        messageModel.updateStatusMessage(
+            idMessage = event.idMessage,
+            uuid = event.uuid,
+            statusMessage = event.statusMessage
+        )
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onNewMessage(event: NewMessageEvent) {
+        messageModel.onNewMessage(
+            event.message
+        )
+    }
+
     override fun onStart() {
         super.onStart()
         EventBusService.register(this)
@@ -71,6 +89,11 @@ class MessageActivity : ComponentActivity() {
     override fun onStop() {
         EventBusService.unregister(this)
         super.onStop()
+    }
+
+    override fun onDestroy() {
+        messageModel.onLeaveRoom()
+        super.onDestroy()
     }
 }
 

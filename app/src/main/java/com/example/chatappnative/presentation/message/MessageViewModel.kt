@@ -11,6 +11,7 @@ import com.example.chatappnative.data.model.ChatDetailParamModel
 import com.example.chatappnative.data.model.MessageModel
 import com.example.chatappnative.data.model.PagedListModel
 import com.example.chatappnative.data.model.UserPresenceSocketModel
+import com.example.chatappnative.data.socket.SocketManager
 import com.example.chatappnative.domain.repository.ChatRepository
 import com.example.chatappnative.helper.DialogAPIHelper
 import com.example.chatappnative.util.DateFormatUtil
@@ -29,6 +30,7 @@ class MessageViewModel
     private val preferences: Preferences,
     private val chatRepository: ChatRepository,
     savedStateHandle: SavedStateHandle,
+    private val socketManager: SocketManager,
 ) : ViewModel() {
     val dialogAPIHelper = DialogAPIHelper()
 
@@ -153,8 +155,8 @@ class MessageViewModel
                     is ResponseState.Success -> {
                         _isLoadingMessageList.value = false
                         val data = it.data ?: return@collectLatest
-
                         _chatDetail.value = data
+                        socketManager.joinRoom(_chatDetail.value?.id ?: "")
                         _messageList.value = data.messages
                         _pagedMessageList = _pagedMessageList.copy(
                             currentPage = _pagedMessageList.currentPage + 1,
@@ -248,18 +250,55 @@ class MessageViewModel
         _audioMode.value = !_audioMode.value
     }
 
+    fun updateStatusMessage(
+        idMessage: String = "",
+        uuid: String = "",
+        statusMessage: String = "sent"
+    ) {
+        val newMessages = _messageList.value.toMutableList()
+
+        var findMessage = newMessages.find { it.id == idMessage }
+
+        if (findMessage == null) {
+            findMessage = newMessages.find { it.uuid == uuid }
+        }
+
+        if (findMessage == null) return
+
+        val index = newMessages.indexOf(findMessage)
+
+        newMessages[index] = findMessage.copy(status = statusMessage)
+
+        _messageList.value = newMessages
+
+        updateGroupedByMessages(_messageList.value)
+    }
+
     fun onSend() {
+        if (_isLoadingMessageList.value) return
+
         val currentDateUtc0 = DateFormatUtil.getCurrentUtc0Date()
         val getFormatDate = DateFormatUtil.getFormattedUTCDate(
             currentDateUtc0,
             format = DATE_TIME_FORMAT5
         )
 
+        val userInfo = preferences.getUserInfo()
+
         val newMessage = MessageModel(
             message = _messageText.value,
             status = "not-sent",
             isMine = true,
-            timeStamp = getFormatDate
+            timeStamp = getFormatDate,
+            type = "text",
+            senderName = userInfo?.name ?: "",
+            senderAvatar = userInfo?.urlImage ?: "",
+        )
+
+        socketManager.emitClientSendMessage(
+            message = newMessage,
+            chatID = _chatDetail.value?.id ?: "",
+            userId = userInfo?.userID ?: "",
         )
 
         _messageList.value = _messageList.value.plus(
@@ -273,7 +312,20 @@ class MessageViewModel
         _triggerScroll.value = true
     }
 
+    fun onNewMessage(messageModel: MessageModel) {
+        _messageList.value = _messageList.value.plus(
+            messageModel
+        )
+
+        updateGroupedByMessages(_messageList.value)
+    }
+
     fun onUpdateTriggerScroll(value: Boolean) {
         _triggerScroll.value = value
+    }
+
+    fun onLeaveRoom() {
+        if (_chatDetail.value == null) return
+        socketManager.leaveRoom(_chatDetail.value?.id ?: "")
     }
 }

@@ -13,7 +13,8 @@ data class UserInfoAccessModel(
     val refreshToken: String = "",
     @SerializedName("refresh_token_expired") val refreshTokenExpired: Long,
     @SerializedName("token_expired") val tokenExpired: Long,
-    val urlImage: String
+    @SerializedName("urlImage") val urlImage: String = "",
+    @SerializedName("userID") val userID: String = ""
 ) {
     fun isExpired(): Boolean {
         return tokenExpired < System.currentTimeMillis()

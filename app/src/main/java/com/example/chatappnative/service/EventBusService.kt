@@ -2,10 +2,13 @@ package com.example.chatappnative.service
 
 import com.example.chatappnative.data.model.FriendModel
 import com.example.chatappnative.data.model.FriendStatusModel
+import com.example.chatappnative.data.model.MessageModel
 import com.example.chatappnative.data.model.UserPresenceSocketModel
 import com.example.chatappnative.event.AddContactEvent
 import com.example.chatappnative.event.AddFriendEvent
+import com.example.chatappnative.event.NewMessageEvent
 import com.example.chatappnative.event.UnauthorizedEvent
+import com.example.chatappnative.event.UpdateSentMessageEvent
 import com.example.chatappnative.event.UpdateUserPresenceEvent
 import org.greenrobot.eventbus.EventBus
 
@@ -34,6 +37,14 @@ object EventBusService {
 
     fun sendUnauthorizedEvent(message: String = "Phiên đăng nhập của bạn đã hết hạn!") {
         eventBus.post(UnauthorizedEvent(message))
+    }
+
+    fun sendUpdateSentMessageEvent(updateSentMessageEvent: UpdateSentMessageEvent) {
+        eventBus.post(updateSentMessageEvent)
+    }
+
+    fun sendNewMessageEvent(message: MessageModel) {
+        eventBus.post(NewMessageEvent(message))
     }
 
     fun register(subscriber: Any) {
