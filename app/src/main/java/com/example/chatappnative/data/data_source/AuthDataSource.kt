@@ -3,9 +3,11 @@ package com.example.chatappnative.data.data_source
 import com.example.chatappnative.core.constants.NetworkUrl.LOGIN
 import com.example.chatappnative.core.constants.NetworkUrl.LOGOUT
 import com.example.chatappnative.core.constants.NetworkUrl.REFRESH_DEVICE_TOKEN
+import com.example.chatappnative.core.constants.NetworkUrl.REFRESH_TOKEN
 import com.example.chatappnative.core.constants.NetworkUrl.REGISTER
 import com.example.chatappnative.data.api.BaseResponse
 import com.example.chatappnative.data.model.DeviceTokenModel
+import com.example.chatappnative.data.model.RefreshTokenModel
 import com.example.chatappnative.data.model.UserInfoAccessModel
 import retrofit2.Response
 import retrofit2.http.Body
@@ -34,4 +36,9 @@ interface AuthDataSource {
     suspend fun logout(
         @Header("Authorization") accessToken: String = ""
     ): Response<BaseResponse<Boolean>>
+
+    @POST(REFRESH_TOKEN)
+    suspend fun refreshToken(
+        @Body postData: Map<String, String>,
+    ): Response<BaseResponse<RefreshTokenModel>>
 }

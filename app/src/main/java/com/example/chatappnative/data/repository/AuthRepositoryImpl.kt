@@ -4,6 +4,7 @@ import com.example.chatappnative.data.api.ResponseState
 import com.example.chatappnative.data.data_source.AuthDataSource
 import com.example.chatappnative.data.local_database.Preferences
 import com.example.chatappnative.data.model.DeviceTokenModel
+import com.example.chatappnative.data.model.RefreshTokenModel
 import com.example.chatappnative.data.model.UserInfoAccessModel
 import com.example.chatappnative.domain.repository.AuthRepository
 import kotlinx.coroutines.flow.Flow
@@ -52,7 +53,7 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun refreshToken(deviceToken: String): Flow<ResponseState<DeviceTokenModel>> {
+    override suspend fun refreshDeviceToken(deviceToken: String): Flow<ResponseState<DeviceTokenModel>> {
         return BaseRepository.callAPI {
             val postData = HashMap<String, String>()
 
@@ -70,6 +71,18 @@ class AuthRepositoryImpl @Inject constructor(
         return BaseRepository.callAPI {
             authDataSource.logout(
                 accessToken = "Bearer ${preferences.getAccessToken()}"
+            )
+        }
+    }
+
+    override suspend fun refreshToken(refreshToken: String): Flow<ResponseState<RefreshTokenModel>> {
+        return BaseRepository.callAPI {
+            val postData = HashMap<String, String>()
+
+            postData["refreshToken"] = refreshToken
+
+            authDataSource.refreshToken(
+                postData = postData,
             )
         }
     }

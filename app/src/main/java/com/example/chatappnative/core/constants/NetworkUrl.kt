@@ -3,13 +3,14 @@ package com.example.chatappnative.core.constants
 object NetworkUrl {
     const val BASE_URL = "https://chatnodeserver.onrender.com"
 
-//    const val BASE_URL = "http://192.168.1.6:5000";
+//    const val BASE_URL = "http://192.168.1.7:5000";
 
     //Auth
     const val REGISTER = "/api/auth/register"
     const val LOGIN = "/api/auth/login"
     const val REFRESH_DEVICE_TOKEN = "/api/auth/refresh-device-token"
     const val LOGOUT = "/api/auth/logout"
+    const val REFRESH_TOKEN = "/api/auth/refresh-token"
 
     //Contact
     const val GET_FRIEND_LIST = "/api/friend/get-friend"

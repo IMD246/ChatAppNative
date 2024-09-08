@@ -3,8 +3,10 @@ package com.example.chatappnative.presentation.main
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.chatappnative.data.api.ResponseState
 import com.example.chatappnative.data.local_database.Preferences
 import com.example.chatappnative.data.socket.SocketManager
+import com.example.chatappnative.domain.repository.AuthRepository
 import com.example.chatappnative.presentation.add_contact.AddContactActivity
 import com.example.chatappnative.service.ConnectivityInternetObserver
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +21,8 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val socketManager: SocketManager,
     private val preferences: Preferences,
-    private val connectivityInternetObserver: ConnectivityInternetObserver
+    private val connectivityInternetObserver: ConnectivityInternetObserver,
+    private val authRepository: AuthRepository,
 ) : ViewModel() {
     private val navigateChannel = Channel<NavigateMainScreen>()
     val navigateChannelFlow = navigateChannel.receiveAsFlow()
@@ -103,6 +106,37 @@ class MainViewModel @Inject constructor(
 
     fun logout() {
         preferences.logout()
+    }
+
+    fun getUserInfo() = preferences.getUserInfo()
+
+    fun onRefreshToken() {
+        val userInfo = preferences.getUserInfo()!!
+
+        viewModelScope.launch {
+            authRepository.refreshToken(userInfo.refreshToken).collect {
+                when (it) {
+                    is ResponseState.Success -> {
+                        val newUserInfo = userInfo.copy(
+                            accessToken = it.data?.accessToken ?: "",
+                            refreshToken = it.data?.refreshToken ?: "",
+                            tokenExpired = it.data?.accessExpiredTime ?: 0,
+                            refreshTokenExpired = it.data?.refreshExpiredTime ?: 0,
+                        )
+
+                        preferences.saveUserInfo(newUserInfo)
+                    }
+
+                    is ResponseState.Error -> {
+                        onNavigateChanged(NavigateMainScreen.LOGIN)
+                        logout()
+                    }
+
+                    is ResponseState.Loading -> {
+                    }
+                }
+            }
+        }
     }
 }
 

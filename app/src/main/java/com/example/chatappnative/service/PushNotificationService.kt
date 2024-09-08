@@ -40,7 +40,7 @@ class PushNotificationService : FirebaseMessagingService() {
         super.onNewToken(token)
 
         CoroutineScope(Dispatchers.Default).launch {
-            authRepository.refreshToken(token).collect {
+            authRepository.refreshDeviceToken(token).collect {
                 Log.d("PushNotificationService", "refreshToken: ${it.data?.deviceToken}")
             }
         }

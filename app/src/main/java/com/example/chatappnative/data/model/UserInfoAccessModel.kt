@@ -18,5 +18,9 @@ data class UserInfoAccessModel(
     fun isExpired(): Boolean {
         return tokenExpired < System.currentTimeMillis()
     }
+
+    fun isExpiredRefreshToken(): Boolean {
+        return refreshTokenExpired < System.currentTimeMillis()
+    }
 }
 

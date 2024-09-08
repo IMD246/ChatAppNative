@@ -92,12 +92,25 @@ class MainActivity : ComponentActivity() {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onUnauthorizedEvent(event: UnauthorizedEvent) {
-        mainModel.logout()
-        Toast.makeText(this, event.message, Toast.LENGTH_SHORT).show()
-        val intent = Intent(this, LoginActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-        startActivity(intent)
-        finish()
+        val userInfo = mainModel.getUserInfo()
+
+        var isLogout = false
+
+        if (userInfo == null) {
+            isLogout = true
+        }
+
+        if (userInfo != null && userInfo.isExpiredRefreshToken()) {
+            isLogout = true
+        }
+
+        if (isLogout) {
+            mainModel.logout()
+            Toast.makeText(this, event.message, Toast.LENGTH_SHORT).show()
+            mainModel.onNavigateChanged(NavigateMainScreen.LOGIN)
+        } else {
+            mainModel.onRefreshToken()
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
