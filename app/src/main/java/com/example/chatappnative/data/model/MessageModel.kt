@@ -6,6 +6,7 @@ import java.util.Date
 import java.util.UUID
 
 data class MessageModel(
+    @SerializedName("chatID") val chatID: String = "",
     @SerializedName("uuid") val uuid: String = UUID.randomUUID().toString(),
     @SerializedName("_id") val id: String = "",
     @SerializedName("message") val message: String = "",

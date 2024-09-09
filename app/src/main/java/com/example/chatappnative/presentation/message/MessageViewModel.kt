@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@Suppress("LABEL_NAME_CLASH")
 @HiltViewModel
 class MessageViewModel
 @Inject constructor(
@@ -39,7 +40,6 @@ class MessageViewModel
     val triggerScroll = _triggerScroll
 
     private val _messageList = MutableStateFlow(arrayOf<MessageModel>().toList())
-    val messageList = _messageList
 
     private val _groupedByMessages: MutableStateFlow<List<Pair<String, List<MessageModel>>>> =
         MutableStateFlow(emptyList())
@@ -75,21 +75,41 @@ class MessageViewModel
     val messageErrorFlow = messageError.receiveAsFlow()
 
     init {
-        savedStateHandle.get<ChatDetailParamModel>(MessageActivity.CHAT_PARAMS)?.let {
-            _chatDetailParam = it
+        savedStateHandle.get<ChatDetailParamModel>(MessageActivity.CHAT_PARAMS)?.let { params ->
+            _chatDetailParam = params
         }
 
         viewModelScope.launch {
             getChatDetail()
         }
 
+        onNewMessage()
+
+        onUpdateSentMessage()
+
+        onUserReadMessages()
+    }
+
+    private fun onUserReadMessages() {
         viewModelScope.launch {
-            socketManager.onNewMessage {
-                _messageList.value = _messageList.value.plus(it)
-                addNewMessageToGroupByMessages(it)
+            socketManager.onUserReadMessages {
+                if (it != _chatDetail.value?.id) return@onUserReadMessages
+
+                if (_messageList.value.any { item -> item.status == "sent" && item.isMine }) {
+                    _messageList.value = _messageList.value.map { message ->
+                        if (message.status == "sent" && message.isMine) {
+                            message.copy(status = "read")
+                        } else {
+                            message
+                        }
+                    }
+                    updateGroupedByMessages()
+                }
             }
         }
+    }
 
+    private fun onUpdateSentMessage() {
         viewModelScope.launch {
             socketManager.onUpdateSentMessages {
                 updateStatusMessage(
@@ -101,12 +121,30 @@ class MessageViewModel
         }
     }
 
-    private fun updateGroupedByMessages(
-        messages: List<MessageModel>,
-    ) {
-        if (messages.isEmpty()) return
+    private fun onNewMessage() {
+        viewModelScope.launch {
+            socketManager.onNewMessage {
+                if (it.chatID != _chatDetail.value?.id) return@onNewMessage
 
-        _groupedByMessages.value = messages.asReversed()
+                val newList = mutableListOf(
+                    it.copy(status = "read")
+                ).plus(
+                    _messageList.value
+                )
+
+                _messageList.value = newList
+
+                socketManager.emitUpdateReadMessages(_chatDetail.value?.id ?: "")
+
+                updateGroupedByMessages()
+            }
+        }
+    }
+
+    private fun updateGroupedByMessages() {
+        if (_messageList.value.isEmpty()) return
+
+        _groupedByMessages.value = _messageList.value.asReversed()
             .groupBy { item ->
                 val localDate = DateFormatUtil.parseUtcToDate(item.timeStamp)
                 DateFormatUtil.getFormattedDate(localDate, DATE_FORMAT)
@@ -181,8 +219,8 @@ class MessageViewModel
                             currentPage = _pagedMessageList.currentPage + 1,
                             totalPages = data.totalPages,
                         )
-                        updateGroupedByMessages(_messageList.value)
-                        getMessageList()
+                        onEmitReadMessages()
+                        updateGroupedByMessages()
                     }
                 }
             }
@@ -222,7 +260,7 @@ class MessageViewModel
 
                         _messageList.value = newMessages
 
-                        updateGroupedByMessages(_messageList.value)
+                        updateGroupedByMessages()
                     }
                 }
             }
@@ -270,11 +308,12 @@ class MessageViewModel
         _audioMode.value = !_audioMode.value
     }
 
-    fun updateStatusMessage(
+    private fun updateStatusMessage(
         idMessage: String = "",
         uuid: String = "",
         statusMessage: String = "sent"
     ) {
+
         val newMessages = _messageList.value.toMutableList()
 
         var findMessage = newMessages.find { it.id == idMessage }
@@ -287,11 +326,11 @@ class MessageViewModel
 
         val index = newMessages.indexOf(findMessage)
 
-        newMessages[index] = findMessage.copy(status = statusMessage)
+        newMessages[index] = newMessages[index].copy(status = statusMessage)
 
         _messageList.value = newMessages
 
-        updateMessageGroupByMessages(newMessages[index], statusMessage)
+        updateGroupedByMessages()
     }
 
     fun onSend() {
@@ -320,81 +359,19 @@ class MessageViewModel
             chatID = _chatDetail.value?.id ?: "",
             userId = userInfo?.userID ?: "",
         )
-
-        _messageList.value = _messageList.value.plus(
+        val newList = mutableListOf(
             newMessage
+        ).plus(
+            _messageList.value
         )
+
+        _messageList.value = newList
 
         _messageText.value = ""
 
-        addNewMessageToGroupByMessages(newMessage)
+        updateGroupedByMessages()
 
         _triggerScroll.value = true
-    }
-
-    private fun addNewMessageToGroupByMessages(newMessage: MessageModel) {
-        val newGroupByMessage = _groupedByMessages.value.toMutableList()
-
-        newGroupByMessage.let {
-            var getPair =
-                it.find { element -> element.first == newMessage.parseUTCAndGetFormattedDate() }
-
-            if (getPair == null) {
-                getPair = Pair(newMessage.parseUTCAndGetFormattedDate(), listOf(newMessage))
-                it.add(0, getPair)
-                return@let
-            }
-
-            val index = it.indexOf(getPair)
-
-            it[index] = getPair.copy(
-                second = it[index].second + newMessage
-            )
-        }
-
-        _groupedByMessages.value = newGroupByMessage
-    }
-
-    private fun updateMessageGroupByMessages(newMessage: MessageModel, statusMessage: String) {
-        val newGroupByMessage = _groupedByMessages.value.toMutableList()
-
-        newGroupByMessage.let {
-            var getPair =
-                it.find { element -> element.first == newMessage.parseUTCAndGetFormattedDate() }
-
-            if (getPair == null) {
-                getPair = Pair(newMessage.parseUTCAndGetFormattedDate(), listOf(newMessage))
-                it.add(0, getPair)
-                return@let
-            }
-
-            val index = it.indexOf(getPair)
-            val newMessages = it[index].second.toMutableList()
-
-            val findMessage =
-                newMessages.find { element -> element.id == newMessage.id }
-                    ?: newMessages.find { element -> element.uuid == newMessage.uuid }
-
-            if (findMessage == null) return
-
-            val getIndexMessage = newMessages.indexOf(findMessage)
-
-            newMessages[getIndexMessage] = findMessage.copy(status = statusMessage)
-
-            it[index] = getPair.copy(
-                second = newMessages
-            )
-        }
-
-        _groupedByMessages.value = newGroupByMessage
-    }
-
-    fun onNewMessage(messageModel: MessageModel) {
-        _messageList.value = _messageList.value.plus(
-            messageModel
-        )
-
-        addNewMessageToGroupByMessages(messageModel)
     }
 
     fun onUpdateTriggerScroll(value: Boolean) {
@@ -404,5 +381,21 @@ class MessageViewModel
     fun onLeaveRoom() {
         if (_chatDetail.value == null) return
         socketManager.leaveRoom(_chatDetail.value?.id ?: "")
+    }
+
+    private fun onEmitReadMessages() {
+        if (_messageList.value.isEmpty()) return
+
+        if (_messageList.value.any { item -> item.status == "sent" && !item.isMine }) {
+            _messageList.value = _messageList.value.map { message ->
+                if (message.status == "sent" && !message.isMine) {
+                    message.copy(status = "read")
+                } else {
+                    message
+                }
+            }
+            updateGroupedByMessages()
+            socketManager.emitUpdateReadMessages(_chatDetail.value?.id ?: "")
+        }
     }
 }

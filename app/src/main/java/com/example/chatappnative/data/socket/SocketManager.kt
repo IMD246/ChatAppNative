@@ -65,7 +65,7 @@ class SocketManager(
         socket?.on("updateUserPresence") {
             val data = it[0] as JSONObject
 
-            Log.d("SocketManager", "onUserPresence: {$data}")
+            Log.d("SocketManager", "onUserPresence: $data")
 
             val userPresence = Gson().fromJson(data.toString(), UserPresenceSocketModel::class.java)
 
@@ -77,7 +77,7 @@ class SocketManager(
         socket?.on("updateUserPresenceDisconnect") {
             val data = it[0] as JSONObject
 
-            Log.d("SocketManager", "onUserPresenceDisconnect: {$data}")
+            Log.d("SocketManager", "onUserPresenceDisconnect: $data")
 
             val userPresence = Gson().fromJson(data.toString(), UserPresenceSocketModel::class.java)
 
@@ -128,7 +128,7 @@ class SocketManager(
         val data = JSONObject()
         data.put("access_token", preferences.getAccessToken())
 
-        Log.d("SocketManager", "reconnect: {$data}")
+        Log.d("SocketManager", "reconnect: $data")
 
         socket?.emit("reconnect", data)
 
@@ -143,7 +143,7 @@ class SocketManager(
         socket?.on("updateSentMessages") {
             val data = it[0] as JSONObject
 
-            Log.d("SocketManager", "onUpdateSentMessages: {$data}")
+            Log.d("SocketManager", "onUpdateSentMessages: $data")
 
             val sentMessageEvent =
                 Gson().fromJson(data.toString(), UpdateSentMessageEvent::class.java)
@@ -156,12 +156,31 @@ class SocketManager(
         socket?.on("newMessage") {
             val data = it[0] as JSONObject
 
-            Log.d("SocketManager", "onNewMessage: {$data}")
+            Log.d("SocketManager", "onNewMessage: $data")
 
             val newMessage =
                 Gson().fromJson(data.toString(), MessageModel::class.java)
 
             action(newMessage)
+        }
+    }
+
+    fun emitUpdateReadMessages(chatID: String) {
+        val data = JSONObject()
+        data.put("chatID", chatID)
+
+        Log.d("SocketManager", "emitUpdateReadMessages: $data")
+        
+        socket?.emit("updateReadMessages", data)
+    }
+
+    fun onUserReadMessages(action: (chatID: String) -> Unit) {
+        socket?.on("userReadMessages") {
+            val data = it[0] as JSONObject
+
+            Log.d("SocketManager", "onUpdateReadMessages: $data")
+
+            action(data.getString("chatID"))
         }
     }
 
