@@ -74,6 +74,9 @@ class MessageViewModel
     private val messageError = Channel<String>()
     val messageErrorFlow = messageError.receiveAsFlow()
 
+    private val newMessage: MutableStateFlow<MessageModel?> = MutableStateFlow(null)
+    val newMessageFlow = newMessage
+
     init {
         savedStateHandle.get<ChatDetailParamModel>(MessageActivity.CHAT_PARAMS)?.let { params ->
             _chatDetailParam = params
@@ -137,6 +140,8 @@ class MessageViewModel
                 socketManager.emitUpdateReadMessages(_chatDetail.value?.id ?: "")
 
                 updateGroupedByMessages()
+
+                newMessage.value = it
             }
         }
     }
@@ -426,5 +431,10 @@ class MessageViewModel
             updateGroupedByMessages()
             socketManager.emitUpdateReadMessages(_chatDetail.value?.id ?: "")
         }
+    }
+
+    fun clearNewMessage() {
+        if (newMessage.value == null) return
+        newMessage.value = null
     }
 }

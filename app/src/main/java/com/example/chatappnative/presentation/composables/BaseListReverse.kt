@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -47,11 +48,15 @@ fun <T> BaseListReverse(
     onTriggerScroll: () -> Unit = {},
     rangeLoadMore: Int = 300,
     isGroupByList: Boolean = false,
+    customIconEnableScrollButton: @Composable (() -> Unit)? = null,
+    onScrollToEnd: () -> Unit = {},
 ) {
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp
 
     var triggerScrollToEnd by remember { mutableStateOf(false) }
+
+    var currentOffsetVisible by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(triggerScroll) {
         if (!triggerScroll) return@LaunchedEffect
@@ -65,6 +70,7 @@ fun <T> BaseListReverse(
 
         listState.scrollToItem(0)
         triggerScrollToEnd = false
+        onScrollToEnd()
     }
 
     val loadMoreComposable = @Composable { loadMoreContent() ?: Box {} }
@@ -93,7 +99,20 @@ fun <T> BaseListReverse(
 
             val currentOffset = listState.firstVisibleItemScrollOffset
 
-            return@derivedStateOf (currentOffset >= 200)
+            if (listState.layoutInfo.visibleItemsInfo.last().index == 0) {
+                currentOffsetVisible = currentOffset
+            }
+
+            if (listState.layoutInfo.visibleItemsInfo.last().index > 0) {
+                currentOffsetVisible += currentOffset
+            }
+
+            Log.d(
+                "BaseListReverse",
+                "currentOffsetVisible: $currentOffsetVisible,  currentOffset: $currentOffset"
+            )
+
+            return@derivedStateOf (currentOffsetVisible >= 200)
         }
     }
 
@@ -173,19 +192,25 @@ fun <T> BaseListReverse(
         if (enableButtonScrollToEnd)
             FloatingActionButton(
                 modifier = Modifier
-                    .size(28.dp)
+                    .size(40.dp)
                     .align(Alignment.BottomCenter),
                 shape = CircleShape,
                 containerColor = Color.White,
                 onClick = {
                     triggerScrollToEnd = true
                 }) {
-                Icon(
+                if (triggerScroll) Icon(
                     painter = painterResource(id = R.drawable.ic_arrow_down),
                     contentDescription = null,
                     tint = Color.Black,
                     modifier = Modifier
-                        .size(20.dp)
+                        .size(28.dp)
+                ) else customIconEnableScrollButton?.invoke() ?: Icon(
+                    painter = painterResource(id = R.drawable.ic_arrow_down),
+                    contentDescription = null,
+                    tint = Color.Black,
+                    modifier = Modifier
+                        .size(28.dp)
                 )
             }
     }

@@ -51,9 +51,21 @@ fun MessageContent(messageViewModel: MessageViewModel) {
     val isLoadingMessageList = messageViewModel.isLoadingMessageList.collectAsState().value
     val isLoadMore = messageViewModel.isMessageListLoadMore.collectAsState().value
     val isTyping = messageViewModel.isTyping.collectAsState().value
+    val newMessage = messageViewModel.newMessageFlow.collectAsState().value
 
     val triggerScroll =
         messageViewModel.triggerScroll.collectAsState().value
+
+    var customScrollToEnd: @Composable (() -> Unit)? = null
+
+    if (newMessage != null) {
+        customScrollToEnd = {
+            NetworkImage(
+                newMessage.senderAvatar,
+                size = 32.dp,
+            )
+        }
+    }
 
     BaseListReverse(
         isGroupByList = true,
@@ -61,6 +73,10 @@ fun MessageContent(messageViewModel: MessageViewModel) {
         triggerScroll = triggerScroll,
         isLoadMore = isLoadMore,
         isLoading = isLoadingMessageList,
+        onScrollToEnd = {
+            messageViewModel.clearNewMessage()
+        },
+        customIconEnableScrollButton = customScrollToEnd,
         onTriggerScroll = {
             messageViewModel.onUpdateTriggerScroll(false)
         },
