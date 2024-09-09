@@ -121,7 +121,7 @@ fun <T> BaseListReverse(
             val lastVisibleItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()
                 ?: return@derivedStateOf false
 
-            if (isLoading) return@derivedStateOf false
+            if (isLoading || isLoadMore) return@derivedStateOf false
 
             val layoutInfo = listState.layoutInfo
             val viewportHeight = layoutInfo.viewportSize.height
