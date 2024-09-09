@@ -72,8 +72,8 @@ fun MessageContent(messageViewModel: MessageViewModel) {
                         .align(Alignment.CenterHorizontally),
                     text = it.first,
                 )
-                it.second.forEach {
-                    MessageItem(item = it)
+                it.second.forEach { messageModel: MessageModel ->
+                    MessageItem(item = messageModel)
                 }
             }
         },

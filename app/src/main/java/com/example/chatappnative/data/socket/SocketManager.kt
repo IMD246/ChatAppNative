@@ -38,8 +38,6 @@ class SocketManager(
 
                 onUserPresence()
                 onUserPresenceDisconnect()
-                onUpdateSentMessages()
-                onNewMessage()
             }
 
         } catch (e: URISyntaxException) {
@@ -109,7 +107,7 @@ class SocketManager(
         val data = JSONObject()
         data.put("chatID", chatID)
 
-        socket?.emit("joinRoom", chatID)
+        socket?.emit("joinRoom", data)
     }
 
     fun leaveRoom(chatID: String) {
@@ -117,7 +115,7 @@ class SocketManager(
         val data = JSONObject()
         data.put("chatID", chatID)
 
-        socket?.emit("leaveRoom", chatID)
+        socket?.emit("leaveRoom", data)
     }
 
     fun disconnect() {
@@ -141,7 +139,7 @@ class SocketManager(
         needReconnect = value
     }
 
-    private fun onUpdateSentMessages() {
+    fun onUpdateSentMessages(action: (UpdateSentMessageEvent) -> Unit) {
         socket?.on("updateSentMessages") {
             val data = it[0] as JSONObject
 
@@ -150,11 +148,11 @@ class SocketManager(
             val sentMessageEvent =
                 Gson().fromJson(data.toString(), UpdateSentMessageEvent::class.java)
 
-            EventBusService.sendUpdateSentMessageEvent(sentMessageEvent)
+            action(sentMessageEvent)
         }
     }
 
-    private fun onNewMessage() {
+    fun onNewMessage(action: (newMessage: MessageModel) -> Unit) {
         socket?.on("newMessage") {
             val data = it[0] as JSONObject
 
@@ -163,7 +161,7 @@ class SocketManager(
             val newMessage =
                 Gson().fromJson(data.toString(), MessageModel::class.java)
 
-            EventBusService.sendNewMessageEvent(newMessage)
+            action(newMessage)
         }
     }
 

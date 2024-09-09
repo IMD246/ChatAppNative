@@ -82,6 +82,23 @@ class MessageViewModel
         viewModelScope.launch {
             getChatDetail()
         }
+
+        viewModelScope.launch {
+            socketManager.onNewMessage {
+                _messageList.value = _messageList.value.plus(it)
+                addNewMessageToGroupByMessages(it)
+            }
+        }
+
+        viewModelScope.launch {
+            socketManager.onUpdateSentMessages {
+                updateStatusMessage(
+                    idMessage = it.idMessage,
+                    uuid = it.uuid,
+                    statusMessage = it.statusMessage,
+                )
+            }
+        }
     }
 
     private fun updateGroupedByMessages(
@@ -95,7 +112,6 @@ class MessageViewModel
                 DateFormatUtil.getFormattedDate(localDate, DATE_FORMAT)
             }
             .toSortedMap(reverseOrder())
-//            .mapValues { (_, value) -> value.reversed() }
             .toList()
 
     }
@@ -378,7 +394,7 @@ class MessageViewModel
             messageModel
         )
 
-        updateGroupedByMessages(_messageList.value)
+        addNewMessageToGroupByMessages(messageModel)
     }
 
     fun onUpdateTriggerScroll(value: Boolean) {
