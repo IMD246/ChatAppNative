@@ -146,13 +146,13 @@ private fun MessageItem(item: MessageModel) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = horizontalAlignment,
     ) {
-        if (!item.isMine) {
-            NetworkImage(
-                url = item.senderAvatar,
-                size = 26.dp,
-                modifier = Modifier.align(alignment = Alignment.CenterVertically),
-            )
-        }
+        NetworkImage(
+            url = if (item.showAvatar) {
+                item.senderAvatar
+            } else "",
+            size = 26.dp,
+            modifier = Modifier.align(alignment = Alignment.CenterVertically),
+        )
         if (!item.isMine) {
             Spacer(modifier = Modifier.width(10.dp))
         }

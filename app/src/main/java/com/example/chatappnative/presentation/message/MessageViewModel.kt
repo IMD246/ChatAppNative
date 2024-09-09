@@ -150,6 +150,35 @@ class MessageViewModel
                 DateFormatUtil.getFormattedDate(localDate, DATE_FORMAT)
             }
             .toSortedMap(reverseOrder())
+            .mapValues {
+                val newMessages = it.value.toMutableList()
+
+                var currentLastIndex = it.value.lastIndex
+
+                val lastMessage = it.value[currentLastIndex]
+
+                if (!lastMessage.isMine) {
+                    newMessages[currentLastIndex] = lastMessage.copy(showAvatar = true)
+
+                    currentLastIndex--
+                }
+
+                while (currentLastIndex > 0) {
+                    val currentLastMessage = it.value[currentLastIndex]
+                    val previousMessage = it.value[currentLastIndex - 1]
+
+                    if (!previousMessage.isMine) {
+                        if (currentLastMessage.isMine) {
+                            newMessages[currentLastIndex - 1] =
+                                previousMessage.copy(showAvatar = true)
+                        }
+                    }
+
+                    currentLastIndex--
+                }
+
+                return@mapValues newMessages
+            }
             .toList()
 
     }

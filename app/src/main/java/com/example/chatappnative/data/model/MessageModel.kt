@@ -16,6 +16,7 @@ data class MessageModel(
     @SerializedName("avatar") val senderAvatar: String = "",
     @SerializedName("isMine") val isMine: Boolean = false,
     @SerializedName("nameSender") val senderName: String = "",
+    val showAvatar: Boolean = false,
 ) {
     fun getDateTimeMessage(): Date {
         val parseToUtc = DateFormatUtil.parseUtcToDate(timeStamp)
