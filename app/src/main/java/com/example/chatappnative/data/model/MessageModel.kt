@@ -21,4 +21,8 @@ data class MessageModel(
 
         return parseToUtc
     }
+
+    fun parseUTCAndGetFormattedDate(): String {
+        return DateFormatUtil.parseUtcToLocalDateAndGetFormattedDate(utcTimestamp = timeStamp)
+    }
 }

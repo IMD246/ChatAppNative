@@ -123,7 +123,7 @@ object DateFormatUtil {
 
     @SuppressLint("SimpleDateFormat")
     fun parseToLocalDate(value: String): Date {
-        val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        val formatter = SimpleDateFormat(DATE_TIME_FORMAT5)
         val tz = TimeZone.getDefault()
         formatter.timeZone = tz;
 
@@ -265,5 +265,14 @@ object DateFormatUtil {
             utcFormat.timeZone = TimeZone.getTimeZone("UTC")
             utcFormat.parse(utcFormat.format(Date()))!!
         }
+    }
+
+    fun parseUtcToLocalDateAndGetFormattedDate(
+        utcTimestamp: String,
+        format: String = DATE_FORMAT
+    ): String {
+        val localDate = parseToLocalDate(utcTimestamp)
+
+        return getFormattedDate(localDate, format)
     }
 }

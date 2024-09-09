@@ -15,6 +15,7 @@ import com.example.chatappnative.data.socket.SocketManager
 import com.example.chatappnative.domain.repository.ChatRepository
 import com.example.chatappnative.helper.DialogAPIHelper
 import com.example.chatappnative.util.DateFormatUtil
+import com.example.chatappnative.util.DateFormatUtil.DATE_FORMAT
 import com.example.chatappnative.util.DateFormatUtil.DATE_TIME_FORMAT5
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -88,11 +89,13 @@ class MessageViewModel
     ) {
         if (messages.isEmpty()) return
 
-        _groupedByMessages.value = messages
+        _groupedByMessages.value = messages.asReversed()
             .groupBy { item ->
-                item.timeStamp.substringBefore('T')
+                val localDate = DateFormatUtil.parseUtcToDate(item.timeStamp)
+                DateFormatUtil.getFormattedDate(localDate, DATE_FORMAT)
             }
             .toSortedMap(reverseOrder())
+//            .mapValues { (_, value) -> value.reversed() }
             .toList()
 
     }
@@ -163,6 +166,7 @@ class MessageViewModel
                             totalPages = data.totalPages,
                         )
                         updateGroupedByMessages(_messageList.value)
+                        getMessageList()
                     }
                 }
             }
@@ -174,7 +178,7 @@ class MessageViewModel
             chatRepository.getChatMessages(
                 page = _pagedMessageList.currentPage + 1,
                 pageSize = _pagedMessageList.pageSize,
-                chatID = _chatDetailParam?.chatID ?: "",
+                chatID = _chatDetail.value?.id ?: "",
             ).collectLatest {
                 when (it) {
                     is ResponseState.Error -> {
@@ -198,7 +202,7 @@ class MessageViewModel
                         _pagedMessageList = data
 
                         val newMessages =
-                            listOf<MessageModel>().plus(data.data + _messageList.value)
+                            listOf<MessageModel>().plus(_messageList.value + data.data)
 
                         _messageList.value = newMessages
 
@@ -271,7 +275,7 @@ class MessageViewModel
 
         _messageList.value = newMessages
 
-        updateGroupedByMessages(_messageList.value)
+        updateMessageGroupByMessages(newMessages[index], statusMessage)
     }
 
     fun onSend() {
@@ -307,9 +311,66 @@ class MessageViewModel
 
         _messageText.value = ""
 
-        updateGroupedByMessages(_messageList.value)
+        addNewMessageToGroupByMessages(newMessage)
 
         _triggerScroll.value = true
+    }
+
+    private fun addNewMessageToGroupByMessages(newMessage: MessageModel) {
+        val newGroupByMessage = _groupedByMessages.value.toMutableList()
+
+        newGroupByMessage.let {
+            var getPair =
+                it.find { element -> element.first == newMessage.parseUTCAndGetFormattedDate() }
+
+            if (getPair == null) {
+                getPair = Pair(newMessage.parseUTCAndGetFormattedDate(), listOf(newMessage))
+                it.add(0, getPair)
+                return@let
+            }
+
+            val index = it.indexOf(getPair)
+
+            it[index] = getPair.copy(
+                second = it[index].second + newMessage
+            )
+        }
+
+        _groupedByMessages.value = newGroupByMessage
+    }
+
+    private fun updateMessageGroupByMessages(newMessage: MessageModel, statusMessage: String) {
+        val newGroupByMessage = _groupedByMessages.value.toMutableList()
+
+        newGroupByMessage.let {
+            var getPair =
+                it.find { element -> element.first == newMessage.parseUTCAndGetFormattedDate() }
+
+            if (getPair == null) {
+                getPair = Pair(newMessage.parseUTCAndGetFormattedDate(), listOf(newMessage))
+                it.add(0, getPair)
+                return@let
+            }
+
+            val index = it.indexOf(getPair)
+            val newMessages = it[index].second.toMutableList()
+
+            val findMessage =
+                newMessages.find { element -> element.id == newMessage.id }
+                    ?: newMessages.find { element -> element.uuid == newMessage.uuid }
+
+            if (findMessage == null) return
+
+            val getIndexMessage = newMessages.indexOf(findMessage)
+
+            newMessages[getIndexMessage] = findMessage.copy(status = statusMessage)
+
+            it[index] = getPair.copy(
+                second = newMessages
+            )
+        }
+
+        _groupedByMessages.value = newGroupByMessage
     }
 
     fun onNewMessage(messageModel: MessageModel) {
