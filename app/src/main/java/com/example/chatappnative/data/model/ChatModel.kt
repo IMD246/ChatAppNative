@@ -1,5 +1,6 @@
 package com.example.chatappnative.data.model
 
+import com.example.chatappnative.data.param.TypeChat
 import com.example.chatappnative.util.DateFormatUtil
 import com.google.gson.annotations.SerializedName
 import java.util.Date
@@ -10,12 +11,12 @@ data class ChatModel(
     @SerializedName("lastMessage") val lastMessage: String = "",
     @SerializedName("nameChat") val nameChat: String = "",
     @SerializedName("timeLastMessage") val timeLastMessage: String = "",
-    val type: String = "",
-    val urlImage: String = "",
-    val userIDLastMessage: String = "",
+    @SerializedName("type") val type: String = "",
+    @SerializedName("urlImage") val urlImage: String = "",
+    @SerializedName("userIDLastMessage") val userIDLastMessage: String = "",
     @SerializedName("userNameLastMessage") val userNameLastMessage: String = "",
     @SerializedName("typeMessage") val typeMessage: String = "",
-    @SerializedName("users") val usersPresence: List<UserPresence> = arrayListOf(),
+    @SerializedName("users") val usersPresence: List<UserPresenceModel> = arrayListOf(),
     @SerializedName("typeLastMessage") val typeLastMessage: String = "",
 ) {
     fun getDateTimeLastMessage(): Date {
@@ -48,5 +49,17 @@ data class ChatModel(
         val parseToUtc = DateFormatUtil.parseUtcToDate(getDate)
 
         return parseToUtc
+    }
+
+    fun getTypeChat(): TypeChat {
+        return when (type) {
+            "group" -> {
+                TypeChat.GROUP
+            }
+
+            else -> {
+                TypeChat.PERSONAL
+            }
+        }
     }
 }

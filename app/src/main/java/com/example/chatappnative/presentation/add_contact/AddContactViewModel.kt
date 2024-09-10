@@ -6,12 +6,12 @@ import androidx.lifecycle.viewModelScope
 import com.example.chatappnative.data.api.APIConstants
 import com.example.chatappnative.data.api.ResponseState
 import com.example.chatappnative.data.local_database.Preferences
-import com.example.chatappnative.data.model.ChatDetailParamModel
 import com.example.chatappnative.data.model.ContactModel
 import com.example.chatappnative.data.model.FriendModel
 import com.example.chatappnative.data.model.PagedListModel
-import com.example.chatappnative.data.model.TypeChat
 import com.example.chatappnative.data.model.UserPresenceSocketModel
+import com.example.chatappnative.data.param.ChatDetailParam
+import com.example.chatappnative.data.param.TypeChat
 import com.example.chatappnative.domain.repository.ContactRepository
 import com.example.chatappnative.helper.DialogAPIHelper
 import com.example.chatappnative.service.EventBusService
@@ -187,7 +187,7 @@ class AddContactViewModel
                         channelEvent.send(ChannelEventAddContact.ShowToastMessage("Đã cập nhật thành công!"))
 
                         data[index] =
-                            data[index].copy(status = it.data?.user_status ?: data[index].status)
+                            data[index].copy(status = it.data?.userStatus ?: data[index].status)
 
                         if (data[index].status == 1 || data[index].status == 3) {
                             Log.d("AddContactViewModel", "sendFriendEvent: ${data[index]}")
@@ -215,7 +215,7 @@ class AddContactViewModel
         viewModelScope.launch {
             channelEvent.send(
                 ChannelEventAddContact.ClickItem(
-                    ChatDetailParamModel(
+                    ChatDetailParam(
                         listUserID = listOf(it.id),
                         type = TypeChat.PERSONAL.type,
                     )
@@ -227,5 +227,5 @@ class AddContactViewModel
 
 sealed class ChannelEventAddContact {
     data class ShowToastMessage(val message: String) : ChannelEventAddContact()
-    data class ClickItem(val chatDetailParamModel: ChatDetailParamModel) : ChannelEventAddContact()
+    data class ClickItem(val chatDetailParam: ChatDetailParam) : ChannelEventAddContact()
 }

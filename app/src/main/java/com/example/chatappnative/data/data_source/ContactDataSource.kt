@@ -8,7 +8,7 @@ import com.example.chatappnative.data.model.ContactModel
 import com.example.chatappnative.data.model.FriendModel
 import com.example.chatappnative.data.model.PagedListModel
 import com.example.chatappnative.data.model.UpdateFriendStatusModel
-import com.example.chatappnative.data.model.UpdateFriendStatusParamModel
+import com.example.chatappnative.data.param.UpdateFriendStatusParam
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -37,7 +37,7 @@ interface ContactDataSource {
 
     @POST(UPDATE_FRIEND_STATUS)
     suspend fun updateFriendStatus(
-        @Body() postData: UpdateFriendStatusParamModel,
+        @Body postData: UpdateFriendStatusParam,
         @Header("Authorization") accessToken: String = ""
     ): Response<BaseResponse<UpdateFriendStatusModel>>
 }

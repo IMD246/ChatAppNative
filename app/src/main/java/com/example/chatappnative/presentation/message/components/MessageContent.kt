@@ -34,6 +34,8 @@ import androidx.compose.ui.unit.sp
 import com.example.chatappnative.R
 import com.example.chatappnative.data.model.ChatDetailModel
 import com.example.chatappnative.data.model.MessageModel
+import com.example.chatappnative.data.param.StatusMessage.TYPING
+import com.example.chatappnative.data.param.TypeMessage
 import com.example.chatappnative.presentation.composables.BaseListReverse
 import com.example.chatappnative.presentation.composables.GifImage
 import com.example.chatappnative.presentation.composables.NetworkImage
@@ -179,9 +181,11 @@ private fun MessageItem(item: MessageModel) {
         ) {
             val maxWidth = this.maxWidth
 
-            when (item.type) {
-                "text" -> TextMessage(maxWidth, item)
-                "image" -> Box {}
+            when (item.getTypeMessage()) {
+                TypeMessage.TEXT -> TextMessage(maxWidth, item)
+                TypeMessage.IMAGE -> Box {}
+                TypeMessage.VIDEO -> Box {}
+                TypeMessage.AUDIO -> Box {}
             }
         }
     }
@@ -191,16 +195,16 @@ private fun MessageItem(item: MessageModel) {
 @Composable
 private fun TextMessage(maxWidth: Dp, item: MessageModel) {
     val content = @Composable {
-        if (item.status == "typing") {
-            Column(
+        when (item.getStatusMessage()) {
+            TYPING -> Column(
                 horizontalAlignment = Alignment.End
             ) {
                 GifImage(
                     data = R.drawable.anim_typing_message, modifier = Modifier.size(24.dp),
                 )
             }
-        } else {
-            Column(
+
+            else -> Column(
                 modifier = Modifier.sizeIn(minWidth = 70.dp, maxWidth = maxWidth * 0.7F),
                 horizontalAlignment = Alignment.End
             ) {

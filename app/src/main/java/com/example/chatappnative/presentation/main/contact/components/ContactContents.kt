@@ -55,7 +55,7 @@ fun ContactContent(contactModel: ContactViewModel) {
         contentItem = {
             ContactItem(it, onItemClick = contactModel::selectContactItem)
         },
-        keyItem = { it.uuid },
+        keyItem = { it.id },
         isLoadMore = isLoadMore,
         onLoadMore = {
             contactModel.loadMore()

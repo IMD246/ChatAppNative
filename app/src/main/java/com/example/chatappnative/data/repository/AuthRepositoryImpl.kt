@@ -3,9 +3,11 @@ package com.example.chatappnative.data.repository
 import com.example.chatappnative.data.api.ResponseState
 import com.example.chatappnative.data.data_source.AuthDataSource
 import com.example.chatappnative.data.local_database.Preferences
-import com.example.chatappnative.data.model.DeviceTokenModel
+import com.example.chatappnative.data.model.RefreshDeviceTokenModel
 import com.example.chatappnative.data.model.RefreshTokenModel
 import com.example.chatappnative.data.model.UserInfoAccessModel
+import com.example.chatappnative.data.param.LoginParam
+import com.example.chatappnative.data.param.RegisterParam
 import com.example.chatappnative.domain.repository.AuthRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -15,45 +17,27 @@ class AuthRepositoryImpl @Inject constructor(
     private val preferences: Preferences,
 ) : AuthRepository {
     override suspend fun register(
-        name: String,
-        email: String,
-        phone: String,
-        password: String,
-        deviceToken: String,
+        registerParam: RegisterParam,
     ): Flow<ResponseState<UserInfoAccessModel>> {
         return BaseRepository.callAPI {
-            val postData = HashMap<String, String>()
-
-            postData["name"] = name
-            postData["email"] = email
-            postData["password"] = password
-            postData["phone"] = phone
-            postData["device_token"] = deviceToken
             authDataSource.register(
-                postData = postData
+                postData = registerParam
             )
         }
     }
 
 
     override suspend fun login(
-        email: String,
-        password: String,
-        deviceToken: String,
+        loginParam: LoginParam,
     ): Flow<ResponseState<UserInfoAccessModel>> {
         return BaseRepository.callAPI {
-            val postData = HashMap<String, String>()
-
-            postData["email"] = email
-            postData["password"] = password
-            postData["device_token"] = deviceToken
             authDataSource.login(
-                postData = postData
+                postData = loginParam,
             )
         }
     }
 
-    override suspend fun refreshDeviceToken(deviceToken: String): Flow<ResponseState<DeviceTokenModel>> {
+    override suspend fun refreshDeviceToken(deviceToken: String): Flow<ResponseState<RefreshDeviceTokenModel>> {
         return BaseRepository.callAPI {
             val postData = HashMap<String, String>()
 
@@ -61,7 +45,6 @@ class AuthRepositoryImpl @Inject constructor(
 
             authDataSource.refreshDeviceToken(
                 postData = postData,
-//                accessToken = "Bearer ${preferences.getAccessToken()}"
                 accessToken = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2YjhjNjA4YjFmODUwNzU1NzcwMDg3ZCIsImlhdCI6MTcyMzM4ODAyMX0.X7bLhNUuRmNlhSP21ciiAwKLPBFTzsPT-GC_9uCqZbw"
             )
         }

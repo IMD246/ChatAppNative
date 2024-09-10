@@ -32,7 +32,7 @@ fun ContactScreen(context: Context, contactModel: ContactViewModel) {
         when (it) {
             is ChannelEventContact.ClickItemContact -> {
                 val intent = Intent(context, MessageActivity::class.java)
-                intent.putExtra(MessageActivity.CHAT_PARAMS, it.chatDetailParamModel)
+                intent.putExtra(MessageActivity.CHAT_PARAMS, it.chatDetailParam)
                 context.startActivity(intent)
             }
         }

@@ -23,11 +23,10 @@ class SettingViewModel
 
     fun onLogout() {
         viewModelScope.launch {
-            authRepository.logout().collect {
-                preferences.logout()
-                socketManager.disconnect()
-                navigateChannel.send(NavigateSettingScreen.Main)
-            }
+            navigateChannel.send(NavigateSettingScreen.Main)
+            authRepository.logout()
+            preferences.logout()
+            socketManager.disconnect()
         }
     }
 }

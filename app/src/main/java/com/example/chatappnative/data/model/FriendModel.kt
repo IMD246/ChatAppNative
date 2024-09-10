@@ -6,11 +6,10 @@ import java.util.Date
 import java.util.UUID
 
 data class FriendModel(
-    val uuid: String = UUID.randomUUID().toString(),
-    val id: String = "",
-    val name: String = "",
-    val urlImage: String? = "",
-    val presence: Boolean = false,
+    @SerializedName("id") val id: String = UUID.randomUUID().toString(),
+    @SerializedName("name") val name: String = "",
+    @SerializedName("urlImage") val urlImage: String? = "",
+    @SerializedName("presence") val presence: Boolean = false,
     @SerializedName("presence_timestamp") val presenceTimestamp: String = "",
 ) {
 

@@ -1,9 +1,9 @@
-package com.example.chatappnative.data.model
+package com.example.chatappnative.data.param
 
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
-data class ChatDetailParamModel(
+data class ChatDetailParam(
     @SerializedName("page_size_message") val pageSizeMessage: Int = 15,
     @SerializedName("type") val type: String? = "personal",
     @SerializedName("room_id") val chatID: String? = null,

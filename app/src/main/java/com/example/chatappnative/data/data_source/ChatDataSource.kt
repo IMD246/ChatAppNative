@@ -5,10 +5,10 @@ import com.example.chatappnative.core.constants.NetworkUrl.TAKE_MESSAGE_LIST
 import com.example.chatappnative.core.constants.NetworkUrl.TAKE_ROOM_CHAT
 import com.example.chatappnative.data.api.BaseResponse
 import com.example.chatappnative.data.model.ChatDetailModel
-import com.example.chatappnative.data.model.ChatDetailParamModel
 import com.example.chatappnative.data.model.ChatModel
 import com.example.chatappnative.data.model.MessageModel
 import com.example.chatappnative.data.model.PagedListModel
+import com.example.chatappnative.data.param.ChatDetailParam
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -28,7 +28,7 @@ interface ChatDataSource {
 
     @POST(TAKE_ROOM_CHAT)
     suspend fun getChatDetail(
-        @Body postData: ChatDetailParamModel,
+        @Body postData: ChatDetailParam,
         @Header("Authorization") accessToken: String = ""
     ): Response<BaseResponse<ChatDetailModel>>
 

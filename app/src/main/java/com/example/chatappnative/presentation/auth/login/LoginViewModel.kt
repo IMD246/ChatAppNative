@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.chatappnative.data.api.ResponseState
 import com.example.chatappnative.data.local_database.Preferences
+import com.example.chatappnative.data.param.LoginParam
 import com.example.chatappnative.data.socket.SocketManager
 import com.example.chatappnative.domain.repository.AuthRepository
 import com.example.chatappnative.helper.DialogAPIHelper
@@ -94,11 +95,12 @@ class LoginViewModel @Inject constructor(
         _showError.value = false
 
         viewModelScope.launch {
-            val token = Firebase.messaging.token.await()
             authRepository.login(
-                _emailController.value,
-                _passwordController.value,
-                token
+                LoginParam(
+                    _emailController.value,
+                    _passwordController.value,
+                    Firebase.messaging.token.await()
+                )
             ).collectLatest {
                 when (it) {
                     is ResponseState.Error -> {

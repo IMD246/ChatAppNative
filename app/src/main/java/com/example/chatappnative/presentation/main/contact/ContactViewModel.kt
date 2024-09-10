@@ -6,12 +6,12 @@ import androidx.lifecycle.viewModelScope
 import com.example.chatappnative.data.api.APIConstants
 import com.example.chatappnative.data.api.ResponseState
 import com.example.chatappnative.data.local_database.Preferences
-import com.example.chatappnative.data.model.ChatDetailParamModel
 import com.example.chatappnative.data.model.FriendModel
 import com.example.chatappnative.data.model.PagedListModel
-import com.example.chatappnative.data.model.TypeChat
 import com.example.chatappnative.data.model.UserInfoAccessModel
 import com.example.chatappnative.data.model.UserPresenceSocketModel
+import com.example.chatappnative.data.param.ChatDetailParam
+import com.example.chatappnative.data.param.TypeChat
 import com.example.chatappnative.data.socket.SocketManager
 import com.example.chatappnative.domain.repository.ContactRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -199,7 +199,7 @@ class ContactViewModel
         viewModelScope.launch {
             channelEvent.send(
                 ChannelEventContact.ClickItemContact(
-                    ChatDetailParamModel(
+                    ChatDetailParam(
                         listUserID = arrayListOf(friendModel.id),
                         type = TypeChat.PERSONAL.type
                     )
@@ -210,6 +210,6 @@ class ContactViewModel
 }
 
 sealed class ChannelEventContact {
-    data class ClickItemContact(val chatDetailParamModel: ChatDetailParamModel) :
+    data class ClickItemContact(val chatDetailParam: ChatDetailParam) :
         ChannelEventContact()
 }

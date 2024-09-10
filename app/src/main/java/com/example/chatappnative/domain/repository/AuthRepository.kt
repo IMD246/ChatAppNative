@@ -1,29 +1,25 @@
 package com.example.chatappnative.domain.repository
 
 import com.example.chatappnative.data.api.ResponseState
-import com.example.chatappnative.data.model.DeviceTokenModel
+import com.example.chatappnative.data.model.RefreshDeviceTokenModel
 import com.example.chatappnative.data.model.RefreshTokenModel
 import com.example.chatappnative.data.model.UserInfoAccessModel
+import com.example.chatappnative.data.param.LoginParam
+import com.example.chatappnative.data.param.RegisterParam
 import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
     suspend fun register(
-        name: String,
-        email: String,
-        phone: String = "",
-        password: String,
-        deviceToken: String,
+        registerParam: RegisterParam,
     ): Flow<ResponseState<UserInfoAccessModel>>
 
     suspend fun login(
-        email: String,
-        password: String,
-        deviceToken: String,
+        loginParam: LoginParam,
     ): Flow<ResponseState<UserInfoAccessModel>>
 
     suspend fun refreshDeviceToken(
         deviceToken: String,
-    ): Flow<ResponseState<DeviceTokenModel>>
+    ): Flow<ResponseState<RefreshDeviceTokenModel>>
 
     suspend fun logout(): Flow<ResponseState<Boolean>>
 

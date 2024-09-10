@@ -6,11 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.chatappnative.data.api.APIConstants
 import com.example.chatappnative.data.api.ResponseState
 import com.example.chatappnative.data.local_database.Preferences
-import com.example.chatappnative.data.model.ChatDetailParamModel
 import com.example.chatappnative.data.model.ChatModel
 import com.example.chatappnative.data.model.PagedListModel
 import com.example.chatappnative.data.model.UserInfoAccessModel
 import com.example.chatappnative.data.model.UserPresenceSocketModel
+import com.example.chatappnative.data.param.ChatDetailParam
 import com.example.chatappnative.data.socket.SocketManager
 import com.example.chatappnative.domain.repository.ChatRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -230,7 +230,7 @@ class ChatViewModel
         viewModelScope.launch {
             _channelNavigateChat.send(
                 NavigateChatEvent.ChatDetail(
-                    ChatDetailParamModel(chatID = it.id)
+                    ChatDetailParam(chatID = it.id)
                 )
             )
         }
@@ -238,5 +238,5 @@ class ChatViewModel
 }
 
 sealed class NavigateChatEvent {
-    data class ChatDetail(val chatDetailParam: ChatDetailParamModel) : NavigateChatEvent()
+    data class ChatDetail(val chatDetailParam: ChatDetailParam) : NavigateChatEvent()
 }

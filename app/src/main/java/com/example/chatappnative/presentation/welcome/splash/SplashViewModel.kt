@@ -29,7 +29,7 @@ class SplashViewModel @Inject constructor(
                 if (accessToken.isEmpty() || accessToken.isBlank() || userInfo == null) {
                     navigateChannel.send(NavigateSplashScreen.Login)
                 } else {
-                    if (userInfo.isExpired()) {
+                    if (userInfo.isExpired() && userInfo.isExpiredRefreshToken()) {
                         preferences.logout()
                         navigateChannel.send(NavigateSplashScreen.Login)
                         return@launch

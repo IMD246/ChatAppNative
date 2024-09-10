@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.chatappnative.data.api.ResponseState
 import com.example.chatappnative.data.local_database.Preferences
+import com.example.chatappnative.data.param.RegisterParam
 import com.example.chatappnative.data.socket.SocketManager
 import com.example.chatappnative.domain.repository.AuthRepository
 import com.example.chatappnative.helper.DialogAPIHelper
@@ -137,11 +138,13 @@ class RegisterViewModel @Inject constructor(
 
         viewModelScope.launch {
             authRepository.register(
-                _nameController.value,
-                _emailController.value,
-                _phoneController.value,
-                _passwordController.value,
-                Firebase.messaging.token.await()
+                RegisterParam(
+                    _nameController.value,
+                    _emailController.value,
+                    _phoneController.value,
+                    _passwordController.value,
+                    Firebase.messaging.token.await()
+                )
             ).collectLatest {
                 when (it) {
                     is ResponseState.Error -> {

@@ -1,29 +1,24 @@
 package com.example.chatappnative.data.model
 
+import com.example.chatappnative.data.param.TypeChat
 import com.example.chatappnative.util.DateFormatUtil
 import com.google.gson.annotations.SerializedName
 import java.util.Date
 
 data class ChatDetailModel(
     @SerializedName("_id") val id: String = "",
-    val lastMessage: String = "",
-    val nameChat: String = "",
-    val timeLastMessage: String = "",
-    val type: String = "",
-    val urlImage: String = "",
-    val userIDLastMessage: String = "",
-    val userNameLastMessage: String = "",
-    val typeMessage: String = "",
-    @SerializedName("users") val usersPresence: List<UserPresence> = arrayListOf(),
+    @SerializedName("lastMessage") val lastMessage: String = "",
+    @SerializedName("nameChat") val nameChat: String = "",
+    @SerializedName("timeLastMessage") val timeLastMessage: String = "",
+    @SerializedName("type") val type: String = "",
+    @SerializedName("urlImage") val urlImage: String = "",
+    @SerializedName("userIDLastMessage") val userIDLastMessage: String = "",
+    @SerializedName("userNameLastMessage") val userNameLastMessage: String = "",
+    @SerializedName("typeMessage") val typeMessage: String = "",
+    @SerializedName("users") val usersPresence: List<UserPresenceModel> = arrayListOf(),
     @SerializedName("messages") val messages: List<MessageModel> = arrayListOf(),
     @SerializedName("totalPages") val totalPages: Int = 0
 ) {
-    fun getDateTimeLastMessage(): Date {
-        val parseToUtc = DateFormatUtil.parseUtcToDate(timeLastMessage)
-
-        return parseToUtc
-    }
-
     fun getPresence(): Boolean {
         return usersPresence.any { it.presence }
     }
@@ -48,5 +43,17 @@ data class ChatDetailModel(
         val parseToUtc = DateFormatUtil.parseUtcToDate(getDate)
 
         return parseToUtc
+    }
+
+    fun getTypeChat(): TypeChat {
+        return when (type) {
+            "group" -> {
+                TypeChat.GROUP
+            }
+
+            else -> {
+                TypeChat.PERSONAL
+            }
+        }
     }
 }

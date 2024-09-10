@@ -1,5 +1,8 @@
 package com.example.chatappnative.presentation.main.setting
 
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,19 +18,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.example.chatappnative.presentation.auth.login.LoginActivity
 import com.example.chatappnative.presentation.composables.BaseSearchBar
 import com.example.chatappnative.presentation.composables.ObserverAsEvent
 import com.example.chatappnative.presentation.main.contact.ContactViewModel
 import com.example.chatappnative.ui.theme.ColorPrimary
 
 @Composable
-fun SettingScreen(settingViewModel: SettingViewModel, onLogout: () -> Unit) {
+fun SettingScreen(context: Context, settingViewModel: SettingViewModel) {
     val navigateFlow = settingViewModel.navigateChannelFlow
 
     ObserverAsEvent(navigateFlow) {
         when (it) {
             NavigateSettingScreen.Main -> {
-                onLogout()
+                val intent = Intent(context, LoginActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                context.startActivity(intent)
+
+                if (context is Activity) {
+                    context.finish()
+                }
             }
         }
     }
@@ -38,9 +48,11 @@ fun SettingScreen(settingViewModel: SettingViewModel, onLogout: () -> Unit) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        OutlinedButton(onClick = {
-            settingViewModel.onLogout()
-        }) {
+        OutlinedButton(
+            onClick = {
+                settingViewModel.onLogout()
+            },
+        ) {
             Text(text = "Logout")
         }
     }

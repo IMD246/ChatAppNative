@@ -1,5 +1,7 @@
 package com.example.chatappnative.data.model
 
+import com.google.gson.annotations.SerializedName
+
 data class UpdateFriendStatusModel(
-    val user_status: Int
+    @SerializedName("user_status") val userStatus: Int = 0,
 )

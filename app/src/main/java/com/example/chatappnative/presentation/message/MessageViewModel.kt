@@ -7,10 +7,13 @@ import com.example.chatappnative.data.api.APIConstants
 import com.example.chatappnative.data.api.ResponseState
 import com.example.chatappnative.data.local_database.Preferences
 import com.example.chatappnative.data.model.ChatDetailModel
-import com.example.chatappnative.data.model.ChatDetailParamModel
 import com.example.chatappnative.data.model.MessageModel
 import com.example.chatappnative.data.model.PagedListModel
 import com.example.chatappnative.data.model.UserPresenceSocketModel
+import com.example.chatappnative.data.param.ChatDetailParam
+import com.example.chatappnative.data.param.StatusMessage
+import com.example.chatappnative.data.param.TypeMessage
+import com.example.chatappnative.data.param.UserTypingParam
 import com.example.chatappnative.data.socket.SocketManager
 import com.example.chatappnative.domain.repository.ChatRepository
 import com.example.chatappnative.helper.DialogAPIHelper
@@ -69,7 +72,7 @@ class MessageViewModel
     private val _chatDetail = MutableStateFlow<ChatDetailModel?>(null)
     val chatDetail = _chatDetail
 
-    private var _chatDetailParam: ChatDetailParamModel? = null
+    private var _chatDetailParam: ChatDetailParam? = null
 
     private val messageError = Channel<String>()
     val messageErrorFlow = messageError.receiveAsFlow()
@@ -77,8 +80,10 @@ class MessageViewModel
     private val newMessage: MutableStateFlow<MessageModel?> = MutableStateFlow(null)
     val newMessageFlow = newMessage
 
+    private var sendTypingMessage: Boolean = false
+
     init {
-        savedStateHandle.get<ChatDetailParamModel>(MessageActivity.CHAT_PARAMS)?.let { params ->
+        savedStateHandle.get<ChatDetailParam>(MessageActivity.CHAT_PARAMS)?.let { params ->
             _chatDetailParam = params
         }
 
@@ -91,6 +96,10 @@ class MessageViewModel
         onUpdateSentMessage()
 
         onUserReadMessages()
+
+        onUserTyping()
+
+        onUserStopTyping()
     }
 
     private fun onUserReadMessages() {
@@ -98,16 +107,24 @@ class MessageViewModel
             socketManager.onUserReadMessages {
                 if (it != _chatDetail.value?.id) return@onUserReadMessages
 
-                if (_messageList.value.any { item -> item.status == "sent" && item.isMine }) {
-                    _messageList.value = _messageList.value.map { message ->
-                        if (message.status == "sent" && message.isMine) {
-                            message.copy(status = "read")
-                        } else {
-                            message
-                        }
-                    }
-                    updateGroupedByMessages()
+                updateSentToReadMessages(false)
+            }
+        }
+    }
+
+    private fun updateSentToReadMessages(isEmit: Boolean = false) {
+        if (_messageList.value.any { item -> item.status == StatusMessage.SENT.type && item.isMine }) {
+            _messageList.value = _messageList.value.map { message ->
+                if (message.status == StatusMessage.SENT.type && message.isMine) {
+                    message.copy(status = StatusMessage.READ.type)
+                } else {
+                    message
                 }
+            }
+            updateGroupedByMessages()
+
+            if (isEmit) {
+                socketManager.emitUpdateReadMessages(_chatDetail.value?.id ?: "")
             }
         }
     }
@@ -130,7 +147,7 @@ class MessageViewModel
                 if (it.chatID != _chatDetail.value?.id) return@onNewMessage
 
                 val newList = mutableListOf(
-                    it.copy(status = "read")
+                    it.copy(status = StatusMessage.READ.type)
                 ).plus(
                     _messageList.value
                 )
@@ -331,11 +348,43 @@ class MessageViewModel
 
     val onChangedMessageText: (String) -> Unit = {
         _messageText.value = it
-        onUpdateIsTyping()
+        _isTyping.value = it.isNotEmpty()
+        onSendTypingMessage()
     }
 
-    private fun onUpdateIsTyping() {
-        _isTyping.value = _messageText.value.isNotEmpty()
+    private fun onSendTypingMessage() {
+        if (_chatDetail.value == null) return
+
+        if (!_isTyping.value) {
+            if (!sendTypingMessage) return
+
+            socketManager.emitUserStopTyping(
+                UserTypingParam(
+                    chatID = _chatDetail.value?.id ?: "",
+                    userID = getUserInfo()?.userID ?: "",
+                    senderAvatar = getUserInfo()?.urlImage ?: "",
+                    senderName = getUserInfo()?.name ?: "",
+                )
+            )
+            sendTypingMessage = false
+        }
+
+        if (isTyping.value) {
+            if (sendTypingMessage) {
+                return
+            }
+
+            socketManager.emitUserTyping(
+                UserTypingParam(
+                    chatID = _chatDetail.value?.id ?: "",
+                    userID = getUserInfo()?.userID ?: "",
+                    senderAvatar = getUserInfo()?.urlImage ?: "",
+                    senderName = getUserInfo()?.name ?: "",
+                )
+            )
+
+            sendTypingMessage = true
+        }
     }
 
     fun onAudio() {
@@ -370,6 +419,15 @@ class MessageViewModel
     fun onSend() {
         if (_isLoadingMessageList.value) return
 
+        socketManager.emitUserStopTyping(
+            UserTypingParam(
+                chatID = _chatDetail.value?.id ?: "",
+                userID = getUserInfo()?.userID ?: "",
+                senderAvatar = getUserInfo()?.urlImage ?: "",
+                senderName = getUserInfo()?.name ?: "",
+            )
+        )
+
         val currentDateUtc0 = DateFormatUtil.getCurrentUtc0Date()
         val getFormatDate = DateFormatUtil.getFormattedUTCDate(
             currentDateUtc0,
@@ -383,7 +441,7 @@ class MessageViewModel
             status = "not-sent",
             isMine = true,
             timeStamp = getFormatDate,
-            type = "text",
+            typeMessage = TypeMessage.TEXT.type,
             senderName = userInfo?.name ?: "",
             senderAvatar = userInfo?.urlImage ?: "",
         )
@@ -402,6 +460,7 @@ class MessageViewModel
         _messageList.value = newList
 
         _messageText.value = ""
+        onChangedMessageText("")
 
         updateGroupedByMessages()
 
@@ -414,27 +473,85 @@ class MessageViewModel
 
     fun onLeaveRoom() {
         if (_chatDetail.value == null) return
+        if (_isTyping.value) {
+            socketManager.emitUserStopTyping(
+                UserTypingParam(
+                    chatID = _chatDetail.value?.id ?: "",
+                    userID = getUserInfo()?.userID ?: "",
+                    senderAvatar = getUserInfo()?.urlImage ?: "",
+                )
+            )
+        }
         socketManager.leaveRoom(_chatDetail.value?.id ?: "")
     }
 
     private fun onEmitReadMessages() {
         if (_messageList.value.isEmpty()) return
 
-        if (_messageList.value.any { item -> item.status == "sent" && !item.isMine }) {
-            _messageList.value = _messageList.value.map { message ->
-                if (message.status == "sent" && !message.isMine) {
-                    message.copy(status = "read")
-                } else {
-                    message
-                }
-            }
-            updateGroupedByMessages()
-            socketManager.emitUpdateReadMessages(_chatDetail.value?.id ?: "")
-        }
+        updateSentToReadMessages(isEmit = true)
     }
 
     fun clearNewMessage() {
         if (newMessage.value == null) return
         newMessage.value = null
+    }
+
+    private fun onUserTyping() {
+        viewModelScope.launch {
+            socketManager.onUserTyping { param ->
+                if (param.chatID != _chatDetail.value?.id) return@onUserTyping
+
+                val findTypingMessage = _messageList.value.find {
+                    it.status == StatusMessage.TYPING.type && !it.isMine && it.senderId == param.userID
+                }
+
+                if (findTypingMessage != null) {
+                    return@onUserTyping
+                }
+
+                val currentDateUtc0 = DateFormatUtil.getCurrentUtc0Date()
+                val getFormatDate = DateFormatUtil.getFormattedUTCDate(
+                    currentDateUtc0,
+                    format = DATE_TIME_FORMAT5
+                )
+
+                val newMessage = MessageModel(
+                    status = StatusMessage.TYPING.type,
+                    isMine = false,
+                    typeMessage = TypeMessage.TEXT.type,
+                    timeStamp = getFormatDate,
+                    senderName = param.senderName,
+                    senderAvatar = param.senderAvatar,
+                    senderId = param.userID,
+                    chatID = param.chatID,
+                )
+
+                val newList = mutableListOf(
+                    newMessage
+                ).plus(
+                    _messageList.value
+                )
+
+                _messageList.value = newList
+
+                updateGroupedByMessages()
+            }
+        }
+    }
+
+    private fun onUserStopTyping() {
+        socketManager.onUserStopTyping { param ->
+            if (param.chatID != _chatDetail.value?.id) return@onUserStopTyping
+
+            val newMessages = _messageList.value.toMutableList()
+
+            val result =
+                newMessages.removeIf { it.status == StatusMessage.TYPING.type && !it.isMine && it.senderId == param.userID }
+
+            if (result) {
+                _messageList.value = newMessages
+                updateGroupedByMessages()
+            }
+        }
     }
 }

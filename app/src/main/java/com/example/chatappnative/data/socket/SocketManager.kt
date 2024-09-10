@@ -5,6 +5,7 @@ import com.example.chatappnative.core.constants.NetworkUrl
 import com.example.chatappnative.data.local_database.Preferences
 import com.example.chatappnative.data.model.MessageModel
 import com.example.chatappnative.data.model.UserPresenceSocketModel
+import com.example.chatappnative.data.param.UserTypingParam
 import com.example.chatappnative.event.UpdateSentMessageEvent
 import com.example.chatappnative.service.EventBusService
 import com.google.gson.Gson
@@ -170,7 +171,7 @@ class SocketManager(
         data.put("chatID", chatID)
 
         Log.d("SocketManager", "emitUpdateReadMessages: $data")
-        
+
         socket?.emit("updateReadMessages", data)
     }
 
@@ -181,6 +182,54 @@ class SocketManager(
             Log.d("SocketManager", "onUpdateReadMessages: $data")
 
             action(data.getString("chatID"))
+        }
+    }
+
+    fun emitUserTyping(userTypingParam: UserTypingParam) {
+        // Convert MessageModel to JSON string using Gson
+        val jsonString = Gson().toJson(userTypingParam)
+
+        // Parse JSON string into JSONObject
+        val jsonObject = JSONObject(jsonString)
+
+        Log.d("SocketManager", "emitUserTyping: $userTypingParam")
+
+        socket?.emit("user-typing", jsonObject)
+    }
+
+    fun emitUserStopTyping(userTypingParam: UserTypingParam) {
+        // Convert MessageModel to JSON string using Gson
+        val jsonString = Gson().toJson(userTypingParam)
+
+        // Parse JSON string into JSONObject
+        val jsonObject = JSONObject(jsonString)
+
+        Log.d("SocketManager", "emitUserTyping: $userTypingParam")
+
+        socket?.emit("user-stop-typing", jsonObject)
+    }
+
+    fun onUserTyping(action: (userTypingParam: UserTypingParam) -> Unit) {
+        socket?.on("update-user-typing") {
+            val data = it[0] as JSONObject
+
+            val userTypingParam = Gson().fromJson(data.toString(), UserTypingParam::class.java)
+
+            Log.d("SocketManager", "onUserTyping: $userTypingParam")
+
+            action(userTypingParam)
+        }
+    }
+
+    fun onUserStopTyping(action: (userTypingParam: UserTypingParam) -> Unit) {
+        socket?.on("update-user-stop-typing") {
+            val data = it[0] as JSONObject
+
+            val userTypingParam = Gson().fromJson(data.toString(), UserTypingParam::class.java)
+
+            Log.d("SocketManager", "onUserStopTyping: $userTypingParam")
+
+            action(userTypingParam)
         }
     }
 

@@ -96,7 +96,7 @@ fun AddContactScreen(addContactViewModel: AddContactViewModel, context: Context)
 
             is ChannelEventAddContact.ClickItem -> {
                 val intent = Intent(context, MessageActivity::class.java)
-                intent.putExtra(MessageActivity.CHAT_PARAMS, event.chatDetailParamModel)
+                intent.putExtra(MessageActivity.CHAT_PARAMS, event.chatDetailParam)
                 context.startActivity(intent)
             }
         }
