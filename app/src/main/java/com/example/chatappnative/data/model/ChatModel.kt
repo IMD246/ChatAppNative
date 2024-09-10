@@ -1,6 +1,7 @@
 package com.example.chatappnative.data.model
 
 import com.example.chatappnative.data.param.TypeChat
+import com.example.chatappnative.data.param.TypeMessage
 import com.example.chatappnative.util.DateFormatUtil
 import com.google.gson.annotations.SerializedName
 import java.util.Date
@@ -59,6 +60,17 @@ data class ChatModel(
 
             else -> {
                 TypeChat.PERSONAL
+            }
+        }
+    }
+
+    fun getTypeMessage(): TypeMessage {
+        return when (typeMessage) {
+            "image" -> TypeMessage.IMAGE
+            "video" -> TypeMessage.VIDEO
+            "audio" -> TypeMessage.AUDIO
+            else -> {
+                TypeMessage.TEXT
             }
         }
     }

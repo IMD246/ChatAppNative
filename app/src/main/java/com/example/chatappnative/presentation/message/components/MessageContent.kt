@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
@@ -91,7 +92,7 @@ fun MessageContent(messageViewModel: MessageViewModel) {
                     text = it.first,
                 )
                 it.second.forEach { messageModel: MessageModel ->
-                    MessageItem(item = messageModel)
+                    MessageItem(item = messageModel, presence = chatDetail?.getPresence() ?: false)
                 }
             }
         },
@@ -153,7 +154,7 @@ private fun EmptyContent(chatDetail: ChatDetailModel?) {
 }
 
 @Composable
-private fun MessageItem(item: MessageModel) {
+private fun MessageItem(item: MessageModel, presence: Boolean = false) {
     val horizontalAlignment: Arrangement.Horizontal =
         if (item.isMine) Arrangement.End else Arrangement.Start
 
@@ -164,13 +165,28 @@ private fun MessageItem(item: MessageModel) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = horizontalAlignment,
     ) {
-        NetworkImage(
-            url = if (item.showAvatar) {
-                item.senderAvatar
-            } else "",
-            size = 26.dp,
-            modifier = Modifier.align(alignment = Alignment.CenterVertically),
-        )
+        Box(modifier = Modifier.align(alignment = Alignment.CenterVertically)) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.Center)
+            ) {
+                NetworkImage(
+                    url = if (item.showAvatar) {
+                        item.senderAvatar
+                    } else "",
+                    size = 26.dp,
+                )
+            }
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(start = 20.dp, end = 0.dp, top = 12.dp)
+            ) {
+                if (item.showAvatar)
+                    Presence(presence = presence)
+            }
+        }
+
         if (!item.isMine) {
             Spacer(modifier = Modifier.width(10.dp))
         }
@@ -286,4 +302,24 @@ private fun StatusMessage(type: String) {
     }
 
     statusComposable()
+}
+
+@Composable
+private fun Presence(presence: Boolean = false) {
+    val presenceComposable: @Composable () -> Unit = {
+        if (presence) {
+            Box(
+                Modifier
+                    .size(10.dp)
+                    .background(
+                        color = Color(0xFF48D357),
+                        shape = CircleShape,
+                    )
+            )
+        } else {
+            Box(modifier = Modifier.size(0.dp))
+        }
+    }
+
+    presenceComposable()
 }

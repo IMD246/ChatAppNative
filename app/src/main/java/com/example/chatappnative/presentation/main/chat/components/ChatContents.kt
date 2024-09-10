@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.chatappnative.R
 import com.example.chatappnative.data.model.ChatModel
+import com.example.chatappnative.data.param.TypeMessage
 import com.example.chatappnative.presentation.composables.BaseList
 import com.example.chatappnative.presentation.composables.NetworkImage
 import com.example.chatappnative.presentation.composables.Presence
@@ -149,8 +150,8 @@ private fun Message(item: ChatModel, chatViewModel: ChatViewModel) {
         }
     }
 
-    when (item.typeMessage) {
-        "image" -> Row {
+    when (item.getTypeMessage()) {
+        TypeMessage.IMAGE -> Row {
             Icon(
                 modifier = Modifier.size(12.dp),
                 painter = painterResource(id = R.drawable.ic_photo),
@@ -167,7 +168,7 @@ private fun Message(item: ChatModel, chatViewModel: ChatViewModel) {
             )
         }
 
-        "video" -> Row {
+        TypeMessage.VIDEO -> Row {
             Icon(
                 modifier = Modifier.size(12.dp),
                 painter = painterResource(id = R.drawable.ic_video),
@@ -184,7 +185,7 @@ private fun Message(item: ChatModel, chatViewModel: ChatViewModel) {
             )
         }
 
-        "record" -> Row(
+        TypeMessage.AUDIO -> Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
