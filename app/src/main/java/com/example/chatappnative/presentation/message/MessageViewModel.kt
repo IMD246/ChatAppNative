@@ -1,5 +1,6 @@
 ﻿package com.example.chatappnative.presentation.message
 
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,6 +18,7 @@ import com.example.chatappnative.data.param.UserTypingParam
 import com.example.chatappnative.data.socket.SocketManager
 import com.example.chatappnative.domain.repository.ChatRepository
 import com.example.chatappnative.helper.DialogAPIHelper
+import com.example.chatappnative.service.MediaService
 import com.example.chatappnative.util.DateFormatUtil
 import com.example.chatappnative.util.DateFormatUtil.DATE_FORMAT
 import com.example.chatappnative.util.DateFormatUtil.DATE_TIME_FORMAT5
@@ -36,6 +38,7 @@ class MessageViewModel
     private val chatRepository: ChatRepository,
     savedStateHandle: SavedStateHandle,
     private val socketManager: SocketManager,
+    private val mediaService: MediaService,
 ) : ViewModel() {
     val dialogAPIHelper = DialogAPIHelper()
 
@@ -81,6 +84,15 @@ class MessageViewModel
     val newMessageFlow = newMessage
 
     private var sendTypingMessage: Boolean = false
+
+    private var _mediaList = MutableStateFlow<List<Uri>>(emptyList())
+    val mediaListFlow = _mediaList
+
+    private var _selectedMediaList = MutableStateFlow<List<Uri>>(emptyList())
+    val selectedMediaListFlow = _selectedMediaList
+
+    private val openPhotoSheet = MutableStateFlow(false)
+    val openPhotoSheetFlow = openPhotoSheet
 
     init {
         savedStateHandle.get<ChatDetailParam>(MessageActivity.CHAT_PARAMS)?.let { params ->
@@ -553,5 +565,41 @@ class MessageViewModel
                 updateGroupedByMessages()
             }
         }
+    }
+
+    fun cancelSelectedMedia() {
+        if (_selectedMediaList.value.isEmpty()) return
+        _selectedMediaList.value = emptyList()
+    }
+
+    fun onOpenPhotoSheet() {
+        openPhotoSheet.value = true
+    }
+
+    fun onClosePhotoSheet() {
+        openPhotoSheet.value = false
+    }
+
+    fun initMediaList() {
+        viewModelScope.launch {
+            val data = mediaService.getAllMedia()
+            _mediaList.value = data
+        }
+    }
+
+    fun onSelectedMediaItem(item: Uri) {
+        val newMediaList = _selectedMediaList.value.toMutableList()
+
+        if (newMediaList.contains(item)) {
+            newMediaList.remove(item)
+        } else {
+            newMediaList.add(item)
+        }
+
+        _selectedMediaList.value = newMediaList
+    }
+
+    fun onSendMedia() {
+
     }
 }

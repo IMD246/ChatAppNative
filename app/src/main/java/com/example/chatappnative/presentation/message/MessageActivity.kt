@@ -30,6 +30,7 @@ import com.example.chatappnative.R
 import com.example.chatappnative.event.UpdateUserPresenceEvent
 import com.example.chatappnative.presentation.composables.ObserverAsEvent
 import com.example.chatappnative.presentation.message.components.AppBarMessage
+import com.example.chatappnative.presentation.message.components.BottomSheetMediaGrid
 import com.example.chatappnative.presentation.message.components.MessageContent
 import com.example.chatappnative.presentation.message.components.MessageInput
 import com.example.chatappnative.service.EventBusService
@@ -100,6 +101,12 @@ fun MessageScreen(
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
     val interactionSource = remember { MutableInteractionSource() }
+
+    val openPhotoSheet = messageViewModel.openPhotoSheetFlow.collectAsState().value
+
+    if (openPhotoSheet) {
+        BottomSheetMediaGrid(messageViewModel)
+    }
 
     PullToRefreshBox(
         isRefreshing = isRefreshing,

@@ -28,6 +28,8 @@ googleGmsGoogleServices = "4.4.2"
 firebaseMessaging = "24.0.0"
 playServicesCloudMessaging = "17.3.0"
 eventbus = "3.3.1"
+exoplayer = "2.19.1"
+accompanistPermissions = "0.36.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -64,6 +66,8 @@ socket-io-client = { group = "io.socket", name = "socket.io-client", version.ref
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging", version.ref = "firebaseMessaging" }
 play-services-cloud-messaging = { group = "com.google.android.gms", name = "play-services-cloud-messaging", version.ref = "playServicesCloudMessaging" }
 eventbus = { group = "org.greenrobot", name = "eventbus", version.ref = "eventbus" }
+exoplayer = { group = "com.google.android.exoplayer", name = "exoplayer", version.ref = "exoplayer" }
+accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanistPermissions" }
 
 
 [plugins]

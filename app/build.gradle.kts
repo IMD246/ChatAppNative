@@ -82,6 +82,8 @@ dependencies {
     implementation(libs.firebase.messaging)
     implementation(libs.play.services.cloud.messaging)
     implementation(libs.eventbus)
+    implementation(libs.exoplayer)
+    implementation(libs.accompanist.permissions)
     ksp(libs.hilt.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

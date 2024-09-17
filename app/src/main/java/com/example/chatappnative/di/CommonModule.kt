@@ -4,6 +4,7 @@ import android.content.Context
 import com.example.chatappnative.data.local_database.Preferences
 import com.example.chatappnative.data.socket.SocketManager
 import com.example.chatappnative.service.ConnectivityInternetObserver
+import com.example.chatappnative.service.MediaService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -34,5 +35,13 @@ object CommonModule {
         socketManager: SocketManager
     ): ConnectivityInternetObserver {
         return ConnectivityInternetObserver(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideMediaService(
+        @ApplicationContext context: Context
+    ): MediaService {
+        return MediaService(context)
     }
 }

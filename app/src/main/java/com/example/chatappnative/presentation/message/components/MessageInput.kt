@@ -15,7 +15,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
@@ -26,10 +29,35 @@ import com.example.chatappnative.presentation.message.MessageViewModel
 import com.example.chatappnative.ui.theme.ColorBlack
 import com.example.chatappnative.ui.theme.ColorF9FFFF
 import com.example.chatappnative.ui.theme.ColorPrimary
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun MessageInput(messageViewModel: MessageViewModel) {
     val messageText = messageViewModel.messageText.collectAsState().value
+
+    val permissionState =
+        rememberPermissionState(permission = android.Manifest.permission.READ_EXTERNAL_STORAGE)
+
+    val firstTime = remember { mutableStateOf(true) }
+
+    LaunchedEffect(permissionState.status) {
+        withContext(Dispatchers.IO) {
+            if (permissionState.status.isGranted) {
+                messageViewModel.initMediaList()
+                if (!firstTime.value) {
+                    messageViewModel.onOpenPhotoSheet()
+                }
+                if (firstTime.value) {
+                    firstTime.value = false
+                }
+            }
+        }
+    }
 
     val actionMessageIcon = if (messageText.isEmpty()) {
         R.drawable.ic_audio
@@ -93,6 +121,25 @@ fun MessageInput(messageViewModel: MessageViewModel) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_camera),
                             contentDescription = "camera",
+                            modifier =
+                            Modifier.size(16.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(6.dp))
+                    IconButton(
+                        modifier = Modifier.size(20.dp),
+                        onClick = {
+                            if (!permissionState.status.isGranted) {
+                                permissionState.launchPermissionRequest()
+                                firstTime.value = false
+                            } else {
+                                messageViewModel.onOpenPhotoSheet()
+                            }
+                        },
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_photo),
+                            contentDescription = "photo",
                             modifier =
                             Modifier.size(16.dp)
                         )
