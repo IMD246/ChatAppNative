@@ -10,9 +10,9 @@ import android.os.Build.VERSION_CODES
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.chatappnative.R
-import com.example.chatappnative.data.local_database.Preferences
-import com.example.chatappnative.data.model.DataNotificationModel
-import com.example.chatappnative.data.model.FriendStatusModel
+import com.example.chatappnative.gateway.local_database.Preferences
+import com.example.chatappnative.gateway.model.DataNotificationModel
+import com.example.chatappnative.gateway.model.FriendStatusModel
 import com.example.chatappnative.domain.repository.AuthRepository
 import com.example.chatappnative.presentation.add_contact.AddContactActivity
 import com.example.chatappnative.presentation.auth.login.LoginActivity

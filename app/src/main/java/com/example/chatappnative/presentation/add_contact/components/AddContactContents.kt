@@ -21,7 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.chatappnative.data.model.ContactModel
+import com.example.chatappnative.gateway.model.ContactModel
 import com.example.chatappnative.presentation.add_contact.AddContactViewModel
 import com.example.chatappnative.presentation.composables.BaseList
 import com.example.chatappnative.presentation.composables.NetworkImage

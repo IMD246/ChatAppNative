@@ -1,9 +1,9 @@
 package com.example.chatappnative.di
 
 import com.example.chatappnative.core.constants.NetworkUrl
-import com.example.chatappnative.data.data_source.AuthDataSource
-import com.example.chatappnative.data.local_database.Preferences
-import com.example.chatappnative.data.repository.AuthRepositoryImpl
+import com.example.chatappnative.gateway.data_source.AuthDataSource
+import com.example.chatappnative.gateway.local_database.Preferences
+import com.example.chatappnative.gateway.repository.AuthRepositoryImpl
 import com.example.chatappnative.domain.repository.AuthRepository
 import dagger.Module
 import dagger.Provides

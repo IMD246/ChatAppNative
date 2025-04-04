@@ -2,8 +2,8 @@ package com.example.chatappnative.presentation.main.setting
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.chatappnative.data.local_database.Preferences
-import com.example.chatappnative.data.socket.SocketManager
+import com.example.chatappnative.gateway.local_database.Preferences
+import com.example.chatappnative.gateway.socket.SocketManager
 import com.example.chatappnative.domain.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel

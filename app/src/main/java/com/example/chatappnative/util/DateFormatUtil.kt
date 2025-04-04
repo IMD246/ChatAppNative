@@ -275,4 +275,10 @@ object DateFormatUtil {
 
         return getFormattedDate(localDate, format)
     }
+
+    fun getMinutesBetweenTwoMills(date1: Long, date2: Long): Int {
+        val diffInMillis = date2 - date1
+        val minutes = diffInMillis / (1000 * 60)
+        return minutes.toInt()
+    }
 }

@@ -1,8 +1,8 @@
 package com.example.chatappnative.di
 
 import android.content.Context
-import com.example.chatappnative.data.local_database.Preferences
-import com.example.chatappnative.data.socket.SocketManager
+import com.example.chatappnative.gateway.local_database.Preferences
+import com.example.chatappnative.gateway.socket.SocketManager
 import com.example.chatappnative.service.ConnectivityInternetObserver
 import com.example.chatappnative.service.MediaService
 import dagger.Module

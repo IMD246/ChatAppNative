@@ -3,9 +3,9 @@ package com.example.chatappnative.presentation.main
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.chatappnative.data.api.ResponseState
-import com.example.chatappnative.data.local_database.Preferences
-import com.example.chatappnative.data.socket.SocketManager
+import com.example.chatappnative.gateway.api.ResponseState
+import com.example.chatappnative.gateway.local_database.Preferences
+import com.example.chatappnative.gateway.socket.SocketManager
 import com.example.chatappnative.domain.repository.AuthRepository
 import com.example.chatappnative.presentation.add_contact.AddContactActivity
 import com.example.chatappnative.service.ConnectivityInternetObserver
@@ -72,7 +72,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun handleActivityPending(): Unit {
+    private fun handleActivityPending() {
         val activityPending = preferences.getActivityPending()
 
         if (activityPending.isEmpty()) return

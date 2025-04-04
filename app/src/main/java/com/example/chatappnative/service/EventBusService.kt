@@ -1,9 +1,9 @@
 package com.example.chatappnative.service
 
-import com.example.chatappnative.data.model.FriendModel
-import com.example.chatappnative.data.model.FriendStatusModel
-import com.example.chatappnative.data.model.MessageModel
-import com.example.chatappnative.data.model.UserPresenceSocketModel
+import com.example.chatappnative.gateway.model.FriendModel
+import com.example.chatappnative.gateway.model.FriendStatusModel
+import com.example.chatappnative.gateway.model.MessageModel
+import com.example.chatappnative.gateway.model.UserPresenceSocketModel
 import com.example.chatappnative.event.AddContactEvent
 import com.example.chatappnative.event.AddFriendEvent
 import com.example.chatappnative.event.NewMessageEvent

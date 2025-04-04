@@ -1,10 +1,10 @@
 package com.example.chatappnative.domain.repository
 
-import com.example.chatappnative.data.api.ResponseState
-import com.example.chatappnative.data.model.ContactModel
-import com.example.chatappnative.data.model.FriendModel
-import com.example.chatappnative.data.model.PagedListModel
-import com.example.chatappnative.data.model.UpdateFriendStatusModel
+import com.example.chatappnative.gateway.api.ResponseState
+import com.example.chatappnative.gateway.model.ContactModel
+import com.example.chatappnative.gateway.model.FriendModel
+import com.example.chatappnative.gateway.model.PagedListModel
+import com.example.chatappnative.gateway.model.UpdateFriendStatusModel
 import kotlinx.coroutines.flow.Flow
 
 interface ContactRepository {

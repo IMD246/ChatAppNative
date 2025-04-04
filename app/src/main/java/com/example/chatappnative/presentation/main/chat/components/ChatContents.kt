@@ -26,8 +26,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.chatappnative.R
-import com.example.chatappnative.data.model.ChatModel
-import com.example.chatappnative.data.param.TypeMessage
+import com.example.chatappnative.gateway.model.ChatModel
+import com.example.chatappnative.gateway.param.TypeMessage
 import com.example.chatappnative.presentation.composables.BaseList
 import com.example.chatappnative.presentation.composables.NetworkImage
 import com.example.chatappnative.presentation.composables.Presence

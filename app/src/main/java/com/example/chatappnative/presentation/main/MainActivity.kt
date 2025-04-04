@@ -43,6 +43,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.chatappnative.R
+
 import com.example.chatappnative.event.AddFriendEvent
 import com.example.chatappnative.event.UnauthorizedEvent
 import com.example.chatappnative.event.UpdateUserPresenceEvent

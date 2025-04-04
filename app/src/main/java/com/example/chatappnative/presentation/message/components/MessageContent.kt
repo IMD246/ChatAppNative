@@ -33,10 +33,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.chatappnative.R
-import com.example.chatappnative.data.model.ChatDetailModel
-import com.example.chatappnative.data.model.MessageModel
-import com.example.chatappnative.data.param.StatusMessage.TYPING
-import com.example.chatappnative.data.param.TypeMessage
+import com.example.chatappnative.gateway.model.ChatDetailModel
+import com.example.chatappnative.gateway.model.MessageModel
+import com.example.chatappnative.gateway.param.StatusMessage.TYPING
+import com.example.chatappnative.gateway.param.TypeMessage
 import com.example.chatappnative.presentation.composables.BaseListReverse
 import com.example.chatappnative.presentation.composables.GifImage
 import com.example.chatappnative.presentation.composables.NetworkImage

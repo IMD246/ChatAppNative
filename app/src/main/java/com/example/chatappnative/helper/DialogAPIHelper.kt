@@ -26,7 +26,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import coil.size.Size
 import com.example.chatappnative.R
-import com.example.chatappnative.data.api.ResponseState
+import com.example.chatappnative.gateway.api.ResponseState
 import com.example.chatappnative.presentation.composables.GifImage
 import com.example.chatappnative.ui.theme.ColorF2F2F2
 import java.util.Timer

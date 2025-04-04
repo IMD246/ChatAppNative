@@ -1,7 +1,7 @@
 package com.example.chatappnative.core.constants
 
 object NetworkUrl {
-    const val BASE_URL = "https://chatnodeserver.onrender.com"
+    const val BASE_URL = "https://222.255.100.116:5000"
 
 //    const val BASE_URL = "http://192.168.1.4:5000";
 

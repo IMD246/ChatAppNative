@@ -1,6 +1,6 @@
 package com.example.chatappnative.event
 
-import com.example.chatappnative.data.model.FriendModel
+import com.example.chatappnative.gateway.model.FriendModel
 
 class AddFriendEvent(
     val status: Int,
