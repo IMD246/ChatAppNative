@@ -16,7 +16,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.BottomNavigation
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -49,7 +51,7 @@ import com.example.chatappnative.event.UnauthorizedEvent
 import com.example.chatappnative.event.UpdateUserPresenceEvent
 import com.example.chatappnative.presentation.add_contact.AddContactActivity
 import com.example.chatappnative.presentation.auth.login.LoginActivity
-import com.example.chatappnative.presentation.composables.ObserverAsEvent
+import com.example.chatappnative.composables.ObserverAsEvent
 import com.example.chatappnative.presentation.main.chat.ChatScreen
 import com.example.chatappnative.presentation.main.chat.ChatViewModel
 import com.example.chatappnative.presentation.main.components.BottomNavItem

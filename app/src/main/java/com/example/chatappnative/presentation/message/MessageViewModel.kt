@@ -5,19 +5,19 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.chatappnative.gateway.api.APIConstants
+import com.example.chatappnative.gateway.api.PagedListModel
 import com.example.chatappnative.gateway.api.ResponseState
 import com.example.chatappnative.gateway.local_database.Preferences
-import com.example.chatappnative.gateway.model.ChatDetailModel
-import com.example.chatappnative.gateway.model.MessageModel
-import com.example.chatappnative.gateway.model.PagedListModel
-import com.example.chatappnative.gateway.model.UserPresenceSocketModel
-import com.example.chatappnative.gateway.param.ChatDetailParam
-import com.example.chatappnative.gateway.param.StatusMessage
-import com.example.chatappnative.gateway.param.TypeMessage
-import com.example.chatappnative.gateway.param.UserTypingParam
+import com.example.chatappnative.presentation.auth.data.model.UserPresenceSocketModel
+import com.example.chatappnative.presentation.main.chat.data.param.ChatDetailParam
+import com.example.chatappnative.presentation.main.chat.data.param.StatusMessage
+import com.example.chatappnative.presentation.main.chat.data.param.TypeMessage
+import com.example.chatappnative.presentation.main.chat.data.param.UserTypingParam
 import com.example.chatappnative.gateway.socket.SocketManager
-import com.example.chatappnative.domain.repository.ChatRepository
 import com.example.chatappnative.helper.DialogAPIHelper
+import com.example.chatappnative.presentation.main.chat.data.domain.entity.ChatDetailEntity
+import com.example.chatappnative.presentation.main.chat.data.domain.entity.MessageEntity
+import com.example.chatappnative.presentation.main.chat.data.domain.repository.ChatRepository
 import com.example.chatappnative.service.MediaService
 import com.example.chatappnative.util.DateFormatUtil
 import com.example.chatappnative.util.DateFormatUtil.DATE_FORMAT
@@ -45,9 +45,9 @@ class MessageViewModel
     private val _triggerScroll = MutableStateFlow(false)
     val triggerScroll = _triggerScroll
 
-    private val _messageList = MutableStateFlow(arrayOf<MessageModel>().toList())
+    private val _messageList = MutableStateFlow(arrayOf<MessageEntity>().toList())
 
-    private val _groupedByMessages: MutableStateFlow<List<Pair<String, List<MessageModel>>>> =
+    private val _groupedByMessages: MutableStateFlow<List<Pair<String, List<MessageEntity>>>> =
         MutableStateFlow(emptyList())
     val groupedByMessages = _groupedByMessages
 
@@ -61,7 +61,7 @@ class MessageViewModel
     val isLoadingMessageList = _isLoadingMessageList
 
     private var _pagedMessageList =
-        PagedListModel<MessageModel>(currentPage = 0, pageSize = APIConstants.PAGE_SIZE)
+        PagedListModel<MessageEntity>(currentPage = 0, pageSize = APIConstants.PAGE_SIZE)
 
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing
@@ -72,7 +72,7 @@ class MessageViewModel
     private val _isMessageListLoadMore = MutableStateFlow(false)
     val isMessageListLoadMore = _isMessageListLoadMore
 
-    private val _chatDetail = MutableStateFlow<ChatDetailModel?>(null)
+    private val _chatDetail = MutableStateFlow<ChatDetailEntity?>(null)
     val chatDetail = _chatDetail
 
     private var _chatDetailParam: ChatDetailParam? = null
@@ -80,7 +80,7 @@ class MessageViewModel
     private val messageError = Channel<String>()
     val messageErrorFlow = messageError.receiveAsFlow()
 
-    private val newMessage: MutableStateFlow<MessageModel?> = MutableStateFlow(null)
+    private val newMessage: MutableStateFlow<MessageEntity?> = MutableStateFlow(null)
     val newMessageFlow = newMessage
 
     private var sendTypingMessage: Boolean = false
@@ -159,7 +159,7 @@ class MessageViewModel
                 if (it.chatID != _chatDetail.value?.id) return@onNewMessage
 
                 val newList = mutableListOf(
-                    it.copy(status = StatusMessage.READ.type)
+                    it.copy(status = StatusMessage.READ.type).toEntity()
                 ).plus(
                     _messageList.value
                 )
@@ -170,7 +170,7 @@ class MessageViewModel
 
                 updateGroupedByMessages()
 
-                newMessage.value = it
+                newMessage.value = it.toEntity()
             }
         }
     }
@@ -319,7 +319,7 @@ class MessageViewModel
                         _pagedMessageList = data
 
                         val newMessages =
-                            listOf<MessageModel>().plus(_messageList.value + data.data)
+                            listOf<MessageEntity>().plus(_messageList.value + data.data)
 
                         _messageList.value = newMessages
 
@@ -448,7 +448,7 @@ class MessageViewModel
 
         val userInfo = preferences.getUserInfo()
 
-        val newMessage = MessageModel(
+        val newMessage = MessageEntity(
             message = _messageText.value,
             status = "not-sent",
             isMine = true,
@@ -459,7 +459,7 @@ class MessageViewModel
         )
 
         socketManager.emitClientSendMessage(
-            message = newMessage,
+            message = newMessage.toModel(),
             chatID = _chatDetail.value?.id ?: "",
             userId = userInfo?.userID ?: "",
         )
@@ -527,7 +527,7 @@ class MessageViewModel
                     format = DATE_TIME_FORMAT5
                 )
 
-                val newMessage = MessageModel(
+                val newMessage = MessageEntity(
                     status = StatusMessage.TYPING.type,
                     isMine = false,
                     typeMessage = TypeMessage.TEXT.type,
@@ -558,7 +558,10 @@ class MessageViewModel
             val newMessages = _messageList.value.toMutableList()
 
             val result =
-                newMessages.removeIf { it.status == StatusMessage.TYPING.type && !it.isMine && it.senderId == param.userID }
+                newMessages.removeIf {
+                    it.status == StatusMessage.TYPING.type &&
+                            !it.isMine && it.senderId == param.userID
+                }
 
             if (result) {
                 _messageList.value = newMessages

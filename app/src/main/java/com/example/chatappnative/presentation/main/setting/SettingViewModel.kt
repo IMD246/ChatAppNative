@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.chatappnative.gateway.local_database.Preferences
 import com.example.chatappnative.gateway.socket.SocketManager
-import com.example.chatappnative.domain.repository.AuthRepository
+import com.example.chatappnative.presentation.auth.data.domain.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow

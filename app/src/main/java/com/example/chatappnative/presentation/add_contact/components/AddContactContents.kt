@@ -21,10 +21,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.chatappnative.gateway.model.ContactModel
 import com.example.chatappnative.presentation.add_contact.AddContactViewModel
-import com.example.chatappnative.presentation.composables.BaseList
-import com.example.chatappnative.presentation.composables.NetworkImage
+import com.example.chatappnative.composables.BaseList
+import com.example.chatappnative.composables.NetworkImage
+import com.example.chatappnative.presentation.main.contact.data.domain.entity.ContactEntity
 import com.example.chatappnative.ui.theme.Color191919
 import com.example.chatappnative.ui.theme.ColorPrimary
 
@@ -68,7 +68,7 @@ fun AddContactContent(addContactModel: AddContactViewModel) {
 }
 
 @Composable
-private fun AddContactItem(addContactModel: AddContactViewModel, item: ContactModel) {
+private fun AddContactItem(addContactModel: AddContactViewModel, item: ContactEntity) {
     Row(
         modifier = Modifier
             .clickable {
@@ -99,7 +99,7 @@ private fun AddContactItem(addContactModel: AddContactViewModel, item: ContactMo
 }
 
 @Composable
-private fun ActionAddContact(addContactModel: AddContactViewModel, item: ContactModel) {
+private fun ActionAddContact(addContactModel: AddContactViewModel, item: ContactEntity) {
     var title = ""
     var titleColor = Color.White
     var bgColor = ColorPrimary

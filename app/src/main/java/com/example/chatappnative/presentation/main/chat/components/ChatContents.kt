@@ -26,12 +26,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.chatappnative.R
-import com.example.chatappnative.gateway.model.ChatModel
-import com.example.chatappnative.gateway.param.TypeMessage
-import com.example.chatappnative.presentation.composables.BaseList
-import com.example.chatappnative.presentation.composables.NetworkImage
-import com.example.chatappnative.presentation.composables.Presence
+import com.example.chatappnative.presentation.main.chat.data.param.TypeMessage
+import com.example.chatappnative.composables.BaseList
+import com.example.chatappnative.composables.NetworkImage
+import com.example.chatappnative.composables.Presence
 import com.example.chatappnative.presentation.main.chat.ChatViewModel
+import com.example.chatappnative.presentation.main.chat.data.domain.entity.ChatEntity
 import com.example.chatappnative.ui.theme.Color191919
 import com.example.chatappnative.util.DateFormatUtil
 import kotlinx.coroutines.delay
@@ -81,8 +81,8 @@ fun ChatContent(chatModel: ChatViewModel) {
 
 @Composable
 private fun ChatItem(
-    item: ChatModel,
-    onClickItem: (ChatModel) -> Unit = {},
+    item: ChatEntity,
+    onClickItem: (ChatEntity) -> Unit = {},
     chatViewModel: ChatViewModel,
 ) {
     val dateDisplay: MutableState<String> = remember {
@@ -139,7 +139,7 @@ private fun ChatItem(
 }
 
 @Composable
-private fun Message(item: ChatModel, chatViewModel: ChatViewModel) {
+private fun Message(item: ChatEntity, chatViewModel: ChatViewModel) {
     val userInfo = chatViewModel.getUserInfo()!!
 
     val getNameLastMessage = {

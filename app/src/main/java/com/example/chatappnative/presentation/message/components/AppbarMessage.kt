@@ -35,8 +35,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.chatappnative.R
-import com.example.chatappnative.presentation.composables.BackButton
-import com.example.chatappnative.presentation.composables.NetworkImage
+import com.example.chatappnative.composables.BackButton
+import com.example.chatappnative.composables.NetworkImage
 import com.example.chatappnative.presentation.message.MessageViewModel
 import com.example.chatappnative.ui.theme.ColorPrimary
 import com.example.chatappnative.util.DateFormatUtil

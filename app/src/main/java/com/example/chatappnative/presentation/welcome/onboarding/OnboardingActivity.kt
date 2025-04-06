@@ -31,8 +31,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.chatappnative.R
 import com.example.chatappnative.presentation.auth.login.LoginActivity
-import com.example.chatappnative.presentation.composables.BaseButton
-import com.example.chatappnative.presentation.composables.ObserverAsEvent
+import com.example.chatappnative.composables.BaseButton
+import com.example.chatappnative.composables.ObserverAsEvent
 import com.example.chatappnative.ui.theme.ChatAppNativeTheme
 import com.example.chatappnative.ui.theme.Color191919
 import com.example.chatappnative.ui.theme.ColorE9FEFE

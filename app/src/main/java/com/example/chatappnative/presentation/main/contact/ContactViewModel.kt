@@ -3,17 +3,18 @@ package com.example.chatappnative.presentation.main.contact
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.chatappnative.presentation.main.contact.data.domain.repository.ContactRepository
 import com.example.chatappnative.gateway.api.APIConstants
+import com.example.chatappnative.gateway.api.PagedListModel
 import com.example.chatappnative.gateway.api.ResponseState
 import com.example.chatappnative.gateway.local_database.Preferences
-import com.example.chatappnative.gateway.model.FriendModel
-import com.example.chatappnative.gateway.model.PagedListModel
-import com.example.chatappnative.gateway.model.UserInfoAccessModel
-import com.example.chatappnative.gateway.model.UserPresenceSocketModel
-import com.example.chatappnative.gateway.param.ChatDetailParam
-import com.example.chatappnative.gateway.param.TypeChat
-import com.example.chatappnative.gateway.socket.SocketManager
-import com.example.chatappnative.domain.repository.ContactRepository
+import com.example.chatappnative.presentation.main.contact.data.domain.entity.FriendEntity
+import com.example.chatappnative.presentation.main.chat.data.param.ChatDetailParam
+import com.example.chatappnative.presentation.main.chat.data.param.TypeChat
+import com.example.chatappnative.presentation.auth.data.domain.entity.UserInfoEntity
+import com.example.chatappnative.presentation.auth.data.model.UserPresenceSocketModel
+import com.example.chatappnative.presentation.main.contact.data.model.FriendModel
+import com.example.chatappnative.util.DateFormatUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,7 +26,6 @@ import javax.inject.Inject
 @HiltViewModel
 class ContactViewModel
 @Inject constructor(
-    private val socketManager: SocketManager,
     private val contactRepository: ContactRepository,
     private val preferences: Preferences
 ) : ViewModel() {
@@ -34,9 +34,9 @@ class ContactViewModel
     private val _isLoadingContactList = MutableStateFlow(false)
     val isLoadingContactList = _isLoadingContactList
 
-    private var _pagedContactList = PagedListModel<FriendModel>()
+    private var _pagedContactList = PagedListModel<FriendEntity>()
 
-    private val _contactList = MutableStateFlow(arrayOf<FriendModel>().toList())
+    private val _contactList = MutableStateFlow(arrayOf<FriendEntity>().toList())
     val contactList = _contactList
 
     private var _keyword: String? = null
@@ -144,8 +144,8 @@ class ContactViewModel
         if (status == 3) {
             val data = _contactList.value.toMutableList()
 
-            if (!data.contains(friendModel)) {
-                data.add(friendModel)
+            if (!data.any { it.id == friendModel.id }) {
+                data.add(friendModel.toEntity())
             }
 
             if (!_exceptFriendIds.contains(friendModel.id)) {
@@ -185,17 +185,17 @@ class ContactViewModel
 
         data[index] = data[index].copy(
             presence = userPresenceSocketModel.presence,
-            presenceTimestamp = userPresenceSocketModel.presenceTimestamp
+            presenceTimestamp = DateFormatUtil.parseUtcToDate(userPresenceSocketModel.presenceTimestamp)
         )
 
         _contactList.value = data
     }
 
-    fun getUserInfo(): UserInfoAccessModel? {
+    fun getUserInfo(): UserInfoEntity? {
         return preferences.getUserInfo()
     }
 
-    fun selectContactItem(friendModel: FriendModel) {
+    fun selectContactItem(friendModel: FriendEntity) {
         viewModelScope.launch {
             channelEvent.send(
                 ChannelEventContact.ClickItemContact(

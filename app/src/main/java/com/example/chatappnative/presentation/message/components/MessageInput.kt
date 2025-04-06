@@ -24,7 +24,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.chatappnative.R
-import com.example.chatappnative.presentation.composables.BaseInput
+import com.example.chatappnative.composables.BaseInput
 import com.example.chatappnative.presentation.message.MessageViewModel
 import com.example.chatappnative.ui.theme.ColorBlack
 import com.example.chatappnative.ui.theme.ColorF9FFFF

@@ -33,13 +33,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.chatappnative.R
-import com.example.chatappnative.gateway.model.ChatDetailModel
-import com.example.chatappnative.gateway.model.MessageModel
-import com.example.chatappnative.gateway.param.StatusMessage.TYPING
-import com.example.chatappnative.gateway.param.TypeMessage
-import com.example.chatappnative.presentation.composables.BaseListReverse
-import com.example.chatappnative.presentation.composables.GifImage
-import com.example.chatappnative.presentation.composables.NetworkImage
+import com.example.chatappnative.presentation.main.chat.data.param.StatusMessage.TYPING
+import com.example.chatappnative.presentation.main.chat.data.param.TypeMessage
+import com.example.chatappnative.composables.BaseListReverse
+import com.example.chatappnative.composables.GifImage
+import com.example.chatappnative.composables.NetworkImage
+import com.example.chatappnative.presentation.main.chat.data.domain.entity.ChatDetailEntity
+import com.example.chatappnative.presentation.main.chat.data.domain.entity.MessageEntity
 import com.example.chatappnative.presentation.message.MessageViewModel
 import com.example.chatappnative.ui.theme.Color191919
 import com.example.chatappnative.ui.theme.ColorPrimary
@@ -91,7 +91,7 @@ fun MessageContent(messageViewModel: MessageViewModel) {
                         .align(Alignment.CenterHorizontally),
                     text = it.first,
                 )
-                it.second.forEach { messageModel: MessageModel ->
+                it.second.forEach { messageModel: MessageEntity ->
                     MessageItem(item = messageModel, presence = chatDetail?.getPresence() ?: false)
                 }
             }
@@ -131,7 +131,7 @@ fun MessageContent(messageViewModel: MessageViewModel) {
 }
 
 @Composable
-private fun EmptyContent(chatDetail: ChatDetailModel?) {
+private fun EmptyContent(chatDetail: ChatDetailEntity?) {
     Column(
         verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -154,7 +154,7 @@ private fun EmptyContent(chatDetail: ChatDetailModel?) {
 }
 
 @Composable
-private fun MessageItem(item: MessageModel, presence: Boolean = false) {
+private fun MessageItem(item: MessageEntity, presence: Boolean = false) {
     val horizontalAlignment: Arrangement.Horizontal =
         if (item.isMine) Arrangement.End else Arrangement.Start
 
@@ -209,7 +209,7 @@ private fun MessageItem(item: MessageModel, presence: Boolean = false) {
 
 
 @Composable
-private fun TextMessage(maxWidth: Dp, item: MessageModel) {
+private fun TextMessage(maxWidth: Dp, item: MessageEntity) {
     val content = @Composable {
         when (item.getStatusMessage()) {
             TYPING -> Column(

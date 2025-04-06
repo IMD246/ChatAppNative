@@ -4,17 +4,18 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.chatappnative.gateway.api.APIConstants
+import com.example.chatappnative.gateway.api.PagedListModel
 import com.example.chatappnative.gateway.api.ResponseState
 import com.example.chatappnative.gateway.local_database.Preferences
-import com.example.chatappnative.gateway.model.ContactModel
-import com.example.chatappnative.gateway.model.FriendModel
-import com.example.chatappnative.gateway.model.PagedListModel
-import com.example.chatappnative.gateway.model.UserPresenceSocketModel
-import com.example.chatappnative.gateway.param.ChatDetailParam
-import com.example.chatappnative.gateway.param.TypeChat
-import com.example.chatappnative.domain.repository.ContactRepository
+import com.example.chatappnative.presentation.auth.data.model.UserPresenceSocketModel
+import com.example.chatappnative.presentation.main.chat.data.param.ChatDetailParam
+import com.example.chatappnative.presentation.main.chat.data.param.TypeChat
+import com.example.chatappnative.presentation.main.contact.data.domain.repository.ContactRepository
 import com.example.chatappnative.helper.DialogAPIHelper
+import com.example.chatappnative.presentation.main.contact.data.domain.entity.ContactEntity
+import com.example.chatappnative.presentation.main.contact.data.model.FriendModel
 import com.example.chatappnative.service.EventBusService
+import com.example.chatappnative.util.DateFormatUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,9 +37,9 @@ class AddContactViewModel
     private val _isLoadingContactList = MutableStateFlow(false)
     val isLoadingContactList = _isLoadingContactList
 
-    private var _pagedContactList = PagedListModel<ContactModel>()
+    private var _pagedContactList = PagedListModel<ContactEntity>()
 
-    private val _contactList = MutableStateFlow(arrayOf<ContactModel>().toList())
+    private val _contactList = MutableStateFlow(arrayOf<ContactEntity>().toList())
     val contactList = _contactList
 
     private var _keyword: String? = null
@@ -68,7 +69,7 @@ class AddContactViewModel
         contactListUpdated[index] =
             item.copy(
                 presence = value.presence,
-                presenceTimestamp = value.presenceTimestamp
+                presenceTimestamp = DateFormatUtil.parseUtcToDate(value.presenceTimestamp)
             )
 
         _contactList.value = contactListUpdated
@@ -162,7 +163,7 @@ class AddContactViewModel
         _contactList.value = data
     }
 
-    fun updateItemStatus(item: ContactModel, statusUpdate: Int) {
+    fun updateItemStatus(item: ContactEntity, statusUpdate: Int) {
         val data = _contactList.value.toMutableList()
 
         val index = data.indexOf(item)
@@ -198,7 +199,7 @@ class AddContactViewModel
                                     name = item.name,
                                     urlImage = item.urlImage,
                                     presence = item.presence,
-                                    presenceTimestamp = item.presenceTimestamp,
+                                    presenceTimestamp = DateFormatUtil.formatDateToUtc(item.presenceTimestamp),
                                 ),
                             )
                         }
@@ -211,7 +212,7 @@ class AddContactViewModel
 
     fun getUserInfo() = preferences.getUserInfo()
 
-    fun selectContactItem(it: ContactModel) {
+    fun selectContactItem(it: ContactEntity) {
         viewModelScope.launch {
             channelEvent.send(
                 ChannelEventAddContact.ClickItem(

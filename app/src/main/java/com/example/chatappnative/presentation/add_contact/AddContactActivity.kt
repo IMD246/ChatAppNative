@@ -25,9 +25,9 @@ import androidx.compose.ui.unit.dp
 import com.example.chatappnative.event.AddContactEvent
 import com.example.chatappnative.event.UpdateUserPresenceEvent
 import com.example.chatappnative.presentation.add_contact.components.AddContactContent
-import com.example.chatappnative.presentation.composables.BackButton
-import com.example.chatappnative.presentation.composables.BaseSearchBar
-import com.example.chatappnative.presentation.composables.ObserverAsEvent
+import com.example.chatappnative.composables.BackButton
+import com.example.chatappnative.composables.BaseSearchBar
+import com.example.chatappnative.composables.ObserverAsEvent
 import com.example.chatappnative.presentation.message.MessageActivity
 import com.example.chatappnative.service.EventBusService
 import com.example.chatappnative.ui.theme.ChatAppNativeTheme

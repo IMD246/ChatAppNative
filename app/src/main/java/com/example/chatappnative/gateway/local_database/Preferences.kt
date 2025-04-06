@@ -2,12 +2,12 @@ package com.example.chatappnative.gateway.local_database
 
 import android.content.Context
 import android.util.Log
-import com.example.chatappnative.domain.entity.UserInfoEntity
+import com.example.chatappnative.presentation.auth.data.domain.entity.UserInfoEntity
 import com.google.gson.Gson
 
 class Preferences(context: Context) {
     private var sharedPreferences =
-        context.getSharedPreferences("prefs", Context.MODE_PRIVATE);
+        context.getSharedPreferences("prefs", Context.MODE_PRIVATE)
 
     private val ONBOARDING = "onboarding"
     private val ACCESS_TOKEN = "access_token"

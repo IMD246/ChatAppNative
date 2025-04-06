@@ -26,9 +26,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.chatappnative.R
-import com.example.chatappnative.gateway.model.ChatModel
-import com.example.chatappnative.presentation.composables.NetworkImage
+import com.example.chatappnative.composables.NetworkImage
 import com.example.chatappnative.presentation.main.chat.ChatViewModel
+import com.example.chatappnative.presentation.main.chat.data.domain.entity.ChatEntity
 import com.example.chatappnative.ui.theme.Color191919
 import com.example.chatappnative.util.DateFormatUtil
 import java.util.Date
@@ -76,7 +76,7 @@ fun CallContent(chatModel: ChatViewModel) {
 }
 
 @Composable
-fun CallItem(item: ChatModel) {
+fun CallItem(item: ChatEntity) {
     val dateDisplay: MutableState<String> = remember {
         mutableStateOf(DateFormatUtil.dateMessageFormat(Date()))
     }
@@ -124,7 +124,7 @@ fun CallItem(item: ChatModel) {
 }
 
 @Composable
-fun CallMessage(item: ChatModel) {
+fun CallMessage(item: ChatEntity) {
     when (item.typeMessage) {
         "image" -> Row {
             Icon(

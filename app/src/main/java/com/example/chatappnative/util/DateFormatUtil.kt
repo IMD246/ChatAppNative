@@ -10,6 +10,11 @@ import java.util.Locale
 import java.util.TimeZone
 
 object DateFormatUtil {
+    private val utcFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US).apply {
+        // Đặt múi giờ của SimpleDateFormat là UTC
+        timeZone = TimeZone.getTimeZone("UTC")
+    }
+
     const val DATE_TIME_FORMAT: String = "yyyy-MM-dd'T'HH:mm:ssZ"
     const val DATE_TIME_FORMAT2: String = "dd/MM/yyyy HH:mm"
     const val DATE_TIME_FORMAT3: String = "HH:mm dd/MM/yyyy"
@@ -280,5 +285,9 @@ object DateFormatUtil {
         val diffInMillis = date2 - date1
         val minutes = diffInMillis / (1000 * 60)
         return minutes.toInt()
+    }
+
+    fun formatDateToUtc(date: Date): String {
+        return utcFormat.format(date)
     }
 }

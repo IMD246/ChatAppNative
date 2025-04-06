@@ -1,0 +1,16 @@
+package com.example.chatappnative.presentation.main.chat.data.param
+
+import com.google.gson.annotations.SerializedName
+import java.io.Serializable
+
+data class ChatDetailParam(
+    @SerializedName("page_size_message") val pageSizeMessage: Int = 15,
+    @SerializedName("type") val type: String? = "personal",
+    @SerializedName("room_id") val chatID: String? = null,
+    @SerializedName("list_user_id") val listUserID: List<String>? = null,
+) : Serializable
+
+enum class TypeChat(val type: String) {
+    PERSONAL("personal"),
+    GROUP("group")
+}

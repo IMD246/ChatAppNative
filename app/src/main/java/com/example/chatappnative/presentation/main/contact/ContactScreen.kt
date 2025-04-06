@@ -16,8 +16,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.example.chatappnative.presentation.composables.BaseSearchBar
-import com.example.chatappnative.presentation.composables.ObserverAsEvent
+import com.example.chatappnative.composables.BaseSearchBar
+import com.example.chatappnative.composables.ObserverAsEvent
 import com.example.chatappnative.presentation.main.contact.components.ContactContent
 import com.example.chatappnative.presentation.message.MessageActivity
 import com.example.chatappnative.ui.theme.ColorPrimary

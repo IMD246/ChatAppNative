@@ -11,12 +11,12 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.chatappnative.R
 import com.example.chatappnative.gateway.local_database.Preferences
-import com.example.chatappnative.gateway.model.DataNotificationModel
-import com.example.chatappnative.gateway.model.FriendStatusModel
-import com.example.chatappnative.domain.repository.AuthRepository
 import com.example.chatappnative.presentation.add_contact.AddContactActivity
+import com.example.chatappnative.presentation.auth.data.domain.repository.AuthRepository
 import com.example.chatappnative.presentation.auth.login.LoginActivity
 import com.example.chatappnative.presentation.main.MainActivity
+import com.example.chatappnative.presentation.main.chat.data.model.DataNotificationModel
+import com.example.chatappnative.presentation.main.contact.data.model.FriendStatusModel
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
@@ -137,7 +137,7 @@ class PushNotificationService : FirebaseMessagingService() {
                 // send event friend's status to update friend list
                 EventBusService.sendFriendEvent(
                     friendStatus.senderStatus,
-                    friendStatus.friendInfo,
+                    friendStatus.friendInfo.toFriendModel(),
                 )
 
                 return null
@@ -179,7 +179,7 @@ class PushNotificationService : FirebaseMessagingService() {
                 // send event friend's status to update friend list
                 EventBusService.sendFriendEvent(
                     friendStatus.senderStatus,
-                    friendStatus.friendInfo,
+                    friendStatus.friendInfo.toFriendModel(),
                 )
 
                 val isLoggedIn = preferences.getIsLoggedIn()

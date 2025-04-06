@@ -3,10 +3,10 @@ package com.example.chatappnative.gateway.socket
 import android.util.Log
 import com.example.chatappnative.core.constants.NetworkUrl
 import com.example.chatappnative.gateway.local_database.Preferences
-import com.example.chatappnative.gateway.model.MessageModel
-import com.example.chatappnative.gateway.model.UserPresenceSocketModel
-import com.example.chatappnative.gateway.param.UserTypingParam
+import com.example.chatappnative.presentation.auth.data.model.UserPresenceSocketModel
 import com.example.chatappnative.event.UpdateSentMessageEvent
+import com.example.chatappnative.presentation.main.chat.data.param.UserTypingParam
+import com.example.chatappnative.presentation.main.chat.data.model.MessageModel
 import com.example.chatappnative.service.EventBusService
 import com.google.gson.Gson
 import io.socket.client.IO

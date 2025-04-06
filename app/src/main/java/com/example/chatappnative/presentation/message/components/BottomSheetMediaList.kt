@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.example.chatappnative.R
-import com.example.chatappnative.presentation.composables.BaseGrid
+import com.example.chatappnative.composables.BaseGrid
 import com.example.chatappnative.presentation.message.MessageViewModel
 import com.example.chatappnative.ui.theme.ColorPrimary
 import kotlinx.coroutines.Dispatchers

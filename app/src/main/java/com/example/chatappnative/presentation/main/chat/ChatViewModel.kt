@@ -4,15 +4,14 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.chatappnative.gateway.api.APIConstants
+import com.example.chatappnative.gateway.api.PagedListModel
 import com.example.chatappnative.gateway.api.ResponseState
 import com.example.chatappnative.gateway.local_database.Preferences
-import com.example.chatappnative.gateway.model.ChatModel
-import com.example.chatappnative.gateway.model.PagedListModel
-import com.example.chatappnative.gateway.model.UserInfoAccessModel
-import com.example.chatappnative.gateway.model.UserPresenceSocketModel
-import com.example.chatappnative.gateway.param.ChatDetailParam
-import com.example.chatappnative.gateway.socket.SocketManager
-import com.example.chatappnative.domain.repository.ChatRepository
+import com.example.chatappnative.presentation.auth.data.domain.entity.UserInfoEntity
+import com.example.chatappnative.presentation.auth.data.model.UserPresenceSocketModel
+import com.example.chatappnative.presentation.main.chat.data.domain.entity.ChatEntity
+import com.example.chatappnative.presentation.main.chat.data.domain.repository.ChatRepository
+import com.example.chatappnative.presentation.main.chat.data.param.ChatDetailParam
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
@@ -25,7 +24,6 @@ import javax.inject.Inject
 @HiltViewModel
 class ChatViewModel
 @Inject constructor(
-    private val socketManager: SocketManager,
     private val chatRepository: ChatRepository,
     private val preferences: Preferences,
 ) : ViewModel() {
@@ -39,12 +37,12 @@ class ChatViewModel
     private val _isLoadingChatList = MutableStateFlow(false)
     val isLoadingChatList = _isLoadingChatList
 
-    private var _pagedChatList = PagedListModel<ChatModel>()
+    private var _pagedChatList = PagedListModel<ChatEntity>()
 
-    private val _chatList = MutableStateFlow(arrayOf<ChatModel>().toList())
+    private val _chatList = MutableStateFlow(arrayOf<ChatEntity>().toList())
     val chatList = _chatList
 
-    private val _callList = MutableStateFlow(arrayOf<ChatModel>().toList())
+    private val _callList = MutableStateFlow(arrayOf<ChatEntity>().toList())
     val callList = _callList
 
     private var _keyword: String? = null
@@ -222,11 +220,11 @@ class ChatViewModel
         _chatList.value = chatListUpdated
     }
 
-    fun getUserInfo(): UserInfoAccessModel? {
+    fun getUserInfo(): UserInfoEntity? {
         return preferences.getUserInfo()
     }
 
-    fun selectChatItem(it: ChatModel) {
+    fun selectChatItem(it: ChatEntity) {
         viewModelScope.launch {
             _channelNavigateChat.send(
                 NavigateChatEvent.ChatDetail(

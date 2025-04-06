@@ -1,15 +1,15 @@
 package com.example.chatappnative.service
 
-import com.example.chatappnative.gateway.model.FriendModel
-import com.example.chatappnative.gateway.model.FriendStatusModel
-import com.example.chatappnative.gateway.model.MessageModel
-import com.example.chatappnative.gateway.model.UserPresenceSocketModel
+import com.example.chatappnative.presentation.auth.data.model.UserPresenceSocketModel
 import com.example.chatappnative.event.AddContactEvent
 import com.example.chatappnative.event.AddFriendEvent
 import com.example.chatappnative.event.NewMessageEvent
 import com.example.chatappnative.event.UnauthorizedEvent
 import com.example.chatappnative.event.UpdateSentMessageEvent
 import com.example.chatappnative.event.UpdateUserPresenceEvent
+import com.example.chatappnative.presentation.main.chat.data.model.MessageModel
+import com.example.chatappnative.presentation.main.contact.data.model.FriendModel
+import com.example.chatappnative.presentation.main.contact.data.model.FriendStatusModel
 import org.greenrobot.eventbus.EventBus
 
 object EventBusService {

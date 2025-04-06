@@ -6,10 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.chatappnative.gateway.api.ResponseState
 import com.example.chatappnative.gateway.local_database.Preferences
-import com.example.chatappnative.gateway.param.RegisterParam
+import com.example.chatappnative.presentation.auth.data.param.RegisterParam
 import com.example.chatappnative.gateway.socket.SocketManager
-import com.example.chatappnative.domain.repository.AuthRepository
 import com.example.chatappnative.helper.DialogAPIHelper
+import com.example.chatappnative.presentation.auth.data.domain.repository.AuthRepository
 import com.example.chatappnative.util.ValidatorUtil
 import com.google.firebase.Firebase
 import com.google.firebase.messaging.messaging

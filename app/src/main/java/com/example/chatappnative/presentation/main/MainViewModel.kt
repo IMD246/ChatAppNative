@@ -6,8 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.chatappnative.gateway.api.ResponseState
 import com.example.chatappnative.gateway.local_database.Preferences
 import com.example.chatappnative.gateway.socket.SocketManager
-import com.example.chatappnative.domain.repository.AuthRepository
 import com.example.chatappnative.presentation.add_contact.AddContactActivity
+import com.example.chatappnative.presentation.auth.data.domain.repository.AuthRepository
 import com.example.chatappnative.service.ConnectivityInternetObserver
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel

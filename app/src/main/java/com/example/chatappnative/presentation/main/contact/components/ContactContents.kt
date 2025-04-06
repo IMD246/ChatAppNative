@@ -18,11 +18,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.chatappnative.gateway.model.FriendModel
-import com.example.chatappnative.presentation.composables.BaseList
-import com.example.chatappnative.presentation.composables.NetworkImage
-import com.example.chatappnative.presentation.composables.Presence
+import com.example.chatappnative.composables.BaseList
+import com.example.chatappnative.composables.NetworkImage
+import com.example.chatappnative.composables.Presence
 import com.example.chatappnative.presentation.main.contact.ContactViewModel
+import com.example.chatappnative.presentation.main.contact.data.domain.entity.FriendEntity
 import com.example.chatappnative.ui.theme.Color191919
 
 @Composable
@@ -66,7 +66,7 @@ fun ContactContent(contactModel: ContactViewModel) {
 }
 
 @Composable
-private fun ContactItem(item: FriendModel, onItemClick: (FriendModel) -> Unit = {}) {
+private fun ContactItem(item: FriendEntity, onItemClick: (FriendEntity) -> Unit = {}) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -81,7 +81,7 @@ private fun ContactItem(item: FriendModel, onItemClick: (FriendModel) -> Unit = 
             NetworkImage(
                 url = item.urlImage ?: "",
             )
-            Presence(isPresence = item.presence, date = item.getDateTimePresence())
+            Presence(isPresence = item.presence, date = item.presenceTimestamp)
         }
         Spacer(modifier = Modifier.width(8.dp))
         Text(

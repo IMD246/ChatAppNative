@@ -28,8 +28,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.chatappnative.presentation.composables.BaseSearchBar
-import com.example.chatappnative.presentation.composables.ObserverAsEvent
+import com.example.chatappnative.composables.BaseSearchBar
+import com.example.chatappnative.composables.ObserverAsEvent
 import com.example.chatappnative.presentation.main.chat.components.CallContent
 import com.example.chatappnative.presentation.main.chat.components.ChatContent
 import com.example.chatappnative.presentation.message.MessageActivity
