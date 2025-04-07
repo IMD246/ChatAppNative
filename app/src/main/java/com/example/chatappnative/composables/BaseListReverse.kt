@@ -190,6 +190,7 @@ fun <T> BaseListReverse(
             }
         }
         if (enableButtonScrollToEnd)
+        {
             FloatingActionButton(
                 modifier = Modifier
                     .size(40.dp)
@@ -213,5 +214,6 @@ fun <T> BaseListReverse(
                         .size(28.dp)
                 )
             }
+        }
     }
 }
