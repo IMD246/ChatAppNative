@@ -1,7 +1,7 @@
 package com.example.chatappnative.di
 
 import com.example.chatappnative.core.constants.NetworkUrl
-import com.example.chatappnative.gateway.data_source.AuthDataSource
+import com.example.chatappnative.presentation.auth.data.data_source.AuthDataSource
 import com.example.chatappnative.gateway.local_database.Preferences
 import com.example.chatappnative.presentation.auth.data.domain.repository.AuthRepository
 import com.example.chatappnative.presentation.auth.data.repository.AuthRepositoryImpl

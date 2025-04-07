@@ -2,11 +2,11 @@ package com.example.chatappnative.presentation.auth.data.model
 
 import com.example.chatappnative.gateway.api.EntityMapper
 import com.example.chatappnative.presentation.auth.data.domain.entity.UserInfoEntity
+import com.example.chatappnative.util.DateFormatUtil
 import com.google.gson.annotations.SerializedName
 
 data class UserInfoAccessModel(
     @SerializedName("accessToken") val accessToken: String = "",
-    @SerializedName("deviceToken") val deviceToken: String = "",
     @SerializedName("email") val email: String = "",
     @SerializedName("isDarkMode") val isDarkMode: Boolean = false,
     @SerializedName("name") val name: String = "",
@@ -22,12 +22,11 @@ data class UserInfoAccessModel(
         return UserInfoEntity(
             userID = userID,
             accessToken = accessToken,
-            deviceToken = deviceToken,
             email = email,
             isDarkMode = isDarkMode,
             name = name,
             phone = phone,
-            presenceTimeStamp = presenceTimeStamp,
+            presenceTimeStamp = DateFormatUtil.parseToLocalDate(presenceTimeStamp),
             refreshToken = refreshToken,
             refreshTokenExpired = refreshTokenExpired,
             tokenExpired = tokenExpired,

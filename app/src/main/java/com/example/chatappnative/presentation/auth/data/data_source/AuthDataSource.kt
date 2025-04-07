@@ -1,4 +1,4 @@
-package com.example.chatappnative.gateway.data_source
+package com.example.chatappnative.presentation.auth.data.data_source
 
 import com.example.chatappnative.core.constants.NetworkUrl.LOGIN
 import com.example.chatappnative.core.constants.NetworkUrl.LOGOUT

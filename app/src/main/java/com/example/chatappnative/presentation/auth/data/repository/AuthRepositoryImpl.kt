@@ -2,7 +2,7 @@ package com.example.chatappnative.presentation.auth.data.repository
 
 import com.example.chatappnative.gateway.api.BaseRepository
 import com.example.chatappnative.gateway.api.ResponseState
-import com.example.chatappnative.gateway.data_source.AuthDataSource
+import com.example.chatappnative.presentation.auth.data.data_source.AuthDataSource
 import com.example.chatappnative.gateway.local_database.Preferences
 import com.example.chatappnative.presentation.auth.data.domain.entity.RefreshDeviceTokenEntity
 import com.example.chatappnative.presentation.auth.data.domain.entity.RefreshTokenEntity
@@ -54,7 +54,7 @@ class AuthRepositoryImpl @Inject constructor(
                 is ResponseState.Success -> {
                     ResponseState.Success(responseState.data!!.toEntity(), responseState.message)
                 }
-                is ResponseState.Error -> {
+                else -> {
                     ResponseState.Error(null,responseState.message ?: "")
                 }
             }

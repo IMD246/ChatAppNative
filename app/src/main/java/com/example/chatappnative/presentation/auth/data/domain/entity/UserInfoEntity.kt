@@ -1,13 +1,14 @@
 package com.example.chatappnative.presentation.auth.data.domain.entity
 
+import java.util.Date
+
 data class UserInfoEntity(
     val accessToken: String = "",
-    val deviceToken: String = "",
     val email: String = "",
     val isDarkMode: Boolean = false,
     val name: String = "",
     val phone: String = "",
-    val presenceTimeStamp: String = "",
+    val presenceTimeStamp: Date = Date(),
     val refreshToken: String = "",
     val refreshTokenExpired: Long = 0,
     val tokenExpired: Long = 0,
