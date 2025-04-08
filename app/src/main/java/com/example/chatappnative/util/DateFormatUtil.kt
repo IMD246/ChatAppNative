@@ -128,13 +128,11 @@ object DateFormatUtil {
 
     @SuppressLint("SimpleDateFormat")
     fun parseToLocalDate(value: String): Date {
-        val formatter = SimpleDateFormat(DATE_TIME_FORMAT5)
-        val tz = TimeZone.getDefault()
-        formatter.timeZone = tz;
+        val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+        // Chuyển về giờ địa phương
+        formatter.timeZone = TimeZone.getDefault()
 
-        val date = formatter.parse(value) as Date
-
-        return date
+        return formatter.parse(value)!!
     }
 
     @SuppressLint("SimpleDateFormat")

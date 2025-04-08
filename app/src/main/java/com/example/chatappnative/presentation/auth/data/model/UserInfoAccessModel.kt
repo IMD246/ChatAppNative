@@ -7,16 +7,16 @@ import com.google.gson.annotations.SerializedName
 
 data class UserInfoAccessModel(
     @SerializedName("accessToken") val accessToken: String = "",
-    @SerializedName("email") val email: String = "",
-    @SerializedName("isDarkMode") val isDarkMode: Boolean = false,
-    @SerializedName("name") val name: String = "",
-    @SerializedName("phone") val phone: String = "",
-    @SerializedName("presence_timestamp") val presenceTimeStamp: String = "",
     @SerializedName("refreshToken") val refreshToken: String = "",
-    @SerializedName("refresh_token_expired") val refreshTokenExpired: Long,
-    @SerializedName("token_expired") val tokenExpired: Long,
+    @SerializedName("email") val email: String = "",
+    @SerializedName("name") val name: String = "",
+    @SerializedName("isDarkMode") val isDarkMode: Boolean = false,
     @SerializedName("urlImage") val urlImage: String = "",
-    @SerializedName("userID") val userID: String = ""
+    @SerializedName("presenceTimeStamp") val presenceTimeStamp: String = "",
+    @SerializedName("phone") val phone: String = "",
+    @SerializedName("userID") val userID: String = "",
+    @SerializedName("token_expired") val tokenExpired: Long,
+    @SerializedName("refresh_token_expired") val refreshTokenExpired: Long,
 ): EntityMapper<UserInfoEntity> {
     override fun toEntity(): UserInfoEntity {
         return UserInfoEntity(
