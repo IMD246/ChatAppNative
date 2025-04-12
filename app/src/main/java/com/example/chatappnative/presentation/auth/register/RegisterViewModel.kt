@@ -162,6 +162,7 @@ class RegisterViewModel @Inject constructor(
                         val state = it
                         preferences.saveAccessToken(it.data?.accessToken ?: "")
                         preferences.saveUserInfo(it.data!!)
+                        AppModel.updateUserInfo(it.data)
 
                         socketManager.connect()
 

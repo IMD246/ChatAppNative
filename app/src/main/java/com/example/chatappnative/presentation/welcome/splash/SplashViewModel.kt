@@ -24,6 +24,8 @@ class SplashViewModel @Inject constructor(
         val isOnboarding = preferences.getOnboarding()
         val accessToken = preferences.getAccessToken()
         val userInfo = preferences.getUserInfo()
+        AppModel.updateUserInfo(userInfo)
+
         viewModelScope.launch {
             if (isOnboarding) {
                 if (accessToken.isEmpty() || accessToken.isBlank() || userInfo == null) {

@@ -17,7 +17,7 @@ data class ChatDetailEntity(
     @SerializedName("userNameLastMessage") val userNameLastMessage: String = "",
     @SerializedName("typeMessage") val typeMessage: String = "",
     @SerializedName("users") val usersPresence: List<UserPresenceModel> = arrayListOf(),
-    @SerializedName("messages") val messages: List<MessageEntity> = arrayListOf(),
+    @SerializedName("messages") val messages: List<GroupMessageEntity> = arrayListOf(),
     @SerializedName("totalPages") val totalPages: Int = 0
 ) {
     fun getPresence(): Boolean {

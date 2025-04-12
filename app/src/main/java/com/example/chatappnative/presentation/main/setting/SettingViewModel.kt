@@ -1,5 +1,6 @@
 package com.example.chatappnative.presentation.main.setting
 
+import AppModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.chatappnative.gateway.local_database.Preferences
@@ -27,6 +28,7 @@ class SettingViewModel
             authRepository.logout()
             preferences.logout()
             socketManager.disconnect()
+//            AppModel.clearUserInfo()
         }
     }
 }

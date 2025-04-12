@@ -16,6 +16,7 @@ import com.example.chatappnative.presentation.main.chat.data.param.UserTypingPar
 import com.example.chatappnative.gateway.socket.SocketManager
 import com.example.chatappnative.helper.DialogAPIHelper
 import com.example.chatappnative.presentation.main.chat.data.domain.entity.ChatDetailEntity
+import com.example.chatappnative.presentation.main.chat.data.domain.entity.GroupMessageEntity
 import com.example.chatappnative.presentation.main.chat.data.domain.entity.MessageEntity
 import com.example.chatappnative.presentation.main.chat.data.domain.repository.ChatRepository
 import com.example.chatappnative.service.MediaService
@@ -45,11 +46,8 @@ class MessageViewModel
     private val _triggerScroll = MutableStateFlow(false)
     val triggerScroll = _triggerScroll
 
-    private val _messageList = MutableStateFlow(arrayOf<MessageEntity>().toList())
-
-    private val _groupedByMessages: MutableStateFlow<List<Pair<String, List<MessageEntity>>>> =
-        MutableStateFlow(emptyList())
-    val groupedByMessages = _groupedByMessages
+    private val _groupMessageList = MutableStateFlow(arrayOf<GroupMessageEntity>().toList())
+    val groupMessageList = _groupMessageList
 
     private var _messageText = MutableStateFlow("")
     val messageText = _messageText
@@ -61,7 +59,7 @@ class MessageViewModel
     val isLoadingMessageList = _isLoadingMessageList
 
     private var _pagedMessageList =
-        PagedListModel<MessageEntity>(currentPage = 0, pageSize = APIConstants.PAGE_SIZE)
+        PagedListModel<GroupMessageEntity>(currentPage = 0, pageSize = APIConstants.PAGE_SIZE)
 
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing
@@ -125,20 +123,20 @@ class MessageViewModel
     }
 
     private fun updateSentToReadMessages(isEmit: Boolean = false) {
-        if (_messageList.value.any { item -> item.status == StatusMessage.SENT.type && item.isMine }) {
-            _messageList.value = _messageList.value.map { message ->
-                if (message.status == StatusMessage.SENT.type && message.isMine) {
-                    message.copy(status = StatusMessage.READ.type)
-                } else {
-                    message
-                }
-            }
-            updateGroupedByMessages()
-
-            if (isEmit) {
-                socketManager.emitUpdateReadMessages(_chatDetail.value?.id ?: "")
-            }
-        }
+//        if (_messageList.value.any { item -> item.status == StatusMessage.SENT.type && item.isMine }) {
+//            _messageList.value = _messageList.value.map { message ->
+//                if (message.status == StatusMessage.SENT.type && message.isMine) {
+//                    message.copy(status = StatusMessage.READ.type)
+//                } else {
+//                    message
+//                }
+//            }
+//            updateGroupedByMessages()
+//
+//            if (isEmit) {
+//                socketManager.emitUpdateReadMessages(_chatDetail.value?.id ?: "")
+//            }
+//        }
     }
 
     private fun onUpdateSentMessage() {
@@ -156,64 +154,64 @@ class MessageViewModel
     private fun onNewMessage() {
         viewModelScope.launch {
             socketManager.onNewMessage {
-                if (it.chatID != _chatDetail.value?.id) return@onNewMessage
-
-                val newList = mutableListOf(
-                    it.copy(status = StatusMessage.READ.type).toEntity()
-                ).plus(
-                    _messageList.value
-                )
-
-                _messageList.value = newList
-
-                socketManager.emitUpdateReadMessages(_chatDetail.value?.id ?: "")
-
-                updateGroupedByMessages()
-
-                newMessage.value = it.toEntity()
+//                if (it.chatID != _chatDetail.value?.id) return@onNewMessage
+//
+//                val newList = mutableListOf(
+//                    it.copy(status = StatusMessage.READ.type).toEntity()
+//                ).plus(
+//                    _messageList.value
+//                )
+//
+//                _messageList.value = newList
+//
+//                socketManager.emitUpdateReadMessages(_chatDetail.value?.id ?: "")
+//
+//                updateGroupedByMessages()
+//
+//                newMessage.value = it.toEntity()
             }
         }
     }
 
     private fun updateGroupedByMessages() {
-        if (_messageList.value.isEmpty()) return
-
-        _groupedByMessages.value = _messageList.value.asReversed()
-            .groupBy { item ->
-                val localDate = DateFormatUtil.parseUtcToDate(item.timeStamp)
-                DateFormatUtil.getFormattedDate(localDate, DATE_FORMAT)
-            }
-            .toSortedMap(reverseOrder())
-            .mapValues {
-                val newMessages = it.value.toMutableList()
-
-                var currentLastIndex = it.value.lastIndex
-
-                val lastMessage = it.value[currentLastIndex]
-
-                if (!lastMessage.isMine) {
-                    newMessages[currentLastIndex] = lastMessage.copy(showAvatar = true)
-
-                    currentLastIndex--
-                }
-
-                while (currentLastIndex > 0) {
-                    val currentLastMessage = it.value[currentLastIndex]
-                    val previousMessage = it.value[currentLastIndex - 1]
-
-                    if (!previousMessage.isMine) {
-                        if (currentLastMessage.isMine) {
-                            newMessages[currentLastIndex - 1] =
-                                previousMessage.copy(showAvatar = true)
-                        }
-                    }
-
-                    currentLastIndex--
-                }
-
-                return@mapValues newMessages
-            }
-            .toList()
+//        if (_messageList.value.isEmpty()) return
+//
+//        _groupedByMessages.value = _messageList.value.asReversed()
+//            .groupBy { item ->
+//                val localDate = DateFormatUtil.parseUtcToDate(item.timeStamp)
+//                DateFormatUtil.getFormattedDate(localDate, DATE_FORMAT)
+//            }
+//            .toSortedMap(reverseOrder())
+//            .mapValues {
+//                val newMessages = it.value.toMutableList()
+//
+//                var currentLastIndex = it.value.lastIndex
+//
+//                val lastMessage = it.value[currentLastIndex]
+//
+//                if (!lastMessage.isMine) {
+//                    newMessages[currentLastIndex] = lastMessage.copy(showAvatar = true)
+//
+//                    currentLastIndex--
+//                }
+//
+//                while (currentLastIndex > 0) {
+//                    val currentLastMessage = it.value[currentLastIndex]
+//                    val previousMessage = it.value[currentLastIndex - 1]
+//
+//                    if (!previousMessage.isMine) {
+//                        if (currentLastMessage.isMine) {
+//                            newMessages[currentLastIndex - 1] =
+//                                previousMessage.copy(showAvatar = true)
+//                        }
+//                    }
+//
+//                    currentLastIndex--
+//                }
+//
+//                return@mapValues newMessages
+//            }
+//            .toList()
 
     }
 
@@ -246,11 +244,12 @@ class MessageViewModel
         isLoadMore: Boolean = false,
     ) {
         if (clear) {
-            _messageList.value = listOf()
+            _groupMessageList.value = listOf()
+            _pagedMessageList = PagedListModel()
         }
 
         viewModelScope.launch {
-            getMessageList(isLoadMore)
+            getGroupMessageList(isLoadMore)
         }.join()
     }
 
@@ -277,7 +276,7 @@ class MessageViewModel
                         val data = it.data ?: return@collectLatest
                         _chatDetail.value = data
                         socketManager.joinRoom(_chatDetail.value?.id ?: "")
-                        _messageList.value = data.messages
+                        _groupMessageList.value = data.messages
                         _pagedMessageList = _pagedMessageList.copy(
                             currentPage = _pagedMessageList.currentPage + 1,
                             totalPages = data.totalPages,
@@ -290,7 +289,7 @@ class MessageViewModel
         }.join()
     }
 
-    private suspend fun getMessageList(isLoadMore: Boolean = false) {
+    private suspend fun getGroupMessageList(isLoadMore: Boolean = false) {
         viewModelScope.launch {
             chatRepository.getChatMessages(
                 page = _pagedMessageList.currentPage + 1,
@@ -317,13 +316,7 @@ class MessageViewModel
                         val data = it.data ?: return@collectLatest
 
                         _pagedMessageList = data
-
-                        val newMessages =
-                            listOf<MessageEntity>().plus(_messageList.value + data.data)
-
-                        _messageList.value = newMessages
-
-                        updateGroupedByMessages()
+                        onHandleAddListMessages(data.data)
                     }
                 }
             }
@@ -409,74 +402,74 @@ class MessageViewModel
         statusMessage: String = "sent"
     ) {
 
-        val newMessages = _messageList.value.toMutableList()
-
-        var findMessage = newMessages.find { it.id == idMessage }
-
-        if (findMessage == null) {
-            findMessage = newMessages.find { it.uuid == uuid }
-        }
-
-        if (findMessage == null) return
-
-        val index = newMessages.indexOf(findMessage)
-
-        newMessages[index] = newMessages[index].copy(status = statusMessage)
-
-        _messageList.value = newMessages
-
-        updateGroupedByMessages()
+//        val newMessages = _messageList.value.toMutableList()
+//
+//        var findMessage = newMessages.find { it.id == idMessage }
+//
+//        if (findMessage == null) {
+//            findMessage = newMessages.find { it.uuid == uuid }
+//        }
+//
+//        if (findMessage == null) return
+//
+//        val index = newMessages.indexOf(findMessage)
+//
+//        newMessages[index] = newMessages[index].copy(status = statusMessage)
+//
+//        _messageList.value = newMessages
+//
+//        updateGroupedByMessages()
     }
 
     fun onSend() {
-        if (_isLoadingMessageList.value) return
-
-        socketManager.emitUserStopTyping(
-            UserTypingParam(
-                chatID = _chatDetail.value?.id ?: "",
-                userID = getUserInfo()?.userID ?: "",
-                senderAvatar = getUserInfo()?.urlImage ?: "",
-                senderName = getUserInfo()?.name ?: "",
-            )
-        )
-
-        val currentDateUtc0 = DateFormatUtil.getCurrentUtc0Date()
-        val getFormatDate = DateFormatUtil.getFormattedUTCDate(
-            currentDateUtc0,
-            format = DATE_TIME_FORMAT5
-        )
-
-        val userInfo = preferences.getUserInfo()
-
-        val newMessage = MessageEntity(
-            message = _messageText.value,
-            status = "not-sent",
-            isMine = true,
-            timeStamp = getFormatDate,
-            typeMessage = TypeMessage.TEXT.type,
-            senderName = userInfo?.name ?: "",
-            senderAvatar = userInfo?.urlImage ?: "",
-        )
-
-        socketManager.emitClientSendMessage(
-            message = newMessage.toModel(),
-            chatID = _chatDetail.value?.id ?: "",
-            userId = userInfo?.userID ?: "",
-        )
-        val newList = mutableListOf(
-            newMessage
-        ).plus(
-            _messageList.value
-        )
-
-        _messageList.value = newList
-
-        _messageText.value = ""
-        onChangedMessageText("")
-
-        updateGroupedByMessages()
-
-        _triggerScroll.value = true
+//        if (_isLoadingMessageList.value) return
+//
+//        socketManager.emitUserStopTyping(
+//            UserTypingParam(
+//                chatID = _chatDetail.value?.id ?: "",
+//                userID = getUserInfo()?.userID ?: "",
+//                senderAvatar = getUserInfo()?.urlImage ?: "",
+//                senderName = getUserInfo()?.name ?: "",
+//            )
+//        )
+//
+//        val currentDateUtc0 = DateFormatUtil.getCurrentUtc0Date()
+//        val getFormatDate = DateFormatUtil.getFormattedUTCDate(
+//            currentDateUtc0,
+//            format = DATE_TIME_FORMAT5
+//        )
+//
+//        val userInfo = preferences.getUserInfo()
+//
+//        val newMessage = MessageEntity(
+//            message = _messageText.value,
+//            status = "not-sent",
+//            isMine = true,
+//            timeStamp = getFormatDate,
+//            typeMessage = TypeMessage.TEXT.type,
+//            senderName = userInfo?.name ?: "",
+//            senderAvatar = userInfo?.urlImage ?: "",
+//        )
+//
+//        socketManager.emitClientSendMessage(
+//            message = newMessage.toModel(),
+//            chatID = _chatDetail.value?.id ?: "",
+//            userId = userInfo?.userID ?: "",
+//        )
+//        val newList = mutableListOf(
+//            newMessage
+//        ).plus(
+//            _messageList.value
+//        )
+//
+//        _messageList.value = newList
+//
+//        _messageText.value = ""
+//        onChangedMessageText("")
+//
+//        updateGroupedByMessages()
+//
+//        _triggerScroll.value = true
     }
 
     fun onUpdateTriggerScroll(value: Boolean) {
@@ -498,9 +491,9 @@ class MessageViewModel
     }
 
     private fun onEmitReadMessages() {
-        if (_messageList.value.isEmpty()) return
-
-        updateSentToReadMessages(isEmit = true)
+//        if (_messageList.value.isEmpty()) return
+//
+//        updateSentToReadMessages(isEmit = true)
     }
 
     fun clearNewMessage() {
@@ -509,65 +502,65 @@ class MessageViewModel
     }
 
     private fun onUserTyping() {
-        viewModelScope.launch {
-            socketManager.onUserTyping { param ->
-                if (param.chatID != _chatDetail.value?.id) return@onUserTyping
-
-                val findTypingMessage = _messageList.value.find {
-                    it.status == StatusMessage.TYPING.type && !it.isMine && it.senderId == param.userID
-                }
-
-                if (findTypingMessage != null) {
-                    return@onUserTyping
-                }
-
-                val currentDateUtc0 = DateFormatUtil.getCurrentUtc0Date()
-                val getFormatDate = DateFormatUtil.getFormattedUTCDate(
-                    currentDateUtc0,
-                    format = DATE_TIME_FORMAT5
-                )
-
-                val newMessage = MessageEntity(
-                    status = StatusMessage.TYPING.type,
-                    isMine = false,
-                    typeMessage = TypeMessage.TEXT.type,
-                    timeStamp = getFormatDate,
-                    senderName = param.senderName,
-                    senderAvatar = param.senderAvatar,
-                    senderId = param.userID,
-                    chatID = param.chatID,
-                )
-
-                val newList = mutableListOf(
-                    newMessage
-                ).plus(
-                    _messageList.value
-                )
-
-                _messageList.value = newList
-
-                updateGroupedByMessages()
-            }
-        }
+//        viewModelScope.launch {
+//            socketManager.onUserTyping { param ->
+//                if (param.chatID != _chatDetail.value?.id) return@onUserTyping
+//
+//                val findTypingMessage = _messageList.value.find {
+//                    it.status == StatusMessage.TYPING.type && !it.isMine && it.senderId == param.userID
+//                }
+//
+//                if (findTypingMessage != null) {
+//                    return@onUserTyping
+//                }
+//
+//                val currentDateUtc0 = DateFormatUtil.getCurrentUtc0Date()
+//                val getFormatDate = DateFormatUtil.getFormattedUTCDate(
+//                    currentDateUtc0,
+//                    format = DATE_TIME_FORMAT5
+//                )
+//
+//                val newMessage = MessageEntity(
+//                    status = StatusMessage.TYPING.type,
+//                    isMine = false,
+//                    typeMessage = TypeMessage.TEXT.type,
+//                    timeStamp = getFormatDate,
+//                    senderName = param.senderName,
+//                    senderAvatar = param.senderAvatar,
+//                    senderId = param.userID,
+//                    chatID = param.chatID,
+//                )
+//
+//                val newList = mutableListOf(
+//                    newMessage
+//                ).plus(
+//                    _messageList.value
+//                )
+//
+//                _messageList.value = newList
+//
+//                updateGroupedByMessages()
+//            }
+//        }
     }
 
     private fun onUserStopTyping() {
-        socketManager.onUserStopTyping { param ->
-            if (param.chatID != _chatDetail.value?.id) return@onUserStopTyping
-
-            val newMessages = _messageList.value.toMutableList()
-
-            val result =
-                newMessages.removeIf {
-                    it.status == StatusMessage.TYPING.type &&
-                            !it.isMine && it.senderId == param.userID
-                }
-
-            if (result) {
-                _messageList.value = newMessages
-                updateGroupedByMessages()
-            }
-        }
+//        socketManager.onUserStopTyping { param ->
+//            if (param.chatID != _chatDetail.value?.id) return@onUserStopTyping
+//
+//            val newMessages = _messageList.value.toMutableList()
+//
+//            val result =
+//                newMessages.removeIf {
+//                    it.status == StatusMessage.TYPING.type &&
+//                            !it.isMine && it.senderId == param.userID
+//                }
+//
+//            if (result) {
+//                _messageList.value = newMessages
+//                updateGroupedByMessages()
+//            }
+//        }
     }
 
     fun cancelSelectedMedia() {
@@ -604,5 +597,27 @@ class MessageViewModel
 
     fun onSendMedia() {
 
+    }
+
+    private fun onHandleAddListMessages(value: List<GroupMessageEntity>) {
+        val newGroupMessages = _groupMessageList.value.toMutableList()
+
+        value.forEach {
+            var findGroup = newGroupMessages.find { item -> item.displayDateTime() == it.displayDateTime() }
+
+            if (findGroup == null) {
+                findGroup = GroupMessageEntity(groupDate = it.groupDate, messages = it.messages)
+                newGroupMessages.add(findGroup)
+            }
+            else
+            {
+                val newMessages = findGroup.messages.toMutableList()
+                newMessages.addAll(it.messages)
+
+                val getIndex =  newGroupMessages.indexOf(findGroup)
+                newGroupMessages[getIndex] = findGroup.copy(messages = newMessages)
+            }
+        }
+        _groupMessageList.value = newGroupMessages
     }
 }

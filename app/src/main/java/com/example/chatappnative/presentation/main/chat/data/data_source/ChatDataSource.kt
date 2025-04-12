@@ -7,6 +7,7 @@ import com.example.chatappnative.gateway.api.BaseResponse
 import com.example.chatappnative.gateway.api.PagedListModel
 import com.example.chatappnative.presentation.main.chat.data.model.ChatDetailModel
 import com.example.chatappnative.presentation.main.chat.data.model.ChatModel
+import com.example.chatappnative.presentation.main.chat.data.model.GroupMessageModel
 import com.example.chatappnative.presentation.main.chat.data.param.ChatDetailParam
 import com.example.chatappnative.presentation.main.chat.data.model.MessageModel
 import retrofit2.Response
@@ -38,5 +39,5 @@ interface ChatDataSource {
         @Query("pageSize") pageSize: Int = 15,
         @Query("chatID") chatID: String = "",
         @Header("Authorization") accessToken: String = ""
-    ): Response<BaseResponse<PagedListModel<MessageModel>>>
+    ): Response<BaseResponse<PagedListModel<GroupMessageModel>>>
 }

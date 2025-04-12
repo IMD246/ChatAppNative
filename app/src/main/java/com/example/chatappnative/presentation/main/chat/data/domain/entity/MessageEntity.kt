@@ -8,6 +8,21 @@ import com.google.gson.annotations.SerializedName
 import java.util.Date
 import java.util.UUID
 
+data class GroupMessageEntity(
+    @SerializedName("group-date") val groupDate: String = "",
+    @SerializedName("messages") val messages: List<MessageEntity> = emptyList(),
+) {
+    fun getGroupDateMessage(): Date {
+        val parseToUtc = DateFormatUtil.parseUtcToDate(groupDate)
+
+        return parseToUtc
+    }
+
+    fun displayDateTime(): String {
+        return DateFormatUtil.getFormattedDate(getGroupDateMessage(), "dd-MM-yyyy")
+    }
+}
+
 data class MessageEntity(
     @SerializedName("chatID") val chatID: String = "",
     @SerializedName("uuid") val uuid: String = UUID.randomUUID().toString(),
@@ -51,7 +66,7 @@ data class MessageEntity(
         }
     }
 
-    fun toModel (): MessageModel = MessageModel(
+    fun toModel(): MessageModel = MessageModel(
         chatID = chatID,
         uuid = uuid,
         id = id,
@@ -60,9 +75,7 @@ data class MessageEntity(
         typeMessage = typeMessage,
         status = status,
         senderAvatar = senderAvatar,
-        isMine = isMine,
         senderName = senderName,
-        showAvatar = showAvatar,
         senderId = senderId,
     )
 }

@@ -4,7 +4,7 @@ import com.example.chatappnative.gateway.api.PagedListModel
 import com.example.chatappnative.gateway.api.ResponseState
 import com.example.chatappnative.presentation.main.chat.data.domain.entity.ChatDetailEntity
 import com.example.chatappnative.presentation.main.chat.data.domain.entity.ChatEntity
-import com.example.chatappnative.presentation.main.chat.data.domain.entity.MessageEntity
+import com.example.chatappnative.presentation.main.chat.data.domain.entity.GroupMessageEntity
 import kotlinx.coroutines.flow.Flow
 
 interface ChatRepository {
@@ -25,5 +25,5 @@ interface ChatRepository {
         page: Int = 1,
         chatID: String = "",
         pageSize: Int = 15,
-    ): Flow<ResponseState<PagedListModel<MessageEntity>>>
+    ): Flow<ResponseState<PagedListModel<GroupMessageEntity>>>
 }

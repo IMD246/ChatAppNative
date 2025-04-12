@@ -8,6 +8,7 @@ import com.example.chatappnative.gateway.api.BaseRepository
 import com.example.chatappnative.presentation.main.chat.data.data_source.ChatDataSource
 import com.example.chatappnative.presentation.main.chat.data.domain.entity.ChatDetailEntity
 import com.example.chatappnative.presentation.main.chat.data.domain.entity.ChatEntity
+import com.example.chatappnative.presentation.main.chat.data.domain.entity.GroupMessageEntity
 import com.example.chatappnative.presentation.main.chat.data.domain.entity.MessageEntity
 import com.example.chatappnative.presentation.main.chat.data.domain.repository.ChatRepository
 import kotlinx.coroutines.flow.Flow
@@ -91,7 +92,7 @@ class ChatRepositoryImpl @Inject constructor(
 
     override suspend fun getChatMessages(
         page: Int, chatID: String, pageSize: Int
-    ): Flow<ResponseState<PagedListModel<MessageEntity>>> {
+    ): Flow<ResponseState<PagedListModel<GroupMessageEntity>>> {
         return BaseRepository.callAPI {
             chatDataSource.getChatMessages(
                 page = page,

@@ -49,7 +49,7 @@ import java.util.Date
 @SuppressLint("SimpleDateFormat")
 @Composable
 fun MessageContent(messageViewModel: MessageViewModel) {
-    val groupedByMessages = messageViewModel.groupedByMessages.collectAsState().value
+    val groupedByMessages = messageViewModel.groupMessageList.collectAsState().value
     val chatDetail = messageViewModel.chatDetail.collectAsState().value
     val isLoadingMessageList = messageViewModel.isLoadingMessageList.collectAsState().value
     val isLoadMore = messageViewModel.isMessageListLoadMore.collectAsState().value
@@ -73,25 +73,25 @@ fun MessageContent(messageViewModel: MessageViewModel) {
     BaseListReverse(
         isGroupByList = true,
         items = groupedByMessages,
-        triggerScroll = triggerScroll,
+//        triggerScroll = triggerScroll,
         isLoadMore = isLoadMore,
         isLoading = isLoadingMessageList,
         onScrollToEnd = {
             messageViewModel.clearNewMessage()
         },
-        customIconEnableScrollButton = customScrollToEnd,
-        onTriggerScroll = {
-            messageViewModel.onUpdateTriggerScroll(false)
-        },
+//        customIconEnableScrollButton = customScrollToEnd,
+//        onTriggerScroll = {
+//            messageViewModel.onUpdateTriggerScroll(false)
+//        },
         contentItem = {
             Column {
                 Text(
                     modifier = Modifier
                         .padding(top = 10.dp)
                         .align(Alignment.CenterHorizontally),
-                    text = it.first,
+                    text = it.displayDateTime(),
                 )
-                it.second.forEach { messageModel: MessageEntity ->
+                it.messages.forEach { messageModel: MessageEntity ->
                     MessageItem(item = messageModel, presence = chatDetail?.getPresence() ?: false)
                 }
             }
@@ -124,7 +124,7 @@ fun MessageContent(messageViewModel: MessageViewModel) {
         onLoadMore = {
             messageViewModel.loadMore()
         },
-        keyItem = { it.first },
+        keyItem = { it.groupDate },
         verticalArrangement = Arrangement.Bottom,
         isTyping = isTyping,
     )

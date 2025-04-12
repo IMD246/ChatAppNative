@@ -3,7 +3,6 @@ package com.example.chatappnative.presentation.main.chat.data.model
 import com.example.chatappnative.gateway.api.EntityMapper
 import com.example.chatappnative.presentation.auth.data.model.UserPresenceModel
 import com.example.chatappnative.presentation.main.chat.data.domain.entity.ChatDetailEntity
-import com.example.chatappnative.presentation.main.chat.data.domain.entity.MessageEntity
 import com.google.gson.annotations.SerializedName
 
 data class ChatDetailModel(
@@ -17,7 +16,7 @@ data class ChatDetailModel(
     @SerializedName("userNameLastMessage") val userNameLastMessage: String = "",
     @SerializedName("typeMessage") val typeMessage: String = "",
     @SerializedName("users") val usersPresence: List<UserPresenceModel> = arrayListOf(),
-    @SerializedName("messages") val messages: List<MessageEntity> = arrayListOf(),
+    @SerializedName("messages") val messages: List<GroupMessageModel> = arrayListOf(),
     @SerializedName("totalPages") val totalPages: Int = 0
 ) : EntityMapper<ChatDetailEntity> {
     override fun toEntity(): ChatDetailEntity {
@@ -32,7 +31,7 @@ data class ChatDetailModel(
             userNameLastMessage = userNameLastMessage,
             typeMessage = typeMessage,
             usersPresence = usersPresence,
-            messages = messages,
+            messages = messages.map { it.toEntity() },
             totalPages = totalPages
         )
     }

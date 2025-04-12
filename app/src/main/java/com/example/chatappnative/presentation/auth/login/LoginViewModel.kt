@@ -1,5 +1,6 @@
 package com.example.chatappnative.presentation.auth.login
 
+import AppModel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -117,7 +118,7 @@ class LoginViewModel @Inject constructor(
                         val state = it
                         preferences.saveAccessToken(it.data?.accessToken ?: "")
                         preferences.saveUserInfo(it.data!!)
-
+                        AppModel.updateUserInfo(it.data)
                         socketManager.connect()
 
                         socketManager.onConnect {
