@@ -107,10 +107,10 @@ fun <T> BaseListReverse(
                 currentOffsetVisible += currentOffset
             }
 
-            Log.d(
-                "BaseListReverse",
-                "currentOffsetVisible: $currentOffsetVisible,  currentOffset: $currentOffset"
-            )
+//            Log.d(
+//                "BaseListReverse",
+//                "currentOffsetVisible: $currentOffsetVisible,  currentOffset: $currentOffset"
+//            )
 
             return@derivedStateOf (currentOffsetVisible >= 200)
         }
@@ -133,15 +133,15 @@ fun <T> BaseListReverse(
             if (totalVisibleItemHeight < screenHeight - 50) return@derivedStateOf false
 
             if (isGroupByList) {
-                Log.d(
-                    "BaseListReverse",
-                    "totalItemsCount: ${totalItemsCount - 1}, lastVisibleItemIndex: ${lastVisibleItem.index} "
-                )
-
-                Log.d(
-                    "BaseListReverse",
-                    "currentOffset: $currentOffset, viewportHeight: $viewportHeight, totalVisibleItemHeight: ${totalVisibleItemHeight - rangeLoadMore} "
-                )
+//                Log.d(
+//                    "BaseListReverse",
+//                    "totalItemsCount: ${totalItemsCount - 1}, lastVisibleItemIndex: ${lastVisibleItem.index} "
+//                )
+//
+//                Log.d(
+//                    "BaseListReverse",
+//                    "currentOffset: $currentOffset, viewportHeight: $viewportHeight, totalVisibleItemHeight: ${totalVisibleItemHeight - rangeLoadMore} "
+//                )
 
                 if (totalItemsCount - 1 == lastVisibleItem.index) {
                     return@derivedStateOf (currentOffset + viewportHeight >= totalVisibleItemHeight - rangeLoadMore)

@@ -29,6 +29,7 @@ import com.example.chatappnative.R
 import com.example.chatappnative.composables.NetworkImage
 import com.example.chatappnative.presentation.main.chat.ChatViewModel
 import com.example.chatappnative.presentation.main.chat.data.domain.entity.ChatEntity
+import com.example.chatappnative.presentation.main.chat.data.param.TypeMessage
 import com.example.chatappnative.ui.theme.Color191919
 import com.example.chatappnative.util.DateFormatUtil
 import java.util.Date
@@ -125,8 +126,8 @@ fun CallItem(item: ChatEntity) {
 
 @Composable
 fun CallMessage(item: ChatEntity) {
-    when (item.typeMessage) {
-        "image" -> Row {
+    when (item.typeLastMessage) {
+        TypeMessage.IMAGE -> Row {
             Icon(
                 modifier = Modifier.size(12.dp),
                 painter = painterResource(id = R.drawable.ic_photo),
@@ -143,7 +144,7 @@ fun CallMessage(item: ChatEntity) {
             )
         }
 
-        "video" -> Row {
+        TypeMessage.VIDEO -> Row {
             Icon(
                 modifier = Modifier.size(12.dp),
                 painter = painterResource(id = R.drawable.ic_video),
@@ -160,7 +161,7 @@ fun CallMessage(item: ChatEntity) {
             )
         }
 
-        "record" -> Row(
+        TypeMessage.AUDIO -> Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {

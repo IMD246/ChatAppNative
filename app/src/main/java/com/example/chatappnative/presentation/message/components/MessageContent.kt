@@ -40,6 +40,7 @@ import com.example.chatappnative.composables.GifImage
 import com.example.chatappnative.composables.NetworkImage
 import com.example.chatappnative.presentation.main.chat.data.domain.entity.ChatDetailEntity
 import com.example.chatappnative.presentation.main.chat.data.domain.entity.MessageEntity
+import com.example.chatappnative.presentation.main.chat.data.param.StatusMessage
 import com.example.chatappnative.presentation.message.MessageViewModel
 import com.example.chatappnative.ui.theme.Color191919
 import com.example.chatappnative.ui.theme.ColorPrimary
@@ -197,7 +198,7 @@ private fun MessageItem(item: MessageEntity, presence: Boolean = false) {
         ) {
             val maxWidth = this.maxWidth
 
-            when (item.getTypeMessage()) {
+            when (item.typeMessage) {
                 TypeMessage.TEXT -> TextMessage(maxWidth, item)
                 TypeMessage.IMAGE -> Box {}
                 TypeMessage.VIDEO -> Box {}
@@ -211,7 +212,7 @@ private fun MessageItem(item: MessageEntity, presence: Boolean = false) {
 @Composable
 private fun TextMessage(maxWidth: Dp, item: MessageEntity) {
     val content = @Composable {
-        when (item.getStatusMessage()) {
+        when (item.status) {
             TYPING -> Column(
                 horizontalAlignment = Alignment.End
             ) {
@@ -237,7 +238,7 @@ private fun TextMessage(maxWidth: Dp, item: MessageEntity) {
                     horizontalArrangement = Arrangement.End,
                 ) {
                     Box(modifier = Modifier.align(alignment = Alignment.Bottom)) {
-                        TimeStamp(item.getDateTimeMessage())
+                        TimeStamp(item.timeStamp)
                     }
                     Spacer(modifier = Modifier.width(4.dp))
                     Box(modifier = Modifier.align(alignment = Alignment.Bottom)) {
@@ -272,10 +273,10 @@ private fun TimeStamp(date: Date) {
 }
 
 @Composable
-private fun StatusMessage(type: String) {
+private fun StatusMessage(status: StatusMessage) {
     val statusComposable = @Composable {
-        when (type.lowercase()) {
-            "not-sent" -> {
+        when (status) {
+            StatusMessage.NOT_SENT -> {
                 Image(
                     painter = painterResource(id = R.drawable.ic_sent_message),
                     contentDescription = null,
@@ -283,7 +284,7 @@ private fun StatusMessage(type: String) {
                 )
             }
 
-            "sent" -> {
+            StatusMessage.SENT -> {
                 Image(
                     painter = painterResource(id = R.drawable.ic_sent_message),
                     contentDescription = null,
@@ -291,13 +292,16 @@ private fun StatusMessage(type: String) {
                 )
             }
 
-            "read" -> {
+            StatusMessage.READ -> {
                 Image(
                     painter = painterResource(id = R.drawable.ic_read_message),
                     contentDescription = null,
                     colorFilter = ColorFilter.tint(Color191919.copy(alpha = 0.75F))
                 )
             }
+
+            TYPING -> Box {  }
+            StatusMessage.DELETE -> Box {  }
         }
     }
 

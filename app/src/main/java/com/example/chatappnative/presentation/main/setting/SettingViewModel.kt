@@ -28,7 +28,7 @@ class SettingViewModel
             authRepository.logout()
             preferences.logout()
             socketManager.disconnect()
-//            AppModel.clearUserInfo()
+            AppModel.clearUserInfo()
         }
     }
 }

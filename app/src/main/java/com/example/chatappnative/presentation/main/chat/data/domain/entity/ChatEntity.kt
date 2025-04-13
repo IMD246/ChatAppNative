@@ -12,21 +12,14 @@ data class ChatEntity(
     @SerializedName("_id") val id: String = UUID.randomUUID().toString(),
     @SerializedName("lastMessage") val lastMessage: String = "",
     @SerializedName("nameChat") val nameChat: String = "",
-    @SerializedName("timeLastMessage") val timeLastMessage: String = "",
-    @SerializedName("type") val type: String = "",
+    @SerializedName("timeLastMessage") val timeLastMessage: Date,
+    @SerializedName("type") val type: TypeChat = TypeChat.PERSONAL,
     @SerializedName("urlImage") val urlImage: String = "",
     @SerializedName("userIDLastMessage") val userIDLastMessage: String = "",
     @SerializedName("userNameLastMessage") val userNameLastMessage: String = "",
-    @SerializedName("typeMessage") val typeMessage: String = "",
     @SerializedName("users") val usersPresence: List<UserPresenceModel> = arrayListOf(),
-    @SerializedName("typeLastMessage") val typeLastMessage: String = "",
+    @SerializedName("typeLastMessage") val typeLastMessage: TypeMessage = TypeMessage.TEXT,
 ) {
-    fun getDateTimeLastMessage(): Date {
-        val parseToUtc = DateFormatUtil.parseUtcToDate(timeLastMessage)
-
-        return parseToUtc
-    }
-
     fun getPresence(): Boolean {
         return usersPresence.any { it.presence }
     }
@@ -51,28 +44,5 @@ data class ChatEntity(
         val parseToUtc = DateFormatUtil.parseUtcToDate(getDate)
 
         return parseToUtc
-    }
-
-    fun getTypeChat(): TypeChat {
-        return when (type) {
-            "group" -> {
-                TypeChat.GROUP
-            }
-
-            else -> {
-                TypeChat.PERSONAL
-            }
-        }
-    }
-
-    fun getTypeMessage(): TypeMessage {
-        return when (typeMessage) {
-            "image" -> TypeMessage.IMAGE
-            "video" -> TypeMessage.VIDEO
-            "audio" -> TypeMessage.AUDIO
-            else -> {
-                TypeMessage.TEXT
-            }
-        }
     }
 }

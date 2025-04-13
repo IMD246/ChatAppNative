@@ -1,18 +1,18 @@
 package com.example.chatappnative.presentation.main.chat.components
 
-import androidx.compose.foundation.clickable
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
@@ -26,31 +26,32 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.chatappnative.R
-import com.example.chatappnative.presentation.main.chat.data.param.TypeMessage
-import com.example.chatappnative.composables.BaseList
 import com.example.chatappnative.composables.NetworkImage
-import com.example.chatappnative.composables.Presence
 import com.example.chatappnative.presentation.main.chat.ChatViewModel
 import com.example.chatappnative.presentation.main.chat.data.domain.entity.ChatEntity
+import com.example.chatappnative.presentation.main.chat.data.param.TypeMessage
 import com.example.chatappnative.ui.theme.Color191919
 import com.example.chatappnative.util.DateFormatUtil
-import kotlinx.coroutines.delay
+import java.util.Date
+import java.util.Timer
+import java.util.TimerTask
 
 @Composable
-fun ChatContent(chatModel: ChatViewModel) {
-    val items = chatModel.chatList.collectAsState().value
-    val isLoading = chatModel.isLoadingChatList.collectAsState().value
-    val isLoadMore = chatModel.isChatListLoadMore.collectAsState().value
+fun CallContent(chatModel: ChatViewModel) {
+    val callList = chatModel.callList.collectAsState().value
+    val isLoadingCallList = chatModel.isLoadingCallList.collectAsState().value
 
-    BaseList(
-        items = items,
-        loadingContent = {
-            ChatListShimmer()
-        },
-        loadMoreContent = {
-            ChatShimmerItem()
-        },
-        emptyContent = {
+    if (isLoadingCallList) {
+        return CallListShimmer()
+    }
+
+    // Chat list is empty
+    if (callList.isEmpty()) {
+        return Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
             Text(
                 text = "There is no conversion here \n" +
                         "lets have some",
@@ -61,58 +62,43 @@ fun ChatContent(chatModel: ChatViewModel) {
                     textAlign = TextAlign.Center,
                 )
             )
-        },
-        isLoading = isLoading,
-        contentItem = {
-            ChatItem(
-                it,
-                onClickItem = chatModel::selectChatItem,
-                chatModel,
-            )
-        },
-        isLoadMore = isLoadMore,
-        onLoadMore = {
-            chatModel.loadMore()
-        },
-        modifier = Modifier.padding(20.dp, 15.dp),
-        keyItem = { it.id }
-    )
+        }
+    }
+
+    LazyColumn(
+        modifier = Modifier.padding(20.dp, 15.dp)
+    ) {
+        callList.forEach {
+            item {
+                CallItem(it)
+            }
+        }
+    }
 }
 
 @Composable
-private fun ChatItem(
-    item: ChatEntity,
-    onClickItem: (ChatEntity) -> Unit = {},
-    chatViewModel: ChatViewModel,
-) {
+fun CallItem(item: ChatEntity) {
     val dateDisplay: MutableState<String> = remember {
-        mutableStateOf(DateFormatUtil.dateMessageFormat(item.timeLastMessage))
+        mutableStateOf(DateFormatUtil.dateMessageFormat(Date()))
     }
 
-    LaunchedEffect(Unit) {
-        while (true) {
-            if (DateFormatUtil.isDiffSecondsMoreThanADay(item.timeLastMessage)) break;
-
-            dateDisplay.value = DateFormatUtil.dateMessageFormat(item.timeLastMessage)
-
-            delay(DateFormatUtil.getDelayDiffMilliseconds(item.timeLastMessage))
+    Timer().schedule(object : TimerTask() {
+        override fun run() {
+            if (DateFormatUtil.isDiffSecondsMoreThanADay(Date())) {
+                Log.d("ChatItem", "cancel")
+                cancel()
+            }
+            dateDisplay.value = DateFormatUtil.dateMessageFormat(Date())
         }
-    }
+    }, DateFormatUtil.getDelayDiffMilliseconds(Date()))
 
     Row(
-        modifier = Modifier
-            .padding(bottom = 15.dp)
-            .clickable {
-                onClickItem(item)
-            },
+        modifier = Modifier.padding(bottom = 15.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Column {
-            NetworkImage(
-                url = item.urlImage,
-            )
-            Presence(isPresence = item.getPresence(), date = item.getDateTimePresence())
-        }
+        NetworkImage(
+            url = item.urlImage,
+        )
         Spacer(modifier = Modifier.width(8.dp))
         Column {
             Text(
@@ -123,8 +109,8 @@ private fun ChatItem(
                     color = Color191919.copy(alpha = 0.95F),
                 )
             )
-            Spacer(modifier = Modifier.height(6.dp))
-            Message(item, chatViewModel)
+            Spacer(modifier = Modifier.width(6.dp))
+            CallMessage(item)
         }
         Spacer(modifier = Modifier.weight(1F))
         Text(
@@ -139,18 +125,8 @@ private fun ChatItem(
 }
 
 @Composable
-private fun Message(item: ChatEntity, chatViewModel: ChatViewModel) {
-    val userInfo = chatViewModel.getUserInfo()!!
-
-    val getNameLastMessage = {
-        if (userInfo.name == item.userNameLastMessage) {
-            "Bạn"
-        } else {
-            item.userNameLastMessage
-        }
-    }
-
-    when (item.typeLastMessage) {
+fun CallMessage(item: ChatEntity) {
+    when (item.typeMessage) {
         TypeMessage.IMAGE -> Row {
             Icon(
                 modifier = Modifier.size(12.dp),
@@ -205,8 +181,8 @@ private fun Message(item: ChatEntity, chatViewModel: ChatViewModel) {
             )
         }
 
-        TypeMessage.TEXT -> Text(
-            text = "${getNameLastMessage()}: ${item.lastMessage}",
+        else -> Text(
+            text = item.lastMessage,
             style = TextStyle(
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Normal,

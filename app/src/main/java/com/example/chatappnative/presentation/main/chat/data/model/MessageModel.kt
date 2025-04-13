@@ -4,6 +4,9 @@ import com.example.chatappnative.gateway.api.EntityMapper
 import com.example.chatappnative.gateway.local_database.Preferences
 import com.example.chatappnative.presentation.main.chat.data.domain.entity.GroupMessageEntity
 import com.example.chatappnative.presentation.main.chat.data.domain.entity.MessageEntity
+import com.example.chatappnative.presentation.main.chat.data.param.StatusMessage
+import com.example.chatappnative.presentation.main.chat.data.param.TypeMessage
+import com.example.chatappnative.util.DateFormatUtil
 import com.google.gson.annotations.SerializedName
 import java.util.UUID
 
@@ -14,7 +17,7 @@ data class GroupMessageModel(
 
     override fun toEntity(): GroupMessageEntity {
         return GroupMessageEntity(
-            groupDate = groupDate,
+            groupDate = DateFormatUtil.parseUtcToDate(groupDate),
             messages = messages.map { it.toEntity() },
         )
     }
@@ -39,9 +42,9 @@ data class MessageModel(
             uuid = uuid,
             id = id,
             message = message,
-            timeStamp = timeStamp,
-            typeMessage = typeMessage,
-            status = status,
+            timeStamp = DateFormatUtil.parseUtcToDate(timeStamp),
+            typeMessage = TypeMessage.fromType(typeMessage) ?: TypeMessage.TEXT,
+            status = StatusMessage.fromType(status) ?: StatusMessage.NOT_SENT,
             senderAvatar = senderAvatar,
             isMine = AppModel.userInfo?.userID == senderId,
             senderName = senderName,

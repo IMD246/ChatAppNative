@@ -1,0 +1,25 @@
+package com.example.chatappnative.presentation.main.contact.data.model
+
+import com.example.chatappnative.gateway.api.EntityMapper
+import com.example.chatappnative.gateway.model.FriendEntity
+import com.example.chatappnative.util.DateFormatUtil
+import com.google.gson.annotations.SerializedName
+import java.util.UUID
+
+data class FriendModel(
+    @SerializedName("id") val id: String = UUID.randomUUID().toString(),
+    @SerializedName("name") val name: String = "",
+    @SerializedName("urlImage") val urlImage: String? = "",
+    @SerializedName("presence") val presence: Boolean = false,
+    @SerializedName("presence_timestamp") val presenceTimestamp: String = "",
+) : EntityMapper<FriendEntity> {
+    override fun toEntity(): FriendEntity {
+        return FriendEntity(
+            id = id,
+            name = name,
+            urlImage = urlImage,
+            presence = presence,
+            presenceTimestamp = DateFormatUtil.parseUtcToDate(presenceTimestamp),
+        )
+    }
+}

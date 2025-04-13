@@ -3,6 +3,9 @@ package com.example.chatappnative.presentation.main.chat.data.model
 import com.example.chatappnative.gateway.api.EntityMapper
 import com.example.chatappnative.presentation.auth.data.model.UserPresenceModel
 import com.example.chatappnative.presentation.main.chat.data.domain.entity.ChatDetailEntity
+import com.example.chatappnative.presentation.main.chat.data.param.TypeChat
+import com.example.chatappnative.presentation.main.chat.data.param.TypeMessage
+import com.example.chatappnative.util.DateFormatUtil
 import com.google.gson.annotations.SerializedName
 
 data class ChatDetailModel(
@@ -24,12 +27,12 @@ data class ChatDetailModel(
             id = id,
             lastMessage = lastMessage,
             nameChat = nameChat,
-            timeLastMessage = timeLastMessage,
-            type = type,
+            timeLastMessage = DateFormatUtil.parseToLocalDate(timeLastMessage),
+            type = TypeChat.fromType(type) ?: TypeChat.PERSONAL,
             urlImage = urlImage,
             userIDLastMessage = userIDLastMessage,
             userNameLastMessage = userNameLastMessage,
-            typeMessage = typeMessage,
+            typeMessage = TypeMessage.fromType(typeMessage) ?: TypeMessage.TEXT,
             usersPresence = usersPresence,
             messages = messages.map { it.toEntity() },
             totalPages = totalPages

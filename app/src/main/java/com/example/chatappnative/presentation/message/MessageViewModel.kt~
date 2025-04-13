@@ -541,6 +541,7 @@ class MessageViewModel
 
         if (findGroup == null) {
             findGroup = GroupMessageEntity(groupDate = value.timeStamp, messages = listOf(value))
+
             newGroupMessages.add(0,findGroup)
         }
         else

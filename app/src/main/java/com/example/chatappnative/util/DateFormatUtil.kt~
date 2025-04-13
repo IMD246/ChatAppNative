@@ -289,10 +289,4 @@ object DateFormatUtil {
     fun formatDateToUtc(date: Date): String {
         return utcFormat.format(date)
     }
-
-    fun formatDateToIso8601(date: Date): String {
-        val formatter = SimpleDateFormat(DATE_TIME_FORMAT5, Locale.getDefault())
-        formatter.timeZone = TimeZone.getTimeZone("UTC")
-        return formatter.format(date)
-    }
 }

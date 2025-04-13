@@ -12,11 +12,5 @@ data class ChatDetailParam(
 
 enum class TypeChat(val type: String) {
     PERSONAL("personal"),
-    GROUP("group");
-
-    companion object {
-        fun fromType(type: String): TypeChat? {
-            return entries.find { it.type == type }
-        }
-    }
+    GROUP("group")
 }
